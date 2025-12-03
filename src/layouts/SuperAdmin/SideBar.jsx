@@ -1,0 +1,165 @@
+// SuperAdminSidebar.jsx
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Users,
+  Shield,
+  Building,
+  FolderTree,
+  FileText,
+  BarChart3,
+  Settings,
+  Database,
+  Wrench,
+  BookOpen,
+  Network,
+  Server,
+  Circle
+} from "lucide-react";
+
+export default function SuperAdminSidebar({ user, collapsed, onClose }) {
+  const location = useLocation();
+
+  // Menu spécifique pour le Super Admin
+  const menuSections = [
+    {
+      title: "Tableau de bord",
+      items: [
+        { label: "Vue d'ensemble", icon: LayoutDashboard, path: "/superadmin/dashboard" },
+      ]
+    },
+    {
+      title: "Gestion des utilisateurs",     
+      items: [
+        { label: "Super administrateurs", icon: Users, path: "/superadmin/super-admins" },
+        { label: "Administrateurs", icon: Users, path: "/superadmin/admins" },
+        { label: "Employes", icon: Users, path: "/" },
+      ]
+    },
+    {
+      title: "Gestion des organisations",     
+      items: [
+        { label: "Entreprises", icon: Building, path: "/superadmin/companies" },
+        { label: "Départements", icon: FolderTree, path: "/superadmin/departments" },
+        { label: "Structures", icon: Network, path: "/superadmin/structures" },
+      ]
+    },
+    {
+      title: "Supervision & Audit",     
+      items: [
+        { label: "Journal d'activité", icon: FileText, path: "/superadmin/audit-logs" },
+        { label: "Statistiques système", icon: BarChart3, path: "/superadmin/statistics" },
+        { label: "Sauvegardes", icon: Database, path: "/superadmin/backups" },
+      ]
+    },
+    {
+      title: "Configuration avancée",     
+      items: [
+        { label: "Paramètres système", icon: Settings, path: "/superadmin/settings" },
+        { label: "Modules & Plugins", icon: Server, path: "/superadmin/modules" },
+        { label: "API & Intégrations", icon: Network, path: "/superadmin/integrations" },
+      ]
+    },
+    {
+      title: "Support & Maintenance",     
+      items: [
+        { label: "Support technique", icon: Wrench, path: "/superadmin/support" },
+        { label: "Maintenance", icon: Settings, path: "/superadmin/maintenance" },
+        { label: "Documentation", icon: BookOpen, path: "/superadmin/documentation" },
+      ]
+    },
+  ];
+
+  const isActiveLink = (path) => {
+    return location.pathname.startsWith(path);
+  };
+
+  return (
+    <aside className={`
+      fixed top-0 left-0 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
+      shadow-xl z-50 transition-transform duration-300 ease-in-out
+      ${collapsed ? '-translate-x-full' : 'translate-x-0'}
+      w-64
+    `}>
+      {/* Header avec logo Super Admin */}
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-50 to-white dark:from-green-900/30 dark:to-gray-800">
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0">
+            <Building className="w-6 h-6" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
+              MINSANTE RH
+            </h1>
+            <p className="text-xs text-green-600 dark:text-green-400 font-semibold truncate">
+              Super Administration
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Super Admin avec scroll */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 h-[calc(100vh-200px)]">
+        {menuSections.map((section, sectionIndex) => (
+          <div key={sectionIndex} className="mb-6">
+            {/* Titre de section */}
+            <h3 className="px-6 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+              {section.title}
+            </h3>
+            
+            <ul className="space-y-1">
+              {section.items.map((item, itemIndex) => {
+                const IconComponent = item.icon;
+                return (
+                  <li key={itemIndex}>
+                    <Link
+                      to={item.path}
+                      onClick={onClose}
+                      className={`
+                        flex items-center mx-3 px-3 py-3 rounded-xl transition-all duration-200 group
+                        ${isActiveLink(item.path) 
+                          ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 shadow-sm' 
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400'
+                        }
+                      `}
+                    >
+                      <IconComponent className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 mr-3" />
+                      <span className="font-medium text-sm truncate flex-1">
+                        {item.label}
+                      </span>
+                      
+                      {/* Indicateur visuel pour les liens actifs */}
+                      {isActiveLink(item.path) && (
+                        <Circle className="w-2 h-2 fill-green-500 text-green-500 ml-2" />
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
+
+      {/* Footer avec informations Super Admin */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
+        <div className="flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg border border-green-200 dark:border-green-700">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+            {user?.first_name ? user.first_name.charAt(0).toUpperCase() : 'SA'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              {user?.first_name || 'Super Admin'}
+            </p>
+            <p className="text-xs text-green-600 dark:text-green-400 truncate">
+              Accès complet
+            </p>
+          </div>
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="En ligne"></div>
+        </div>
+        
+      </div>
+    </aside>
+  );
+}

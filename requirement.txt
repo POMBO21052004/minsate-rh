@@ -1,0 +1,20 @@
+npm create vite@latest   
+-> Choix du projet
+-> Choix du nom du package (package.json) -- Optionnel
+-> Choix du  framework (React)
+-> Choix de la variant (Javascript + SWC)
+
+npm install axios react-router-dom
+npm install axios
+npm install feather-icons 
+npm install react-bootstrap bootstrap
+npm install js-file-download
+npm install chart.js react-chartjs-2
+npm install @fullcalendar
+npm install @fullcalendar/core
+npm install @fullcalendar/core @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction
+npm install @fullcalendar/list @fullcalendar/rrule
+
+npm install lucide-react
+npm install -D tailwindcss@^3.4.0 postcss@^8.4.0 autoprefixer@^10.4.0
+npx tailwindcss init -p
