@@ -77,10 +77,11 @@ export default function AdminView() {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return 'Non renseigné';
     return new Date(dateString).toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
       year: 'numeric',
-      month: 'long',
-      day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     });
@@ -191,8 +192,8 @@ export default function AdminView() {
         {/* Informations principales */}
         <div className="lg:col-span-3 space-y-6">
           {/* Profil */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                 <Contact className="w-5 h-5 mr-3 text-[#179150]" />
                 Informations personnelles
@@ -325,9 +326,9 @@ export default function AdminView() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
           >
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                 <Key className="w-5 h-5 mr-3 text-[#179150]" />
                 Rôle et permissions
@@ -387,9 +388,9 @@ export default function AdminView() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
           >
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide flex items-center">
                 <Settings className="w-4 h-4 mr-2 text-[#179150]" />
                 Actions
@@ -398,7 +399,7 @@ export default function AdminView() {
             <div className="p-4 space-y-2">
               <Link
                 to={`/superadmin/admins/${id}/edit`}
-                className="flex items-center justify-between p-3 bg-[#179150]/10 hover:bg-[#179150]/20 border border-[#179150]/20 transition-colors duration-200 group"
+                className="flex items-center justify-between p-3 bg-[#179150]/10 hover:bg-[#179150]/20 border border-[#179150]/20 transition-colors duration-200 group rounded-lg"
               >
                 <div className="flex items-center">
                   <Edit className="w-4 h-4 text-[#179150] mr-3" />
@@ -411,7 +412,7 @@ export default function AdminView() {
               
               <button
                 onClick={handleDeleteClick}
-                className="flex items-center justify-between w-full p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-700 transition-colors duration-200 group"
+                className="flex items-center justify-between w-full p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-700 transition-colors duration-200 group rounded-lg"
               >
                 <div className="flex items-center">
                   <Trash2 className="w-4 h-4 text-red-600 mr-3" />
@@ -424,7 +425,7 @@ export default function AdminView() {
               
               <Link
                 to="/superadmin/admins"
-                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition-colors duration-200 group"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition-colors duration-200 group rounded-lg"
               >
                 <div className="flex items-center">
                   <ArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400 mr-3" />
@@ -442,9 +443,9 @@ export default function AdminView() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.4 }}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
           >
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide flex items-center">
                 <Database className="w-4 h-4 mr-2 text-[#179150]" />
                 Système
@@ -520,7 +521,7 @@ export default function AdminView() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25 }}
-              className="bg-white dark:bg-gray-800 w-full max-w-md border border-gray-200 dark:border-gray-600"
+              className="bg-white dark:bg-gray-800 w-full max-w-md border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl"
             >
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <div className="flex items-center">
@@ -548,13 +549,13 @@ export default function AdminView() {
                 <div className="flex space-x-3">
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                    className="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors rounded-lg"
                   >
                     Annuler
                   </button>
                   <button
                     onClick={handleDeleteConfirm}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white font-medium hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors flex items-center justify-center"
+                    className="flex-1 px-4 py-2 bg-red-600 text-white font-medium hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors flex items-center justify-center rounded-lg"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Supprimer
@@ -566,41 +567,25 @@ export default function AdminView() {
         )}
       </AnimatePresence>
 
-      {/* Notifications Toast */}
+      {/* Toast Notification */}
       <AnimatePresence>
         {showToast && (
-          <motion.div 
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            className="fixed bottom-4 right-4 z-50"
-          >
-            <div className={`border ${
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 50, x: "-50%" }}
+            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
               toastType === 'success' 
-                ? 'bg-[#179150]/10 border-[#179150]/20' 
-                : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            } p-4 max-w-sm`}>
-              <div className="flex items-center">
-                <div className={`flex-shrink-0 ${
-                  toastType === 'success' ? 'text-[#179150]' : 'text-red-600'
-                }`}>
-                  {toastType === 'success' ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm font-medium ${
-                    toastType === 'success' 
-                      ? 'text-[#179150]' 
-                      : 'text-red-800 dark:text-red-400'
-                  }`}>
-                    {toastMessage}
-                  </p>
-                </div>
-              </div>
-            </div>
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {toastType === 'success' ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : (
+              <AlertCircle className="w-5 h-5" />
+            )}
+            <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>

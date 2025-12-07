@@ -12,7 +12,9 @@ import {
   CheckCircle,
   HelpCircle,
   Eye,
-  EyeOff
+  EyeOff,
+  X,
+  Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
@@ -61,12 +63,22 @@ export default function AdminCreate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (formData.password !== formData.confirm_password) {
+      showToastMessage('Les mots de passe ne correspondent pas', 'error');
+      return;
+    }
+    
     try {
       setSaving(true);
       setError(null);
       setErrors({});
       
-      const response = await api.post('/users/admins', formData);
+      const response = await api.post('/users/admins/', {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        password: formData.password
+      });
       
       if (response.data) {
         showToastMessage('Administrateur créé avec succès !', 'success');
@@ -154,22 +166,24 @@ export default function AdminCreate() {
 
               <div className="p-6">
                 {/* Avatar placeholder */}
-                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] flex items-center justify-center text-white font-bold text-lg mr-4">
-                    <User className="w-6 h-6" />
+                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] flex items-center justify-center text-white font-bold text-lg mr-4 rounded-lg">
+                    <User className="w-8 h-8" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                       Nouvel Administrateur
                     </h3>
                     <div className="flex items-center mt-1">
-                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20">
+                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 rounded">
                         <UserCheck className="w-3 h-3 mr-1" />
                         Administrateur
                       </span>
                     </div>
                   </div>
                 </div>
+
+                <hr className="my-4" />
 
                 {/* Champs du formulaire */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -187,7 +201,7 @@ export default function AdminCreate() {
                         errors.first_name 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="Prénom de l'admin"
                       required
                     />
@@ -212,7 +226,7 @@ export default function AdminCreate() {
                         errors.last_name 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="Nom de l'admin"
                       required
                     />
@@ -237,7 +251,7 @@ export default function AdminCreate() {
                         errors.email 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="admin@minsante.com"
                       required
                     />
@@ -263,7 +277,7 @@ export default function AdminCreate() {
                           errors.password 
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Mot de passe sécurisé"
                         required
                       />
@@ -300,7 +314,7 @@ export default function AdminCreate() {
                           errors.confirm_password 
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Confirmez le mot de passe"
                         required
                       />
@@ -320,50 +334,57 @@ export default function AdminCreate() {
                   </div>
                 </div>
 
+                <hr className="my-4" />
+
                 {/* Informations système */}
-                <div className="mt-8 p-4 bg-[#179150]/10 border border-[#179150]/20">
+                <div className="mt-8 p-4 bg-[#179150]/10 border border-[#179150]/20 rounded-lg">
                   <h4 className="text-sm font-semibold text-[#179150] mb-2 flex items-center">
                     <UserCheck className="w-4 h-4 mr-2" />
-                    Informations système
+                    Informations système (non modifiables)
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-[#179150]">Rôle :</span>
-                      <span className="ml-2 text-[#147a43] font-medium">Administrateur</span>
+                      <span className="text-[#179150] font-medium">Rôle :</span>
+                      <span className="ml-2 text-[#147a43] font-semibold">Administrateur</span>
                     </div>
                     <div>
-                      <span className="text-[#179150]">Statut :</span>
-                      <span className="ml-2 text-[#147a43] font-medium">Activé automatiquement</span>
+                      <span className="text-[#179150] font-medium">Statut :</span>
+                      <span className="ml-2 text-[#147a43] font-semibold">Activé automatiquement</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Boutons d'action */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
-                  <Link
-                    to="/superadmin/admins"
-                    className="inline-flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium transition-colors duration-200 mb-4 sm:mb-0"
-                  >
-                    Annuler
-                  </Link>
+                  <div></div>
                   
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="inline-flex items-center px-6 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50"
-                  >
-                    {saving ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                        Création...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-5 h-5 mr-2" />
-                        Créer l'administrateur
-                      </>
-                    )}
-                  </button>
+                  <div className="flex gap-3">
+                    <Link
+                      to="/superadmin/admins"
+                      className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-colors duration-200 rounded-lg"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Annuler
+                    </Link>
+                    
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="inline-flex items-center px-6 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50 rounded-lg"
+                    >
+                      {saving ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          Enregistrement...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-5 h-5 mr-2" />
+                          Enregistrer l'Administrateur
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -376,37 +397,31 @@ export default function AdminCreate() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
-              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
             >
-              <div className="bg-[#179150]/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="bg-blue-50 dark:bg-blue-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                  <HelpCircle className="w-5 h-5 mr-2 text-[#179150]" />
-                  Conseils
+                  <HelpCircle className="w-5 h-5 mr-2 text-blue-600" />
+                  Conseils - Admin
                 </h3>
               </div>
               <div className="p-4 space-y-3">
                 <div className="flex items-start">
-                  <User className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Les administrateurs ont un accès étendu aux fonctionnalités du système.
+                    Les administrateurs ont accès aux fonctionnalités de gestion
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <Mail className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    L'email doit être unique et sera utilisé pour la connexion au système.
+                    L'email doit être unique et sera utilisé pour la connexion
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <Lock className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Le mot de passe doit être sécurisé et confidentiel. Minimum 8 caractères requis.
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <UserCheck className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Le compte sera automatiquement activé et vérifié après création.
+                    Le mot de passe doit être sécurisé et confidentiel
                   </p>
                 </div>
               </div>
@@ -417,61 +432,38 @@ export default function AdminCreate() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
-              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
             >
-              <div className="bg-[#179150]/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="bg-green-50 dark:bg-green-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                  <UserCheck className="w-5 h-5 mr-2 text-[#179150]" />
+                  <Shield className="w-5 h-5 mr-2 text-green-600" />
                   Permissions Administrateur
                 </h3>
               </div>
               <div className="p-4 space-y-3">
                 <div className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Gestion des employés et des congés
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Accès aux rapports et statistiques
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Validation des demandes de congé
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Gestion des départements
+                    Gestion des départements et postes
                   </p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Validation */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-              className="bg-[#179150]/10 border border-[#179150]/20 p-4"
-            >
-              <div className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-[#179150] mr-3 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="text-sm font-semibold text-[#179150] mb-2">
-                    Validation des données
-                  </h4>
-                  <ul className="text-sm text-[#147a43] space-y-1">
-                    <li>• Tous les champs sont validés en temps réel</li>
-                    <li>• Les erreurs s'affichent immédiatement</li>
-                    <li>• Confirmation avant enregistrement</li>
-                    <li>• Sauvegarde automatique des modifications</li>
-                  </ul>
                 </div>
               </div>
             </motion.div>
@@ -479,41 +471,25 @@ export default function AdminCreate() {
         </div>
       </form>
 
-      {/* Notifications Toast */}
+      {/* Toast Notification */}
       <AnimatePresence>
         {showToast && (
-          <motion.div 
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            className="fixed bottom-4 right-4 z-50"
-          >
-            <div className={`border ${
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 50, x: "-50%" }}
+            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
               toastType === 'success' 
-                ? 'bg-[#179150]/10 border-[#179150]/20' 
-                : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            } p-4 max-w-sm`}>
-              <div className="flex items-center">
-                <div className={`flex-shrink-0 ${
-                  toastType === 'success' ? 'text-[#179150]' : 'text-red-600'
-                }`}>
-                  {toastType === 'success' ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm font-medium ${
-                    toastType === 'success' 
-                      ? 'text-[#179150]' 
-                      : 'text-red-800 dark:text-red-400'
-                  }`}>
-                    {toastMessage}
-                  </p>
-                </div>
-              </div>
-            </div>
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {toastType === 'success' ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : (
+              <AlertCircle className="w-5 h-5" />
+            )}
+            <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>

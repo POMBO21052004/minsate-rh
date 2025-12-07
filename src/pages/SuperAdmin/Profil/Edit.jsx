@@ -13,8 +13,11 @@ import {
   AlertCircle,
   CheckCircle,
   HelpCircle,
-  BadgeCheck
+  BadgeCheck,
+  X,
+  Info
 } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 
 export default function SuperAdminProfileEdit() {
@@ -149,7 +152,12 @@ export default function SuperAdminProfileEdit() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8"
+      >
         <div className="mb-4 sm:mb-0">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Modifier mon profil
@@ -160,65 +168,66 @@ export default function SuperAdminProfileEdit() {
         </div>
         <Link
           to="/superadmin/profile"
-          className="inline-flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-xl shadow-lg transition-all duration-200"
+          className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors duration-200"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Retour au profil
         </Link>
-      </div>
+      </motion.div>
 
       {/* Alertes */}
-      {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-red-400 mr-3" />
-            <div className="text-sm text-red-800 dark:text-red-400">
-              {error}
+      <AnimatePresence>
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
+          >
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-red-400 mr-3" />
+              <div className="text-sm text-red-800 dark:text-red-400">
+                {error}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-      
-      {success && (
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-6">
-          <div className="flex items-center">
-            <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-            <div className="text-sm text-green-800 dark:text-green-400">
-              {success}
-            </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formulaire principal */}
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+            >
+              <div className="bg-[#179150]/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                  <User className="w-5 h-5 mr-2 text-green-600" />
+                  <User className="w-5 h-5 mr-2 text-[#179150]" />
                   Informations personnelles
                 </h2>
               </div>
 
               <div className="p-6">
                 {/* Avatar et informations de rôle */}
-                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg mr-4">
-                    {formData.first_name?.charAt(0) || 'S'}
+                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] rounded-lg flex items-center justify-center text-white font-bold text-lg mr-4">
+                    {formData.first_name?.charAt(0) || 'S'}{formData.last_name?.charAt(0) || 'A'}
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                       {formData.first_name} {formData.last_name}
                     </h3>
                     <div className="flex items-center mt-1">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300`}>
+                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20`}>
                         <BadgeCheck className="w-3 h-3 mr-1" />
                         {roleInfo.label}
                       </span>
                       {user?.is_verified && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 ml-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 ml-2">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Vérifié
                         </span>
@@ -226,6 +235,8 @@ export default function SuperAdminProfileEdit() {
                     </div>
                   </div>
                 </div>
+
+                <hr className="my-4" />
 
                 {/* Champs du formulaire */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -239,10 +250,10 @@ export default function SuperAdminProfileEdit() {
                       name="first_name"
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-xl border-2 ${
+                      className={`w-full px-4 py-3 rounded-lg border ${
                         errors.first_name 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-green-200 dark:border-green-800 focus:border-green-500 focus:ring-green-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
                       } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="Votre prénom"
                       required
@@ -264,10 +275,10 @@ export default function SuperAdminProfileEdit() {
                       name="last_name"
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-xl border-2 ${
+                      className={`w-full px-4 py-3 rounded-lg border ${
                         errors.last_name 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-green-200 dark:border-green-800 focus:border-green-500 focus:ring-green-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
                       } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="Votre nom"
                       required
@@ -289,10 +300,10 @@ export default function SuperAdminProfileEdit() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-xl border-2 ${
+                      className={`w-full px-4 py-3 rounded-lg border ${
                         errors.email 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-green-200 dark:border-green-800 focus:border-green-500 focus:ring-green-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
                       } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="votre@email.com"
                       required
@@ -306,19 +317,19 @@ export default function SuperAdminProfileEdit() {
                 </div>
 
                 {/* Informations non modifiables */}
-                <div className="mt-8 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700">
-                  <h4 className="text-sm font-semibold text-green-900 dark:text-green-400 mb-2 flex items-center">
+                <div className="mt-8 p-4 bg-[#179150]/10 rounded-lg border border-[#179150]/20">
+                  <h4 className="text-sm font-semibold text-[#179150] mb-2 flex items-center">
                     <Shield className="w-4 h-4 mr-2" />
                     Informations système (non modifiables)
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-green-700 dark:text-green-400">Rôle :</span>
-                      <span className="ml-2 text-green-900 dark:text-green-300 font-medium">{roleInfo.label}</span>
+                      <span className="text-[#179150] font-medium">Rôle :</span>
+                      <span className="ml-2 text-[#147a43] font-semibold">{roleInfo.label}</span>
                     </div>
                     <div>
-                      <span className="text-green-700 dark:text-green-400">Statut vérification :</span>
-                      <span className={`ml-2 font-medium ${user?.is_verified ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                      <span className="text-[#179150] font-medium">Statut vérification :</span>
+                      <span className={`ml-2 font-semibold ${user?.is_verified ? 'text-[#179150]' : 'text-yellow-600 dark:text-yellow-400'}`}>
                         {user?.is_verified ? 'Vérifié' : 'En attente'}
                       </span>
                     </div>
@@ -327,31 +338,26 @@ export default function SuperAdminProfileEdit() {
 
                 {/* Boutons d'action */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
-                  <Link
-                    to="/superadmin/profile/security"
-                    className="inline-flex items-center px-6 py-3 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-700 dark:text-green-300 font-semibold rounded-xl transition-colors duration-200 mb-4 sm:mb-0"
-                  >
-                    <Lock className="w-5 h-5 mr-2" />
-                    Sécurité du compte
-                  </Link>
+                  <div></div>
                   
-                  <div className="flex space-x-3">
+                  <div className="flex gap-3">
                     <Link
                       to="/superadmin/profile"
-                      className="inline-flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-xl transition-colors duration-200"
+                      className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-colors duration-200 rounded-lg"
                     >
+                      <X className="w-4 h-4 mr-2" />
                       Annuler
                     </Link>
                     
                     <button
                       type="submit"
                       disabled={saving}
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+                      className="inline-flex items-center px-6 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50 rounded-lg"
                     >
                       {saving ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          Mise à jour...
+                          Enregistrement...
                         </>
                       ) : (
                         <>
@@ -363,43 +369,53 @@ export default function SuperAdminProfileEdit() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Colonne latérale */}
           <div className="space-y-6">
             {/* Conseils */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+            >
+              <div className="bg-blue-50 dark:bg-blue-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                  <HelpCircle className="w-5 h-5 mr-2 text-green-600" />
+                  <HelpCircle className="w-5 h-5 mr-2 text-blue-600" />
                   Conseils
                 </h3>
               </div>
               <div className="p-4 space-y-3">
                 <div className="flex items-start">
-                  <User className="w-4 h-4 text-green-600 mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Utilisez votre nom complet officiel pour une identification facile dans le système.
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <Mail className="w-4 h-4 text-green-600 mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Votre email sera utilisé pour toutes les communications importantes et la récupération de compte.
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <Shield className="w-4 h-4 text-green-600 mr-3 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     En tant que Super Admin, vos informations sont critiques pour la sécurité du système.
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Informations importantes */}
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-4">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4"
+            >
               <div className="flex items-start">
                 <AlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
@@ -414,60 +430,33 @@ export default function SuperAdminProfileEdit() {
                   </ul>
                 </div>
               </div>
-            </div>
-
-            {/* Validation des données */}
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-4">
-              <div className="flex items-start">
-                <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="text-sm font-semibold text-green-800 dark:text-green-400 mb-2">
-                    Validation des données
-                  </h4>
-                  <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
-                    <li>• Tous les champs sont validés en temps réel</li>
-                    <li>• Les erreurs s'affichent immédiatement</li>
-                    <li>• Confirmation avant enregistrement</li>
-                    <li>• Sauvegarde automatique des modifications</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </form>
 
-      {/* Notifications Toast */}
-      {showToast && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <div className={`rounded-xl shadow-lg border-2 ${
-            toastType === 'success' 
-              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
-              : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-          } p-4 max-w-sm`}>
-            <div className="flex items-center">
-              <div className={`flex-shrink-0 ${
-                toastType === 'success' ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {toastType === 'success' ? (
-                  <CheckCircle className="w-5 h-5" />
-                ) : (
-                  <AlertCircle className="w-5 h-5" />
-                )}
-              </div>
-              <div className="ml-3">
-                <p className={`text-sm font-medium ${
-                  toastType === 'success' 
-                    ? 'text-green-800 dark:text-green-400' 
-                    : 'text-red-800 dark:text-red-400'
-                }`}>
-                  {toastMessage}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 50, x: "-50%" }}
+            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
+              toastType === 'success' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {toastType === 'success' ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : (
+              <AlertCircle className="w-5 h-5" />
+            )}
+            <span>{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </SuperAdminLayout>
   );
 }
