@@ -263,8 +263,8 @@ export default function AdminEdit() {
 
               <div className="p-6">
                 {/* Avatar et informations de rôle */}
-                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] flex items-center justify-center text-white font-bold text-lg mr-4">
+                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] flex items-center justify-center text-white font-bold text-lg mr-4 rounded-lg">
                     {getInitials(formData.first_name, formData.last_name)}
                   </div>
                   <div>
@@ -272,12 +272,12 @@ export default function AdminEdit() {
                       {formData.first_name} {formData.last_name}
                     </h3>
                     <div className="flex items-center mt-1">
-                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20">
+                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 rounded">
                         <UserCheck className="w-3 h-3 mr-1" />
                         Administrateur
                       </span>
                       {admin.is_verified && (
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 ml-2">
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 ml-2 rounded">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Vérifié
                         </span>
@@ -285,6 +285,8 @@ export default function AdminEdit() {
                     </div>
                   </div>
                 </div>
+
+                <hr className="my-4" />
 
                 {/* Champs du formulaire */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -302,7 +304,7 @@ export default function AdminEdit() {
                         errors.first_name 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="Prénom de l'admin"
                       required
                     />
@@ -327,7 +329,7 @@ export default function AdminEdit() {
                         errors.last_name 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="Nom de l'admin"
                       required
                     />
@@ -352,7 +354,7 @@ export default function AdminEdit() {
                         errors.email 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="admin@minsante.com"
                       required
                     />
@@ -365,19 +367,19 @@ export default function AdminEdit() {
                 </div>
 
                 {/* Informations non modifiables */}
-                <div className="mt-8 p-4 bg-[#179150]/10 border border-[#179150]/20">
+                <div className="mt-8 p-4 bg-[#179150]/10 border border-[#179150]/20 rounded-lg">
                   <h4 className="text-sm font-semibold text-[#179150] mb-2 flex items-center">
                     <UserCheck className="w-4 h-4 mr-2" />
                     Informations système (non modifiables)
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-[#179150]">Rôle :</span>
-                      <span className="ml-2 text-[#147a43] font-medium">Administrateur</span>
+                      <span className="text-[#179150] font-medium">Rôle :</span>
+                      <span className="ml-2 text-[#147a43] font-semibold">Administrateur</span>
                     </div>
                     <div>
-                      <span className="text-[#179150]">Statut vérification :</span>
-                      <span className={`ml-2 font-medium ${admin.is_verified ? 'text-[#179150]' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                      <span className="text-[#179150] font-medium">Statut vérification :</span>
+                      <span className={`ml-2 font-semibold ${admin.is_verified ? 'text-[#179150]' : 'text-yellow-600 dark:text-yellow-400'}`}>
                         {admin.is_verified ? 'Vérifié' : 'En attente'}
                       </span>
                     </div>
@@ -390,30 +392,31 @@ export default function AdminEdit() {
                     <button
                       type="button"
                       onClick={() => setShowPasswordModal(true)}
-                      className="flex items-center px-6 py-3 bg-[#179150]/10 hover:bg-[#179150]/20 text-[#179150] font-medium transition-colors duration-200"
+                      className="flex items-center px-6 py-3 bg-[#179150]/10 hover:bg-[#179150]/20 text-[#179150] font-medium transition-colors duration-200 rounded-lg"
                     >
                       <Lock className="w-5 h-5 mr-2" />
                       Changer le mot de passe
                     </button>
                   </div>
                   
-                  <div className="flex space-x-3">
+                  <div className="flex gap-3">
                     <Link
                       to={`/superadmin/admins/${id}`}
-                      className="inline-flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium transition-colors duration-200"
+                      className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-colors duration-200 rounded-lg"
                     >
+                      <X className="w-4 h-4 mr-2" />
                       Annuler
                     </Link>
                     
                     <button
                       type="submit"
                       disabled={saving}
-                      className="inline-flex items-center px-6 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50"
+                      className="inline-flex items-center px-6 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50 rounded-lg"
                     >
                       {saving ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          Mise à jour...
+                          Enregistrement...
                         </>
                       ) : (
                         <>
@@ -435,11 +438,11 @@ export default function AdminEdit() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
-              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
             >
-              <div className="bg-[#179150]/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="bg-blue-50 dark:bg-blue-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                  <HelpCircle className="w-5 h-5 mr-2 text-[#179150]" />
+                  <HelpCircle className="w-5 h-5 mr-2 text-blue-600" />
                   Conseils
                 </h3>
               </div>
@@ -470,7 +473,7 @@ export default function AdminEdit() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
-              className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-4"
+              className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-4 rounded-lg"
             >
               <div className="flex items-start">
                 <AlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
@@ -505,7 +508,7 @@ export default function AdminEdit() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25 }}
-              className="bg-white dark:bg-gray-800 w-full max-w-md border border-[#179150]"
+              className="bg-white dark:bg-gray-800 w-full max-w-md border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl"
             >
               <div className="bg-[#179150]/10 px-6 py-4 border-b border-[#179150]/20">
                 <div className="flex items-center justify-between">
@@ -535,7 +538,7 @@ export default function AdminEdit() {
                           name="password"
                           value={passwordForm.password}
                           onChange={handlePasswordChange}
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[#179150] transition-colors"
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[#179150] transition-colors rounded-lg"
                           placeholder="Entrez votre nouveau mot de passe"
                           required
                         />
@@ -566,7 +569,7 @@ export default function AdminEdit() {
                           name="confirm_password"
                           value={passwordForm.confirm_password}
                           onChange={handlePasswordChange}
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[#179150] transition-colors"
+                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[#179150] transition-colors rounded-lg"
                           placeholder="Confirmez votre nouveau mot de passe"
                           required
                         />
@@ -589,14 +592,14 @@ export default function AdminEdit() {
                     <button
                       type="button"
                       onClick={() => setShowPasswordModal(false)}
-                      className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium transition-colors duration-200"
+                      className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium transition-colors duration-200 rounded-lg"
                     >
                       Annuler
                     </button>
                     <button
                       type="submit"
                       disabled={changingPassword}
-                      className="flex-1 px-4 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50"
+                      className="flex-1 px-4 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50 rounded-lg"
                     >
                       {changingPassword ? (
                         <div className="flex items-center justify-center">
@@ -615,41 +618,25 @@ export default function AdminEdit() {
         )}
       </AnimatePresence>
 
-      {/* Notifications Toast */}
+      {/* Toast Notification */}
       <AnimatePresence>
         {showToast && (
-          <motion.div 
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            className="fixed bottom-4 right-4 z-50"
-          >
-            <div className={`border ${
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 50, x: "-50%" }}
+            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
               toastType === 'success' 
-                ? 'bg-[#179150]/10 border-[#179150]/20' 
-                : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            } p-4 max-w-sm`}>
-              <div className="flex items-center">
-                <div className={`flex-shrink-0 ${
-                  toastType === 'success' ? 'text-[#179150]' : 'text-red-600'
-                }`}>
-                  {toastType === 'success' ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm font-medium ${
-                    toastType === 'success' 
-                      ? 'text-[#179150]' 
-                      : 'text-red-800 dark:text-red-400'
-                  }`}>
-                    {toastMessage}
-                  </p>
-                </div>
-              </div>
-            </div>
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {toastType === 'success' ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : (
+              <AlertCircle className="w-5 h-5" />
+            )}
+            <span>{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>

@@ -94,6 +94,7 @@ export default function AdminEdit() {
     }
   };
 
+
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordForm(prev => ({
@@ -117,7 +118,11 @@ export default function AdminEdit() {
       setError(null);
       setErrors({});
       
-      const response = await api.put(`/users/superadmins/${id}/`, formData);
+      const response = await api.put(`/users/superadmins/${id}/`, {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email
+      });
       
       if (response.data) {
         showToastMessage('Super Administrateur mis à jour avec succès !', 'success');
@@ -263,7 +268,7 @@ export default function AdminEdit() {
 
               <div className="p-6">
                 {/* Avatar et informations de rôle */}
-                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700">
+                <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] flex items-center justify-center text-white font-bold text-lg mr-4 rounded-lg">
                     {getInitials(formData.first_name, formData.last_name)}
                   </div>
@@ -272,12 +277,12 @@ export default function AdminEdit() {
                       {formData.first_name} {formData.last_name}
                     </h3>
                     <div className="flex items-center mt-1">
-                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20">
+                      <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 rounded">
                         <UserCheck className="w-3 h-3 mr-1" />
                         Super Administrateur
                       </span>
                       {admin.is_verified && (
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 ml-2">
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 rounded ml-2">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Vérifié
                         </span>
@@ -285,6 +290,8 @@ export default function AdminEdit() {
                     </div>
                   </div>
                 </div>
+
+                <hr className="my-4" />
 
                 {/* Champs du formulaire */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -352,8 +359,8 @@ export default function AdminEdit() {
                         errors.email 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
-                      placeholder="admin@minsante.com"
+                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      placeholder="admin@example.com"
                       required
                     />
                     {errors.email && (
@@ -364,20 +371,20 @@ export default function AdminEdit() {
                   </div>
                 </div>
 
-                {/* Informations non modifiables */}
-                <div className="mt-8 p-4 bg-[#179150]/10 border border-[#179150]/20">
+                {/* Informations système */}
+                <div className="mt-8 p-4 bg-[#179150]/10 border border-[#179150]/20 rounded-lg">
                   <h4 className="text-sm font-semibold text-[#179150] mb-2 flex items-center">
                     <UserCheck className="w-4 h-4 mr-2" />
                     Informations système (non modifiables)
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-[#179150]">Rôle :</span>
-                      <span className="ml-2 text-[#147a43] font-medium">Supers Administrateur</span>
+                      <span className="text-[#179150] font-medium">Rôle :</span>
+                      <span className="ml-2 text-[#147a43] font-semibold">Super Administrateur</span>
                     </div>
                     <div>
-                      <span className="text-[#179150]">Statut vérification :</span>
-                      <span className={`ml-2 font-medium ${admin.is_verified ? 'text-[#179150]' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                      <span className="text-[#179150] font-medium">Statut vérification :</span>
+                      <span className={`ml-2 font-semibold ${admin.is_verified ? 'text-[#179150]' : 'text-yellow-600 dark:text-yellow-400'}`}>
                         {admin.is_verified ? 'Vérifié' : 'En attente'}
                       </span>
                     </div>

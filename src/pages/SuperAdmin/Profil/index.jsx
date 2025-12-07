@@ -22,8 +22,11 @@ import {
   EyeOff,
   AlertCircle,
   X,
-  Building
+  Building,
+  Key,
+  Info
 } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 
 export default function SuperAdminProfile() {
@@ -211,7 +214,12 @@ export default function SuperAdminProfile() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8"
+      >
         <div className="mb-4 sm:mb-0">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Mon Profil Administrateur
@@ -222,21 +230,26 @@ export default function SuperAdminProfile() {
         </div>
         <Link
           to="/superadmin/profile/edit"
-          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          className="inline-flex items-center px-6 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
         >
           <Edit3 className="w-5 h-5 mr-2" />
           Modifier le profil
         </Link>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Informations principales */}
         <div className="lg:col-span-2">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+          >
             {/* En-tête de la carte */}
-            <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="bg-[#179150]/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                <User className="w-5 h-5 mr-2 text-green-600" />
+                <User className="w-5 h-5 mr-2 text-[#179150]" />
                 Informations personnelles
               </h2>
             </div>
@@ -245,10 +258,10 @@ export default function SuperAdminProfile() {
               {/* Photo et informations basiques */}
               <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 mb-8">
                 <div className="relative">
-                  <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                    {user?.first_name?.charAt(0) || 'S'}
+                  <div className="w-24 h-24 bg-gradient-to-br from-[#179150] to-[#147a43] rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                    {user?.first_name?.charAt(0) || 'S'}{user?.last_name?.charAt(0) || 'A'}
                   </div>
-                  <div className="absolute -bottom-2 -right-2 bg-green-500 text-white p-2 rounded-full shadow-lg">
+                  <div className="absolute -bottom-2 -right-2 bg-[#179150] text-white p-2 rounded-lg border-2 border-white dark:border-gray-800 shadow-sm">
                     <Shield className="w-4 h-4" />
                   </div>
                 </div>
@@ -262,12 +275,12 @@ export default function SuperAdminProfile() {
                     {user?.email}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300`}>
+                    <span className={`inline-flex items-center px-3 py-1 rounded text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20`}>
                       <BadgeCheck className="w-3 h-3 mr-1" />
                       {roleInfo.label}
                     </span>
                     {user?.is_verified && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300">
+                      <span className="inline-flex items-center px-3 py-1 rounded text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20">
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Compte vérifié
                       </span>
@@ -353,72 +366,82 @@ export default function SuperAdminProfile() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Colonne latérale */}
         <div className="space-y-6">
           {/* Actions rapides */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+          >
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                <Settings className="w-5 h-5 mr-2 text-green-600" />
+                <Settings className="w-5 h-5 mr-2 text-[#179150]" />
                 Actions rapides
               </h3>
             </div>
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-2">
               <Link
                 to="/superadmin/profile/edit"
-                className="flex items-center justify-between p-3 rounded-xl bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors duration-200 group"
+                className="flex items-center justify-between p-3 rounded-lg bg-[#179150]/10 hover:bg-[#179150]/20 border border-[#179150]/20 transition-colors duration-200 group"
               >
                 <div className="flex items-center">
-                  <Edit3 className="w-5 h-5 text-green-600 mr-3" />
-                  <span className="font-medium text-gray-900 dark:text-white">Modifier le profil</span>
+                  <Edit3 className="w-4 h-4 text-[#179150] mr-3" />
+                  <span className="font-medium text-gray-900 dark:text-white text-sm">Modifier le profil</span>
                 </div>
-                <div className="text-green-600 group-hover:translate-x-1 transition-transform duration-200">
+                <div className="text-[#179150] group-hover:translate-x-1 transition-transform duration-200">
                   →
                 </div>
               </Link>
               
               <button
                 onClick={() => setShowPasswordModal(true)}
-                className="flex items-center justify-between w-full p-3 rounded-xl bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors duration-200 group"
+                className="flex items-center justify-between w-full p-3 rounded-lg bg-[#179150]/10 hover:bg-[#179150]/20 border border-[#179150]/20 transition-colors duration-200 group"
               >
                 <div className="flex items-center">
-                  <Lock className="w-5 h-5 text-green-600 mr-3" />
-                  <span className="font-medium text-gray-900 dark:text-white">Changer mot de passe</span>
+                  <Lock className="w-4 h-4 text-[#179150] mr-3" />
+                  <span className="font-medium text-gray-900 dark:text-white text-sm">Changer mot de passe</span>
                 </div>
-                <div className="text-green-600 group-hover:translate-x-1 transition-transform duration-200">
+                <div className="text-[#179150] group-hover:translate-x-1 transition-transform duration-200">
                   →
                 </div>
               </button>
               
               <Link
                 to="/superadmin/dashboard"
-                className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 group"
+                className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition-colors duration-200 group"
               >
                 <div className="flex items-center">
-                  <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-3" />
-                  <span className="font-medium text-gray-900 dark:text-white">Retour au Dashboard</span>
+                  <ArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400 mr-3" />
+                  <span className="font-medium text-gray-900 dark:text-white text-sm">Retour au Dashboard</span>
                 </div>
                 <div className="text-gray-600 dark:text-gray-400 group-hover:translate-x-1 transition-transform duration-200">
                   →
                 </div>
               </Link>
             </div>
-          </div>
+          </motion.div>
 
           {/* Statistiques du compte */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+          >
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                <Activity className="w-5 h-5 mr-2 text-green-600" />
+                <Activity className="w-5 h-5 mr-2 text-[#179150]" />
                 Statistiques du compte
               </h3>
             </div>
             <div className="p-6">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] rounded-lg flex items-center justify-center mx-auto mb-3">
                   <Award className="w-8 h-8 text-white" />
                 </div>
                 <h4 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
@@ -430,46 +453,59 @@ export default function SuperAdminProfile() {
               </div>
               
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                   <span className="text-gray-600 dark:text-gray-400">Statut du compte</span>
-                  <span className="font-medium text-green-600 dark:text-green-400">Actif</span>
+                  <span className="font-medium text-[#179150]">Actif</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                   <span className="text-gray-600 dark:text-gray-400">Vérification</span>
-                  <span className={`font-medium ${user?.is_verified ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                  <span className={`font-medium ${user?.is_verified ? 'text-[#179150]' : 'text-yellow-600 dark:text-yellow-400'}`}>
                     {user?.is_verified ? 'Complète' : 'En attente'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center py-2">
                   <span className="text-gray-600 dark:text-gray-400">Type de compte</span>
-                  <span className="font-medium text-green-600 dark:text-green-400">Super Admin</span>
+                  <span className="font-medium text-[#179150]">Super Admin</span>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </div>
 
       {/* Modal de changement de mot de passe */}
-      {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md border-2 border-green-500">
-            {/* En-tête du modal */}
-            <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 px-6 py-4 border-b border-green-200 dark:border-green-800 rounded-t-2xl">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                  <Lock className="w-5 h-5 mr-2 text-green-600" />
-                  Changer le mot de passe
-                </h3>
-                <button
-                  onClick={closePasswordModal}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+      <AnimatePresence>
+        {showPasswordModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={closePasswordModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md border border-gray-200 dark:border-gray-700"
+            >
+              {/* En-tête du modal */}
+              <div className="bg-[#179150]/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <Lock className="w-5 h-5 mr-2 text-[#179150]" />
+                    Changer le mot de passe
+                  </h3>
+                  <button
+                    onClick={closePasswordModal}
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            </div>
 
             {/* Corps du modal */}
             <div className="p-6">
@@ -485,10 +521,10 @@ export default function SuperAdminProfile() {
                       name="old_password"
                       value={passwordForm.old_password}
                       onChange={handlePasswordChange}
-                      className={`w-full px-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-700 transition-colors ${
+                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${
                         passwordErrors.old_password
                           ? 'border-red-500 focus:border-red-500'
-                          : 'border-green-200 dark:border-green-800 focus:border-green-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
                       } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
                       placeholder="Entrez votre ancien mot de passe"
                       required
@@ -523,10 +559,10 @@ export default function SuperAdminProfile() {
                       name="new_password"
                       value={passwordForm.new_password}
                       onChange={handlePasswordChange}
-                      className={`w-full px-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-700 transition-colors ${
+                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${
                         passwordErrors.new_password
                           ? 'border-red-500 focus:border-red-500'
-                          : 'border-green-200 dark:border-green-800 focus:border-green-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
                       } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
                       placeholder="Entrez votre nouveau mot de passe"
                       required
@@ -561,10 +597,10 @@ export default function SuperAdminProfile() {
                       name="confirm_password"
                       value={passwordForm.confirm_password}
                       onChange={handlePasswordChange}
-                      className={`w-full px-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-700 transition-colors ${
+                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${
                         passwordErrors.confirm_password
                           ? 'border-red-500 focus:border-red-500'
-                          : 'border-green-200 dark:border-green-800 focus:border-green-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
                       } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
                       placeholder="Confirmez votre nouveau mot de passe"
                       required
@@ -600,7 +636,7 @@ export default function SuperAdminProfile() {
                   <button
                     type="submit"
                     disabled={changingPassword}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+                    className="flex-1 px-4 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium rounded-lg transition-all duration-200 disabled:opacity-50"
                   >
                     {changingPassword ? (
                       <div className="flex items-center justify-center">
@@ -614,41 +650,33 @@ export default function SuperAdminProfile() {
                 </div>
               </form>
             </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Notifications Toast */}
-      {showToast && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <div className={`rounded-xl shadow-lg border-2 ${
-            toastType === 'success' 
-              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
-              : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-          } p-4 max-w-sm`}>
-            <div className="flex items-center">
-              <div className={`flex-shrink-0 ${
-                toastType === 'success' ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {toastType === 'success' ? (
-                  <CheckCircle className="w-5 h-5" />
-                ) : (
-                  <AlertCircle className="w-5 h-5" />
-                )}
-              </div>
-              <div className="ml-3">
-                <p className={`text-sm font-medium ${
-                  toastType === 'success' 
-                    ? 'text-green-800 dark:text-green-400' 
-                    : 'text-red-800 dark:text-red-400'
-                }`}>
-                  {toastMessage}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 50, x: "-50%" }}
+            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
+              toastType === 'success' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {toastType === 'success' ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : (
+              <AlertCircle className="w-5 h-5" />
+            )}
+            <span>{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </SuperAdminLayout>
   );
 }

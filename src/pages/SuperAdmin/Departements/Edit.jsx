@@ -1,0 +1,422 @@
+import React, { useState, useEffect } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
+import { 
+  ArrowLeft, 
+  Save, 
+  FolderTree,
+  AlertCircle,
+  CheckCircle,
+  HelpCircle,
+  Building2,
+  FileText,
+  User,
+  X
+} from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
+import api from "../../../services/api";
+
+export default function DepartementEdit() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [departement, setDepartement] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("success");
+  const [employes, setEmployes] = useState([]);
+
+  const [formData, setFormData] = useState({
+    nom: '',
+    description: '',
+    chef_departement: ''
+  });
+
+  useEffect(() => {
+    fetchDepartement();
+    fetchEmployes();
+  }, [id]);
+
+  const fetchDepartement = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/users/departements/${id}/`);
+      const deptData = response.data;
+      setDepartement(deptData);
+      
+      setFormData({
+        nom: deptData.nom || '',
+        description: deptData.description || '',
+        chef_departement: deptData.chef_departement?.toString() || ''
+      });
+    } catch (error) {
+      console.error('Erreur lors du chargement du département:', error);
+      showToastMessage('Erreur lors du chargement du département', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchEmployes = async () => {
+    try {
+      const response = await api.get('/users/employe-profiles/');
+      setEmployes(response.data || []);
+    } catch (error) {
+      console.error('Erreur lors du chargement des employés:', error);
+    }
+  };
+
+  const showToastMessage = (message, type = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      setSaving(true);
+      setError(null);
+      setErrors({});
+      
+      const submitData = {
+        nom: formData.nom,
+        description: formData.description || null
+      };
+      
+      if (formData.chef_departement) {
+        submitData.chef_departement = parseInt(formData.chef_departement);
+      } else {
+        submitData.chef_departement = null;
+      }
+      
+      const response = await api.put(`/users/departements/${id}/`, submitData);
+      
+      if (response.data) {
+        showToastMessage('Département modifié avec succès !', 'success');
+        setTimeout(() => {
+          navigate('/superadmin/departements');
+        }, 2000);
+      }
+    } catch (err) {
+      if (err.response?.data?.errors) {
+        setErrors(err.response.data.errors);
+        showToastMessage('Veuillez corriger les erreurs du formulaire', 'error');
+      } else {
+        const errorMsg = err.response?.data?.message || err.response?.data?.error || 'Erreur lors de la modification du département';
+        setError(errorMsg);
+        showToastMessage(errorMsg, 'error');
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'D';
+    return name.charAt(0).toUpperCase();
+  };
+
+  if (loading) {
+    return (
+      <SuperAdminLayout>
+        <div className="flex items-center justify-center min-h-96">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Chargement du département...</p>
+          </div>
+        </div>
+      </SuperAdminLayout>
+    );
+  }
+
+  return (
+    <SuperAdminLayout>
+      <div className="space-y-6">
+        {/* En-tête */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex items-center mb-4">
+            <Link
+              to="/superadmin/departements"
+              className="mr-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Modifier le Département
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Modification des informations du département
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Alertes */}
+        <AnimatePresence>
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 mb-6 rounded-lg"
+            >
+              <div className="flex items-center">
+                <AlertCircle className="h-5 w-5 text-red-400 mr-3" />
+                <div className="text-sm text-red-800 dark:text-red-400">
+                  {error}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Formulaire principal */}
+            <div className="lg:col-span-2">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
+              >
+                <div className="bg-[#179150]/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <FolderTree className="w-5 h-5 mr-2 text-[#179150]" />
+                    Informations du département
+                  </h2>
+                </div>
+
+                <div className="p-6">
+                  {/* Avatar et informations de rôle */}
+                  <div className="flex items-center mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] flex items-center justify-center text-white font-bold text-lg mr-4 rounded-lg">
+                      {getInitials(formData.nom)}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        {formData.nom || 'Nouveau Département'}
+                      </h3>
+                      <div className="flex items-center mt-1">
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 rounded">
+                          <Building2 className="w-3 h-3 mr-1" />
+                          Département
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr className="my-4" />
+
+                  <div className="space-y-6">
+                    {/* Nom */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                        <Building2 className="w-4 h-4 mr-2" />
+                        Nom du département *
+                      </label>
+                      <input
+                        type="text"
+                        name="nom"
+                        value={formData.nom}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 border ${
+                          errors.nom 
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        placeholder="Ex: Ressources Humaines"
+                        required
+                      />
+                      {errors.nom && (
+                        <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                          {errors.nom[0]}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                        <FileText className="w-4 h-4 mr-2" />
+                        Description
+                      </label>
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        rows={4}
+                        className={`w-full px-4 py-3 border ${
+                          errors.description 
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        placeholder="Description du département..."
+                      />
+                      {errors.description && (
+                        <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                          {errors.description[0]}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Chef de département */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                        <User className="w-4 h-4 mr-2" />
+                        Chef de département
+                      </label>
+                      <select
+                        name="chef_departement"
+                        value={formData.chef_departement}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[#179150] focus:ring-[#179150] transition-colors duration-200 rounded-lg"
+                      >
+                        <option value="">Aucun chef assigné</option>
+                        {employes.map((employe) => (
+                          <option key={employe.id} value={employe.id}>
+                            {employe.user?.first_name} {employe.user?.last_name} 
+                            {employe.matricule && ` (${employe.matricule})`}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.chef_departement && (
+                        <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                          {errors.chef_departement[0]}
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Sélectionnez un employé pour le poste de chef de département
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Boutons d'action */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 mt-8 border-t border-gray-200 dark:border-gray-700 px-6 pb-6">
+                  <div></div>
+                  
+                  <div className="flex gap-3">
+                    <Link
+                      to="/superadmin/departements"
+                      className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-colors duration-200 rounded-lg"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Annuler
+                    </Link>
+                    
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="inline-flex items-center px-6 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium hover:shadow-md transition-all duration-200 disabled:opacity-50 rounded-lg"
+                    >
+                      {saving ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          Enregistrement...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-5 h-5 mr-2" />
+                          Enregistrer les modifications
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Conseils */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
+              >
+                <div className="bg-blue-50 dark:bg-blue-900/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                    <HelpCircle className="w-5 h-5 mr-2 text-blue-600" />
+                    Conseils
+                  </h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="flex items-start">
+                    <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Le nom du département doit être unique
+                    </p>
+                  </div>
+                  <div className="flex items-start">
+                    <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Vous pouvez modifier le chef de département à tout moment
+                    </p>
+                  </div>
+                  <div className="flex items-start">
+                    <CheckCircle className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      La description aide à clarifier le rôle du département
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 50, x: "-50%" }}
+            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
+              toastType === 'success' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}
+          >
+            {toastType === 'success' ? (
+              <CheckCircle className="w-5 h-5" />
+            ) : (
+              <AlertCircle className="w-5 h-5" />
+            )}
+            <span>{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </SuperAdminLayout>
+  );
+}
+

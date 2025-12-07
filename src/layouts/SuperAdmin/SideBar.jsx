@@ -15,7 +15,8 @@ import {
   BookOpen,
   Network,
   Server,
-  Circle
+  Circle,
+  File
 } from "lucide-react";
 
 export default function SuperAdminSidebar({ user, collapsed, onClose }) {
@@ -30,43 +31,27 @@ export default function SuperAdminSidebar({ user, collapsed, onClose }) {
       ]
     },
     {
+      title: "Gestion des organisations",     
+      items: [
+        { label: "Départements", icon: FolderTree, path: "/superadmin/departements" },
+        { label: "Postes", icon: Network, path: "/superadmin/postes" },
+      ]
+    },
+    {
       title: "Gestion des utilisateurs",     
       items: [
         { label: "Super administrateurs", icon: Users, path: "/superadmin/super-admins" },
         { label: "Administrateurs", icon: Users, path: "/superadmin/admins" },
-        { label: "Employes", icon: Users, path: "/" },
-      ]
-    },
-    {
-      title: "Gestion des organisations",     
-      items: [
-        { label: "Entreprises", icon: Building, path: "/superadmin/companies" },
-        { label: "Départements", icon: FolderTree, path: "/superadmin/departments" },
-        { label: "Structures", icon: Network, path: "/superadmin/structures" },
+        { label: "Employes", icon: Users, path: "/superadmin/employes" },
       ]
     },
     {
       title: "Supervision & Audit",     
       items: [
-        { label: "Journal d'activité", icon: FileText, path: "/superadmin/audit-logs" },
-        { label: "Statistiques système", icon: BarChart3, path: "/superadmin/statistics" },
-        { label: "Sauvegardes", icon: Database, path: "/superadmin/backups" },
-      ]
-    },
-    {
-      title: "Configuration avancée",     
-      items: [
-        { label: "Paramètres système", icon: Settings, path: "/superadmin/settings" },
-        { label: "Modules & Plugins", icon: Server, path: "/superadmin/modules" },
-        { label: "API & Intégrations", icon: Network, path: "/superadmin/integrations" },
-      ]
-    },
-    {
-      title: "Support & Maintenance",     
-      items: [
-        { label: "Support technique", icon: Wrench, path: "/superadmin/support" },
-        { label: "Maintenance", icon: Settings, path: "/superadmin/maintenance" },
-        { label: "Documentation", icon: BookOpen, path: "/superadmin/documentation" },
+        { label: "Formation", icon: FileText, path: "/superadmin/formation" },
+        { label: "Evaluation", icon: File, path: "/superadmin/evaluation" },
+        { label: "Contrat", icon: Database, path: "/superadmin/contrat" },
+        { label: "Demande Congé", icon: BarChart3, path: "/superadmin/conges" },
       ]
     },
   ];
