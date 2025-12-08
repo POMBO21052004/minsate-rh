@@ -154,8 +154,21 @@ export default function EmployeCreate() {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
         showToastMessage('Veuillez corriger les erreurs du formulaire', 'error');
-      } else {
-        const errorMsg = err.response?.data?.message || 'Erreur lors de la création de l\'employé';
+      } else if (err.response?.data) {
+        const errorData = err.response.data;
+        
+        if (typeof errorData === 'object') {
+          setErrors(errorData);
+          showToastMessage('Erreurs de validation', 'error');
+        } else if (errorData.message) {
+          setError(errorData.message);
+          showToastMessage(errorData.message, 'error');
+        } else {
+          setError('Erreur lors de la création');
+          showToastMessage('Erreur lors de la création', 'error');
+        }
+        } else {
+        const errorMsg = err.response?.data?.message || 'Erreur lors de la création de l\'employe';
         setError(errorMsg);
         showToastMessage(errorMsg, 'error');
       }

@@ -308,7 +308,7 @@ export default function AdminView() {
                 <div className="flex items-center p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
                   <Home className="w-6 h-6 text-red-600 mr-3" />
                   <div>
-                    <div className="font-bold text-gray-900 dark:text-white">Gestion des établissements</div>
+                    <div className="font-bold text-gray-900 dark:text-white">Gestion des départements</div>
                     <small className="text-gray-600 dark:text-gray-400">Création et administration</small>
                   </div>
                 </div>

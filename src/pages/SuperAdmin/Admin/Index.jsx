@@ -243,8 +243,9 @@ export default function AdminList() {
 
   return (
     <SuperAdminLayout>
+
       <div className="space-y-6 mb-4">
-        {/* En-tête amélioré */}
+        {/* En-tête */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -77,7 +77,8 @@ export default function AdminCreate() {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        confirm_password: formData.confirm_password
       });
       
       if (response.data) {
@@ -90,7 +91,20 @@ export default function AdminCreate() {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
         showToastMessage('Veuillez corriger les erreurs du formulaire', 'error');
-      } else {
+      } else if (err.response?.data) {
+        const errorData = err.response.data;
+        
+        if (typeof errorData === 'object') {
+          setErrors(errorData);
+          showToastMessage('Erreurs de validation', 'error');
+        } else if (errorData.message) {
+          setError(errorData.message);
+          showToastMessage(errorData.message, 'error');
+        } else {
+          setError('Erreur lors de la création');
+          showToastMessage('Erreur lors de la création', 'error');
+        }
+        } else {
         const errorMsg = err.response?.data?.message || 'Erreur lors de la création de l\'administrateur';
         setError(errorMsg);
         showToastMessage(errorMsg, 'error');

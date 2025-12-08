@@ -259,7 +259,7 @@ export default function AdminList() {
             </div>
             <div>
               <h2 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">
-                Gestion des Administrateurs Système
+                Gestion des Super Administrateurs
               </h2>
               <p className="mb-0 text-gray-600 dark:text-gray-400">
                 Administration système - Gestion des super administrateurs
@@ -344,7 +344,7 @@ export default function AdminList() {
               <div className="flex items-center">
                 <Settings className="w-5 h-5 text-[#179150] mr-3" />
                 <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  Liste des Administrateurs Système
+                  Liste des Super Administrateurs
                 </span>
               </div>
               
@@ -364,7 +364,7 @@ export default function AdminList() {
                   className="flex items-center px-4 py-2 bg-[#179150] text-white font-medium hover:bg-[#147a43] focus:ring-2 focus:ring-[#179150] focus:ring-offset-2 transition-colors rounded-lg"
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Nouvel Admin Système
+                  Nouvel Super Admin 
                 </Link>
               </div>
             </div>
@@ -374,7 +374,7 @@ export default function AdminList() {
         <div className="p-4 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-b border-gray-200 dark:border-gray-700 rounded-t-lg">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Recherche Globale */}
-            <div className="md:col-span-3">
+            <div className="md:col-span-2">
               <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center">
                 <Search className="w-3.5 h-3.5 mr-1" />
                 Recherche Globale
@@ -417,7 +417,7 @@ export default function AdminList() {
             </div>
 
             {/* Actions filtres */}
-            <div className="flex items-end gap-2">
+            {/* <div className="flex items-end gap-2">
               <button
                 onClick={clearFilters}
                 className="flex-1 flex items-center justify-center px-4 py-2.5 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg transition-colors font-medium"
@@ -425,7 +425,7 @@ export default function AdminList() {
               >
                 <RefreshCw className="w-4 h-4" />
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Résultats de recherche */}
@@ -678,8 +678,8 @@ export default function AdminList() {
           </motion.div>
         )}
       </motion.div>
+      </div>
 
-      {/* Modals pour actions groupées */}
       {/* Modal Suppression groupée */}
       <AnimatePresence>
         {showDeleteGroupModal && (
@@ -862,6 +862,7 @@ export default function AdminList() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={() => setShowDeleteModal(false)}
           >
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -955,7 +956,7 @@ export default function AdminList() {
           </motion.div>
         )}
       </AnimatePresence>
-      </div>
+
     </SuperAdminLayout>
   );
 }
