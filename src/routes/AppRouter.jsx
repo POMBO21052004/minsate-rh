@@ -1,15 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Auth/Login";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
 
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
 
 // Gerer par les employes
+// Gerer par les employes
 import EmployeeDashboard from "../pages/Employe/Dashboard";
+import EmployeeProfile from "../pages/Employe/Profil/Index";
+import EmployeeProfileEdit from "../pages/Employe/Profil/Edit";
+import CongesList from "../pages/Employe/Conges/Index";
+import CongesShow from "../pages/Employe/Conges/Show";
+import CongesEdit from "../pages/Employe/Conges/Edit";
 
 // Gerer par les admins
 import AdminDashboard from "../pages/Admin/Dashboard";
+import AdminProfile from "../pages/Admin/Profil/Index";
+import AdminProfileEdit from "../pages/Admin/Profil/Edit";
 
 // Gerer par les super admins
 import SuperAdminDashboard from "../pages/SuperAdmin/Dashboard";
@@ -46,6 +55,8 @@ import DepartementEmployes from "../pages/SuperAdmin/Employes/DepartementEmploye
 import CongeList from "../pages/SuperAdmin/Conges/Index";
 import CongeView from "../pages/SuperAdmin/Conges/Show";
 
+import AuditList from "../pages/SuperAdmin/Audit/Index";
+
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
 
@@ -62,30 +73,38 @@ export default function AppRouter() {
         {/* Public */}
         <Route path="/" element={<PublicRoute> <Login /> </PublicRoute>} />
         <Route path="/login" element={<PublicRoute> <Login /> </PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute> <ForgotPassword /> </PublicRoute>} />
 
         {/* Protégées */}
 
         {/* Employe */}
-        <Route path="/employe/dashboard" element={ <PrivateRoute allowedRoles={[0]}> <EmployeeDashboard /> </PrivateRoute> } />
+        <Route path="/employe/dashboard" element={<PrivateRoute allowedRoles={[0]}> <EmployeeDashboard /> </PrivateRoute>} />
+        <Route path="/employe/profile" element={<PrivateRoute allowedRoles={[0]}> <EmployeeProfile /> </PrivateRoute>} />
+        <Route path="/employe/profile/edit" element={<PrivateRoute allowedRoles={[0]}> <EmployeeProfileEdit /> </PrivateRoute>} />
+        <Route path="/employe/conges" element={<PrivateRoute allowedRoles={[0]}> <CongesList /> </PrivateRoute>} />
+        <Route path="/employe/conges/:id" element={<PrivateRoute allowedRoles={[0]}> <CongesShow /> </PrivateRoute>} />
+        <Route path="/employe/conges/:id/edit" element={<PrivateRoute allowedRoles={[0]}> <CongesEdit /> </PrivateRoute>} />
 
         {/* Admin */}
-        <Route path="/admin/dashboard" element={ <PrivateRoute allowedRoles={[1]}> <AdminDashboard /> </PrivateRoute> } />
+        <Route path="/admin/dashboard" element={<PrivateRoute allowedRoles={[1]}> <AdminDashboard /> </PrivateRoute>} />
+        <Route path="/admin/profile" element={<PrivateRoute allowedRoles={[1]}> <AdminProfile /> </PrivateRoute>} />
+        <Route path="/admin/profile/edit" element={<PrivateRoute allowedRoles={[1]}> <AdminProfileEdit /> </PrivateRoute>} />
 
         {/*Super Admin */}
-        <Route path="/superadmin/dashboard" element={ <PrivateRoute allowedRoles={[2]}> <SuperAdminDashboard /> </PrivateRoute> } />
+        <Route path="/superadmin/dashboard" element={<PrivateRoute allowedRoles={[2]}> <SuperAdminDashboard /> </PrivateRoute>} />
 
         <Route path="/superadmin/profile" element={<PrivateRoute allowedRoles={[2]}> <SuperAdminProfile /> </PrivateRoute>} />
-        <Route path="/superadmin/profile/edit" element={ <PrivateRoute allowedRoles={[2]}> <SuperAdminProfileEdit /> </PrivateRoute> } />
+        <Route path="/superadmin/profile/edit" element={<PrivateRoute allowedRoles={[2]}> <SuperAdminProfileEdit /> </PrivateRoute>} />
 
-        <Route path="/superadmin/super-admins" element={ <PrivateRoute allowedRoles={[2]}> <SuperAdminList /> </PrivateRoute> } />
-        <Route path="/superadmin/super-admins/create" element={ <PrivateRoute allowedRoles={[2]}> <SuperAdminCreate /> </PrivateRoute> } />
-        <Route path="/superadmin/super-admins/:id" element={ <PrivateRoute allowedRoles={[2]}> <SuperAdminView /> </PrivateRoute> } />
-        <Route path="/superadmin/super-admins/:id/edit" element={ <PrivateRoute allowedRoles={[2]}> <SuperAdminEdit /> </PrivateRoute> } />
+        <Route path="/superadmin/super-admins" element={<PrivateRoute allowedRoles={[2]}> <SuperAdminList /> </PrivateRoute>} />
+        <Route path="/superadmin/super-admins/create" element={<PrivateRoute allowedRoles={[2]}> <SuperAdminCreate /> </PrivateRoute>} />
+        <Route path="/superadmin/super-admins/:id" element={<PrivateRoute allowedRoles={[2]}> <SuperAdminView /> </PrivateRoute>} />
+        <Route path="/superadmin/super-admins/:id/edit" element={<PrivateRoute allowedRoles={[2]}> <SuperAdminEdit /> </PrivateRoute>} />
 
-        <Route path="/superadmin/admins" element={ <PrivateRoute allowedRoles={[2]}> <AdminList /> </PrivateRoute> } />
-        <Route path="/superadmin/admins/create" element={ <PrivateRoute allowedRoles={[2]}> <AdminCreate /> </PrivateRoute> } />
-        <Route path="/superadmin/admins/:id" element={ <PrivateRoute allowedRoles={[2]}> <AdminView /> </PrivateRoute> } />
-        <Route path="/superadmin/admins/:id/edit" element={ <PrivateRoute allowedRoles={[2]}> <AdminEdit /> </PrivateRoute> } />
+        <Route path="/superadmin/admins" element={<PrivateRoute allowedRoles={[2]}> <AdminList /> </PrivateRoute>} />
+        <Route path="/superadmin/admins/create" element={<PrivateRoute allowedRoles={[2]}> <AdminCreate /> </PrivateRoute>} />
+        <Route path="/superadmin/admins/:id" element={<PrivateRoute allowedRoles={[2]}> <AdminView /> </PrivateRoute>} />
+        <Route path="/superadmin/admins/:id/edit" element={<PrivateRoute allowedRoles={[2]}> <AdminEdit /> </PrivateRoute>} />
 
         <Route path="/superadmin/departements" element={<PrivateRoute allowedRoles={[2]}> <DepartementList /> </PrivateRoute>} />
         <Route path="/superadmin/departements/create" element={<PrivateRoute allowedRoles={[2]}> <DepartementCreate /> </PrivateRoute>} />
@@ -105,6 +124,8 @@ export default function AppRouter() {
 
         <Route path="/superadmin/conges" element={<PrivateRoute allowedRoles={[2]}> <CongeList /> </PrivateRoute>} />
         <Route path="/superadmin/conges/:id" element={<PrivateRoute allowedRoles={[2]}> <CongeView /> </PrivateRoute>} />
+
+        <Route path="/superadmin/audit" element={<PrivateRoute allowedRoles={[2]}> <AuditList /> </PrivateRoute>} />
 
         {/* Catch-all pour les routes inexistantes */}
         <Route path="*" element={<NotFound />} />

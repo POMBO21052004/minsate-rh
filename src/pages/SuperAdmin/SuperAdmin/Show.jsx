@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Edit, 
-  Trash2, 
-  Mail, 
-  Calendar, 
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Mail,
+  Calendar,
   UserCheck,
   CheckCircle,
   X,
@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function AdminView() {
   const { id } = useParams();
@@ -144,7 +145,7 @@ export default function AdminView() {
   return (
     <SuperAdminLayout>
       {/* En-tête amélioré */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -165,7 +166,7 @@ export default function AdminView() {
                   {admin.first_name} {admin.last_name}
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
-                    <span className="badge bg-red-600 px-2 py-1 rounded flex items-center text-white text-xs">
+                  <span className="badge bg-red-600 px-2 py-1 rounded flex items-center text-white text-xs">
                     <Settings className="w-3 h-3 mr-1" />
                     Super Administrateur
                   </span>
@@ -193,7 +194,7 @@ export default function AdminView() {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.1 }}
@@ -214,15 +215,15 @@ export default function AdminView() {
               <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
                 <div className="md:w-1/4 text-center mb-4 md:mb-0">
                   <div className="relative inline-block">
-                    <div 
+                    <div
                       className="rounded-full border-4 border-red-600 flex items-center justify-center"
-                      style={{ 
-                        width: '120px', 
-                        height: '120px', 
-                        background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)', 
-                        color: 'white', 
-                        fontSize: '2.5rem', 
-                        fontWeight: '700' 
+                      style={{
+                        width: '120px',
+                        height: '120px',
+                        background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+                        color: 'white',
+                        fontSize: '2.5rem',
+                        fontWeight: '700'
                       }}
                     >
                       {getInitials(admin.first_name, admin.last_name)}
@@ -264,7 +265,7 @@ export default function AdminView() {
                     <span className="font-medium text-gray-900 dark:text-white">{admin.email}</span>
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400">Statut du compte :</span>
@@ -286,7 +287,7 @@ export default function AdminView() {
           </div>
 
           {/* Permissions et accès */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -308,7 +309,7 @@ export default function AdminView() {
                 <div className="flex items-center p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
                   <Home className="w-6 h-6 text-red-600 mr-3" />
                   <div>
-                    <div className="font-bold text-gray-900 dark:text-white">Gestion des départements</div>
+                    <div className="font-bold text-gray-900 dark:text-white">Gestion des établissements</div>
                     <small className="text-gray-600 dark:text-gray-400">Création et administration</small>
                   </div>
                 </div>
@@ -360,7 +361,7 @@ export default function AdminView() {
         {/* Colonne latérale */}
         <div className="space-y-6">
           {/* Actions rapides */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -398,7 +399,7 @@ export default function AdminView() {
           </motion.div>
 
           {/* Statut du compte */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.4 }}
@@ -430,18 +431,17 @@ export default function AdminView() {
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-                  <div 
+                  <div
                     className="bg-red-600 h-2 rounded-full transition-all"
                     style={{ width: `${calculateProfileCompletion()}%` }}
                   ></div>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 dark:text-gray-400">Statut :</span>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    admin.is_verified 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                      : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                  }`}>
+                  <span className={`px-2 py-1 rounded text-xs font-medium ${admin.is_verified
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                    : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                    }`}>
                     {admin.is_verified ? 'Actif' : 'Inactif'}
                   </span>
                 </div>
@@ -454,7 +454,7 @@ export default function AdminView() {
           </motion.div>
 
           {/* Informations système */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.5 }}
@@ -503,13 +503,13 @@ export default function AdminView() {
       {/* Modal de confirmation de suppression */}
       <AnimatePresence>
         {showDeleteModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           >
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -529,7 +529,7 @@ export default function AdminView() {
                 <p className="text-gray-700 dark:text-gray-300 mb-4">
                   Êtes-vous sûr de vouloir supprimer le super administrateur <strong>{admin.first_name} {admin.last_name}</strong> ?
                 </p>
-                
+
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 p-4 mb-4">
                   <div className="flex items-center">
                     <AlertCircle className="w-4 h-4 text-red-600 mr-2 flex-shrink-0" />
@@ -560,44 +560,12 @@ export default function AdminView() {
         )}
       </AnimatePresence>
 
-      {/* Notifications Toast */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div 
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            className="fixed bottom-4 right-4 z-50"
-          >
-            <div className={`border ${
-              toastType === 'success' 
-                ? 'bg-[#179150]/10 border-[#179150]/20' 
-                : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            } p-4 max-w-sm`}>
-              <div className="flex items-center">
-                <div className={`flex-shrink-0 ${
-                  toastType === 'success' ? 'text-[#179150]' : 'text-red-600'
-                }`}>
-                  {toastType === 'success' ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm font-medium ${
-                    toastType === 'success' 
-                      ? 'text-[#179150]' 
-                      : 'text-red-800 dark:text-red-400'
-                  }`}>
-                    {toastMessage}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

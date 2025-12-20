@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import {
+  ArrowLeft,
+  Save,
   Briefcase,
   AlertCircle,
   CheckCircle,
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function PosteEdit() {
   const { id } = useParams();
@@ -47,7 +48,7 @@ export default function PosteEdit() {
       const response = await api.get(`/users/postes/${id}/`);
       const posteData = response.data;
       setPoste(posteData);
-      
+
       setFormData({
         titre: posteData.titre || '',
         description: posteData.description || '',
@@ -84,7 +85,7 @@ export default function PosteEdit() {
       ...prev,
       [name]: value
     }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -95,26 +96,26 @@ export default function PosteEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const submitData = {
         titre: formData.titre,
         description: formData.description || null,
         salaire_de_base: parseFloat(formData.salaire_de_base) || 0
       };
-      
+
       if (formData.departement) {
         submitData.departement = parseInt(formData.departement);
       } else {
         submitData.departement = null;
       }
-      
+
       const response = await api.put(`/users/postes/${id}/`, submitData);
-      
+
       if (response.data) {
         showToastMessage('Poste modifié avec succès !', 'success');
         setTimeout(() => {
@@ -157,7 +158,7 @@ export default function PosteEdit() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -183,7 +184,7 @@ export default function PosteEdit() {
         {/* Alertes */}
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -203,7 +204,7 @@ export default function PosteEdit() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Formulaire principal */}
             <div className="lg:col-span-2">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -249,11 +250,10 @@ export default function PosteEdit() {
                         name="titre"
                         value={formData.titre}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.titre 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={`w-full px-4 py-3 border ${errors.titre
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Ex: Développeur Full Stack"
                         required
                       />
@@ -275,11 +275,10 @@ export default function PosteEdit() {
                         value={formData.description}
                         onChange={handleInputChange}
                         rows={4}
-                        className={`w-full px-4 py-3 border ${
-                          errors.description 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={`w-full px-4 py-3 border ${errors.description
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Description du poste..."
                       />
                       {errors.description && (
@@ -331,11 +330,10 @@ export default function PosteEdit() {
                         onChange={handleInputChange}
                         step="0.01"
                         min="0"
-                        className={`w-full px-4 py-3 border ${
-                          errors.salaire_de_base 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={`w-full px-4 py-3 border ${errors.salaire_de_base
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="0.00"
                         required
                       />
@@ -354,7 +352,7 @@ export default function PosteEdit() {
                 {/* Boutons d'action */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 mt-8 border-t border-gray-200 dark:border-gray-700 px-6 pb-6">
                   <div></div>
-                  
+
                   <div className="flex gap-3">
                     <Link
                       to="/superadmin/postes"
@@ -363,7 +361,7 @@ export default function PosteEdit() {
                       <X className="w-4 h-4 mr-2" />
                       Annuler
                     </Link>
-                    
+
                     <button
                       type="submit"
                       disabled={saving}
@@ -389,7 +387,7 @@ export default function PosteEdit() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Conseils */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -427,28 +425,12 @@ export default function PosteEdit() {
         </form>
       </div>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

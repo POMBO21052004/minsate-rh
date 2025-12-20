@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Edit, 
+import {
+  ArrowLeft,
+  Edit,
   Trash2,
   Briefcase,
   AlertCircle,
@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function PosteShow() {
   const { id } = useParams();
@@ -129,7 +130,7 @@ export default function PosteShow() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -174,7 +175,7 @@ export default function PosteShow() {
           {/* Contenu principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Carte principale */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -185,15 +186,15 @@ export default function PosteShow() {
                 <div className="flex flex-col md:flex-row md:items-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="md:w-1/4 text-center mb-4 md:mb-0">
                     <div className="relative inline-block">
-                      <div 
+                      <div
                         className="rounded-lg border-4 border-[#179150] flex items-center justify-center"
-                        style={{ 
-                          width: '120px', 
-                          height: '120px', 
-                          background: 'linear-gradient(135deg, #179150 0%, #147a43 100%)', 
-                          color: 'white', 
-                          fontSize: '3rem', 
-                          fontWeight: '700' 
+                        style={{
+                          width: '120px',
+                          height: '120px',
+                          background: 'linear-gradient(135deg, #179150 0%, #147a43 100%)',
+                          color: 'white',
+                          fontSize: '3rem',
+                          fontWeight: '700'
                         }}
                       >
                         {getInitials(poste.titre)}
@@ -223,7 +224,7 @@ export default function PosteShow() {
                     <FileText className="w-5 h-5 mr-2 text-[#179150]" />
                     Informations générales
                   </h5>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
@@ -237,7 +238,7 @@ export default function PosteShow() {
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                         <span className="text-gray-600 dark:text-gray-400">Salaire de base :</span>
@@ -262,7 +263,7 @@ export default function PosteShow() {
 
             {/* Département */}
             {poste.departement_details && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -273,7 +274,7 @@ export default function PosteShow() {
                     <Building2 className="w-5 h-5 mr-2 text-[#179150]" />
                     Département
                   </h5>
-                  
+
                   <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg mr-4 rounded-lg">
                       <Building2 className="w-8 h-8" />
@@ -297,7 +298,7 @@ export default function PosteShow() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Actions rapides */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -332,7 +333,7 @@ export default function PosteShow() {
             </motion.div>
 
             {/* Informations système */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.3 }}
@@ -381,28 +382,12 @@ export default function PosteShow() {
         </div>
       </div>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
 
       {/* Modal de suppression */}
       <AnimatePresence>
@@ -432,7 +417,7 @@ export default function PosteShow() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer le poste <strong>{poste.titre}</strong> ? 
+                Êtes-vous sûr de vouloir supprimer le poste <strong>{poste.titre}</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  User, 
-  Mail, 
+import {
+  User,
+  Mail,
   Shield,
   Edit3,
   ArrowLeft,
@@ -28,13 +28,14 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function SuperAdminProfile() {
   const { user: authUser } = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // États pour le modal de changement de mot de passe
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
@@ -49,7 +50,7 @@ export default function SuperAdminProfile() {
   });
   const [passwordErrors, setPasswordErrors] = useState({});
   const [changingPassword, setChangingPassword] = useState(false);
-  
+
   // États pour les notifications toast
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -75,9 +76,9 @@ export default function SuperAdminProfile() {
   const formatDate = (dateString) => {
     if (!dateString) return 'Non renseigné';
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { 
-      year: 'numeric', 
-      month: 'long', 
+    return date.toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -96,13 +97,13 @@ export default function SuperAdminProfile() {
 
   function calculateProfileCompletion(user) {
     if (!user) return 0;
-    
+
     const fields = [
-        user?.first_name,
-        user?.last_name, 
-        user?.email
+      user?.first_name,
+      user?.last_name,
+      user?.email
     ];
-    
+
     const completedFields = fields.filter(field => field && field !== '').length;
     return Math.round((completedFields / fields.length) * 100);
   }
@@ -120,7 +121,7 @@ export default function SuperAdminProfile() {
       ...prev,
       [name]: value
     }));
-    
+
     if (passwordErrors[name]) {
       setPasswordErrors(prev => ({
         ...prev,
@@ -138,13 +139,13 @@ export default function SuperAdminProfile() {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setChangingPassword(true);
       setPasswordErrors({});
-      
+
       const response = await api.put('/users/change-password', passwordForm);
-      
+
       if (response.data.message) {
         showToastMessage('Mot de passe changé avec succès !', 'success');
         setShowPasswordModal(false);
@@ -214,7 +215,7 @@ export default function SuperAdminProfile() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -240,7 +241,7 @@ export default function SuperAdminProfile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Informations principales */}
         <div className="lg:col-span-2">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -265,7 +266,7 @@ export default function SuperAdminProfile() {
                     <Shield className="w-4 h-4" />
                   </div>
                 </div>
-                
+
                 <div className="text-center sm:text-left flex-1">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                     {user?.first_name} {user?.last_name}
@@ -301,7 +302,7 @@ export default function SuperAdminProfile() {
                       {user?.first_name || 'Non renseigné'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400 flex items-center">
                       <User className="w-4 h-4 mr-2" />
@@ -311,7 +312,7 @@ export default function SuperAdminProfile() {
                       {user?.last_name || 'Non renseigné'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400 flex items-center">
                       <Mail className="w-4 h-4 mr-2" />
@@ -322,7 +323,7 @@ export default function SuperAdminProfile() {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400 flex items-center">
@@ -333,7 +334,7 @@ export default function SuperAdminProfile() {
                       {roleInfo.label}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400 flex items-center">
                       <CheckCircle className="w-4 h-4 mr-2" />
@@ -343,7 +344,7 @@ export default function SuperAdminProfile() {
                       {user?.is_verified ? 'Vérifié' : 'En attente'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400 flex items-center">
                       <Calendar className="w-4 h-4 mr-2" />
@@ -353,7 +354,7 @@ export default function SuperAdminProfile() {
                       {formatDate(user?.created_at)}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400 flex items-center">
                       <Activity className="w-4 h-4 mr-2" />
@@ -372,7 +373,7 @@ export default function SuperAdminProfile() {
         {/* Colonne latérale */}
         <div className="space-y-6">
           {/* Actions rapides */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -397,7 +398,7 @@ export default function SuperAdminProfile() {
                   →
                 </div>
               </Link>
-              
+
               <button
                 onClick={() => setShowPasswordModal(true)}
                 className="flex items-center justify-between w-full p-3 rounded-lg bg-[#179150]/10 hover:bg-[#179150]/20 border border-[#179150]/20 transition-colors duration-200 group"
@@ -410,7 +411,7 @@ export default function SuperAdminProfile() {
                   →
                 </div>
               </button>
-              
+
               <Link
                 to="/superadmin/dashboard"
                 className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition-colors duration-200 group"
@@ -427,7 +428,7 @@ export default function SuperAdminProfile() {
           </motion.div>
 
           {/* Statistiques du compte */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -451,7 +452,7 @@ export default function SuperAdminProfile() {
                   Profil complété
                 </p>
               </div>
-              
+
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                   <span className="text-gray-600 dark:text-gray-400">Statut du compte</span>
@@ -507,176 +508,157 @@ export default function SuperAdminProfile() {
                 </div>
               </div>
 
-            {/* Corps du modal */}
-            <div className="p-6">
-              <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                {/* Ancien mot de passe */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Ancien mot de passe
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPasswords.old ? "text" : "password"}
-                      name="old_password"
-                      value={passwordForm.old_password}
-                      onChange={handlePasswordChange}
-                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${
-                        passwordErrors.old_password
+              {/* Corps du modal */}
+              <div className="p-6">
+                <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                  {/* Ancien mot de passe */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Ancien mot de passe
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.old ? "text" : "password"}
+                        name="old_password"
+                        value={passwordForm.old_password}
+                        onChange={handlePasswordChange}
+                        className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${passwordErrors.old_password
                           ? 'border-red-500 focus:border-red-500'
                           : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
-                      } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
-                      placeholder="Entrez votre ancien mot de passe"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => togglePasswordVisibility('old')}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-green-400 hover:text-green-600 dark:hover:text-green-300"
-                    >
-                      {showPasswords.old ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                  {passwordErrors.old_password && (
-                    <p className="text-red-600 dark:text-red-400 text-sm mt-1">
-                      {passwordErrors.old_password[0]}
-                    </p>
-                  )}
-                </div>
-
-                {/* Nouveau mot de passe */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Nouveau mot de passe
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPasswords.new ? "text" : "password"}
-                      name="new_password"
-                      value={passwordForm.new_password}
-                      onChange={handlePasswordChange}
-                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${
-                        passwordErrors.new_password
-                          ? 'border-red-500 focus:border-red-500'
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
-                      } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
-                      placeholder="Entrez votre nouveau mot de passe"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => togglePasswordVisibility('new')}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-green-400 hover:text-green-600 dark:hover:text-green-300"
-                    >
-                      {showPasswords.new ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                  {passwordErrors.new_password && (
-                    <p className="text-red-600 dark:text-red-400 text-sm mt-1">
-                      {passwordErrors.new_password[0]}
-                    </p>
-                  )}
-                </div>
-
-                {/* Confirmation du mot de passe */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Confirmer le mot de passe
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPasswords.confirm ? "text" : "password"}
-                      name="confirm_password"
-                      value={passwordForm.confirm_password}
-                      onChange={handlePasswordChange}
-                      className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${
-                        passwordErrors.confirm_password
-                          ? 'border-red-500 focus:border-red-500'
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
-                      } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
-                      placeholder="Confirmez votre nouveau mot de passe"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => togglePasswordVisibility('confirm')}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-green-400 hover:text-green-600 dark:hover:text-green-300"
-                    >
-                      {showPasswords.confirm ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                  {passwordErrors.confirm_password && (
-                    <p className="text-red-600 dark:text-red-400 text-sm mt-1">
-                      {passwordErrors.confirm_password[0]}
-                    </p>
-                  )}
-                </div>
-
-                {/* Boutons d'action */}
-                <div className="flex space-x-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={closePasswordModal}
-                    className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition-colors duration-200"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={changingPassword}
-                    className="flex-1 px-4 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium rounded-lg transition-all duration-200 disabled:opacity-50"
-                  >
-                    {changingPassword ? (
-                      <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                        Modification...
-                      </div>
-                    ) : (
-                      "Changer le mot de passe"
+                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        placeholder="Entrez votre ancien mot de passe"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => togglePasswordVisibility('old')}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-green-400 hover:text-green-600 dark:hover:text-green-300"
+                      >
+                        {showPasswords.old ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                    {passwordErrors.old_password && (
+                      <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                        {passwordErrors.old_password[0]}
+                      </p>
                     )}
-                  </button>
-                </div>
-              </form>
-            </div>
+                  </div>
+
+                  {/* Nouveau mot de passe */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nouveau mot de passe
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.new ? "text" : "password"}
+                        name="new_password"
+                        value={passwordForm.new_password}
+                        onChange={handlePasswordChange}
+                        className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${passwordErrors.new_password
+                          ? 'border-red-500 focus:border-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
+                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        placeholder="Entrez votre nouveau mot de passe"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => togglePasswordVisibility('new')}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-green-400 hover:text-green-600 dark:hover:text-green-300"
+                      >
+                        {showPasswords.new ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                    {passwordErrors.new_password && (
+                      <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                        {passwordErrors.new_password[0]}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Confirmation du mot de passe */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Confirmer le mot de passe
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPasswords.confirm ? "text" : "password"}
+                        name="confirm_password"
+                        value={passwordForm.confirm_password}
+                        onChange={handlePasswordChange}
+                        className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-700 transition-colors ${passwordErrors.confirm_password
+                          ? 'border-red-500 focus:border-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150]'
+                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        placeholder="Confirmez votre nouveau mot de passe"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => togglePasswordVisibility('confirm')}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-green-400 hover:text-green-600 dark:hover:text-green-300"
+                      >
+                        {showPasswords.confirm ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                    {passwordErrors.confirm_password && (
+                      <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                        {passwordErrors.confirm_password[0]}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Boutons d'action */}
+                  <div className="flex space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={closePasswordModal}
+                      className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition-colors duration-200"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={changingPassword}
+                      className="flex-1 px-4 py-3 bg-[#179150] hover:bg-[#147a43] text-white font-medium rounded-lg transition-all duration-200 disabled:opacity-50"
+                    >
+                      {changingPassword ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          Modification...
+                        </div>
+                      ) : (
+                        "Changer le mot de passe"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import {
+  ArrowLeft,
+  Save,
   Users,
   User,
   Mail,
@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function EmployeCreate() {
   const navigate = useNavigate();
@@ -92,12 +93,11 @@ export default function EmployeCreate() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'departement') {
       setSelectedDepartement(value);
       setFormData(prev => ({ ...prev, poste: '' }));
@@ -107,7 +107,7 @@ export default function EmployeCreate() {
         [name]: value
       }));
     }
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -118,17 +118,17 @@ export default function EmployeCreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirm_password) {
       showToastMessage('Les mots de passe ne correspondent pas', 'error');
       return;
     }
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const submitData = {
         // User fields (flat structure)
         email: formData.email,
@@ -141,9 +141,9 @@ export default function EmployeCreate() {
         date_embauche: formData.date_embauche || null,
         poste_id: formData.poste ? parseInt(formData.poste) : null
       };
-      
+
       const response = await api.post('/users/employes/', submitData);
-      
+
       if (response.data) {
         showToastMessage('Employé créé avec succès !', 'success');
         setTimeout(() => {
@@ -154,21 +154,8 @@ export default function EmployeCreate() {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
         showToastMessage('Veuillez corriger les erreurs du formulaire', 'error');
-      } else if (err.response?.data) {
-        const errorData = err.response.data;
-        
-        if (typeof errorData === 'object') {
-          setErrors(errorData);
-          showToastMessage('Erreurs de validation', 'error');
-        } else if (errorData.message) {
-          setError(errorData.message);
-          showToastMessage(errorData.message, 'error');
-        } else {
-          setError('Erreur lors de la création');
-          showToastMessage('Erreur lors de la création', 'error');
-        }
-        } else {
-        const errorMsg = err.response?.data?.message || 'Erreur lors de la création de l\'employe';
+      } else {
+        const errorMsg = err.response?.data?.message || 'Erreur lors de la création de l\'employé';
         setError(errorMsg);
         showToastMessage(errorMsg, 'error');
       }
@@ -181,7 +168,7 @@ export default function EmployeCreate() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -207,7 +194,7 @@ export default function EmployeCreate() {
         {/* Alertes */}
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -228,7 +215,7 @@ export default function EmployeCreate() {
             {/* Formulaire principal */}
             <div className="lg:col-span-2 space-y-6">
               {/* Informations utilisateur */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -273,11 +260,10 @@ export default function EmployeCreate() {
                         name="first_name"
                         value={formData.first_name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.first_name 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.first_name
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Prénom de l'employé"
                         required
                       />
@@ -298,11 +284,10 @@ export default function EmployeCreate() {
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.last_name 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.last_name
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Nom de l'employé"
                         required
                       />
@@ -323,11 +308,10 @@ export default function EmployeCreate() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.email 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.email
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="employe@example.com"
                         required
                       />
@@ -349,11 +333,10 @@ export default function EmployeCreate() {
                           name="password"
                           value={formData.password}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 border ${
-                            errors.password 
-                              ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                          className={`w-full px-4 py-3 border ${errors.password
+                              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                               : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg pr-10`}
+                            } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg pr-10`}
                           placeholder="Mot de passe sécurisé"
                           required
                         />
@@ -386,11 +369,10 @@ export default function EmployeCreate() {
                           name="confirm_password"
                           value={formData.confirm_password}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 border ${
-                            errors.confirm_password 
-                              ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                          className={`w-full px-4 py-3 border ${errors.confirm_password
+                              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                               : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg pr-10`}
+                            } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg pr-10`}
                           placeholder="Confirmez le mot de passe"
                           required
                         />
@@ -413,7 +395,7 @@ export default function EmployeCreate() {
               </motion.div>
 
               {/* Informations employé */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -438,11 +420,10 @@ export default function EmployeCreate() {
                         name="matricule"
                         value={formData.matricule}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.matricule 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.matricule
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="EMP001"
                         required
                       />
@@ -463,11 +444,10 @@ export default function EmployeCreate() {
                         name="date_embauche"
                         value={formData.date_embauche}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.date_embauche 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.date_embauche
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         required
                       />
                       {errors.date_embauche && (
@@ -603,7 +583,7 @@ export default function EmployeCreate() {
                     <X className="w-4 h-4 mr-2" />
                     Annuler
                   </Link>
-                  
+
                   <button
                     type="submit"
                     disabled={saving}
@@ -628,7 +608,7 @@ export default function EmployeCreate() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Conseils */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
@@ -667,27 +647,12 @@ export default function EmployeCreate() {
       </div>
 
       {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

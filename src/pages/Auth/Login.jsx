@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, User, Key, Shield, AlertCircle, Sun, Moon, CheckCircle, ArrowLeft, RefreshCw, Users, Building } from "lucide-react";
 import api from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
@@ -75,10 +75,10 @@ const Login = () => {
         email: form.email,
         otp_code: form.otp_code
       });
-      
+
       const { user, tokens } = res.data;
       await login(user, tokens.access);
-      
+
       // Redirection basée sur le rôle
       if (user.is_superadmin) {
         navigate("/superadmin/dashboard");
@@ -117,7 +117,7 @@ const Login = () => {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center py-8 relative"
       style={{
         backgroundImage: `url(${rhBackground})`,
@@ -128,7 +128,7 @@ const Login = () => {
     >
       {/* Overlay vert foncé pour mieux faire ressortir le vert de la charte */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-900/40 via-black/30 to-green-800/30 backdrop-blur-sm"></div>
-      
+
       <div className="w-full max-w-4xl mx-4 relative z-10">
         {/* En-tête avec logo et branding RH */}
         <div className="text-center mb-8">
@@ -173,7 +173,7 @@ const Login = () => {
                   Automatisez et optimisez vos processus ressources humaines
                 </p>
               </div>
-              
+
               {/* Points forts */}
               <div className="space-y-4">
                 {[
@@ -220,7 +220,7 @@ const Login = () => {
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border-2 border-green-500">
             {/* Barre de progression */}
             <div className="h-1 bg-gradient-to-r from-green-500 to-green-700"></div>
-            
+
             {/* En-tête de la carte */}
             <div className="px-6 py-6 border-b border-green-200 dark:border-green-800 bg-gradient-to-r from-green-50 to-white dark:from-green-900/30 dark:to-gray-900">
               <div className="flex justify-between items-center">
@@ -267,11 +267,10 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className={`w-5 h-5 ${
-                          focusedField === 'email' 
-                            ? 'text-green-500' 
-                            : 'text-green-400'
-                        }`} />
+                        <User className={`w-5 h-5 ${focusedField === 'email'
+                          ? 'text-green-500'
+                          : 'text-green-400'
+                          }`} />
                       </div>
                       <input
                         type="email"
@@ -281,13 +280,12 @@ const Login = () => {
                         onChange={handleChange}
                         onFocus={() => setFocusedField('email')}
                         onBlur={() => setFocusedField(null)}
-                        className={`w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${
-                          fieldErrors.email
-                            ? 'border-red-500 focus:border-red-500'
-                            : focusedField === 'email'
-                              ? 'border-green-500 focus:border-green-500'
-                              : 'border-green-200 dark:border-green-800 focus:border-green-500'
-                        } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${fieldErrors.email
+                          ? 'border-red-500 focus:border-red-500'
+                          : focusedField === 'email'
+                            ? 'border-green-500 focus:border-green-500'
+                            : 'border-green-200 dark:border-green-800 focus:border-green-500'
+                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
                         required
                       />
                     </div>
@@ -309,11 +307,10 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Key className={`w-5 h-5 ${
-                          focusedField === 'password' 
-                            ? 'text-green-500' 
-                            : 'text-green-400'
-                        }`} />
+                        <Key className={`w-5 h-5 ${focusedField === 'password'
+                          ? 'text-green-500'
+                          : 'text-green-400'
+                          }`} />
                       </div>
                       <input
                         type={showPassword ? "text" : "password"}
@@ -323,13 +320,12 @@ const Login = () => {
                         onChange={handleChange}
                         onFocus={() => setFocusedField('password')}
                         onBlur={() => setFocusedField(null)}
-                        className={`w-full pl-10 pr-12 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${
-                          fieldErrors.password
-                            ? 'border-red-500 focus:border-red-500'
-                            : focusedField === 'password'
-                              ? 'border-green-500 focus:border-green-500'
-                              : 'border-green-200 dark:border-green-800 focus:border-green-500'
-                        } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        className={`w-full pl-10 pr-12 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${fieldErrors.password
+                          ? 'border-red-500 focus:border-red-500'
+                          : focusedField === 'password'
+                            ? 'border-green-500 focus:border-green-500'
+                            : 'border-green-200 dark:border-green-800 focus:border-green-500'
+                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
                         required
                       />
                       <button
@@ -350,6 +346,14 @@ const Login = () => {
                         {fieldErrors.password[0]}
                       </p>
                     )}
+                    <div className="text-right mt-2">
+                      <Link
+                        to="/forgot-password"
+                        className="text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 font-medium transition-colors"
+                      >
+                        Mot de passe oublié ?
+                      </Link>
+                    </div>
                   </div>
 
                   {/* Bouton de connexion */}
@@ -398,11 +402,10 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Shield className={`w-5 h-5 ${
-                          focusedField === 'otp_code' 
-                            ? 'text-green-500' 
-                            : 'text-green-400'
-                        }`} />
+                        <Shield className={`w-5 h-5 ${focusedField === 'otp_code'
+                          ? 'text-green-500'
+                          : 'text-green-400'
+                          }`} />
                       </div>
                       <input
                         type="text"
@@ -413,13 +416,12 @@ const Login = () => {
                         onFocus={() => setFocusedField('otp_code')}
                         onBlur={() => setFocusedField(null)}
                         maxLength={6}
-                        className={`w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${
-                          fieldErrors.otp_code
-                            ? 'border-red-500 focus:border-red-500'
-                            : focusedField === 'otp_code'
-                              ? 'border-green-500 focus:border-green-500'
-                              : 'border-green-200 dark:border-green-800 focus:border-green-500'
-                        } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        className={`w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${fieldErrors.otp_code
+                          ? 'border-red-500 focus:border-red-500'
+                          : focusedField === 'otp_code'
+                            ? 'border-green-500 focus:border-green-500'
+                            : 'border-green-200 dark:border-green-800 focus:border-green-500'
+                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
                         required
                       />
                     </div>

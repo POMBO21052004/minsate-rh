@@ -2,19 +2,20 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { 
-  Menu, 
-  Sun, 
-  Moon, 
-  ChevronDown, 
-  User, 
-  Settings, 
+import {
+  Menu,
+  Sun,
+  Moon,
+  ChevronDown,
+  User,
+  Settings,
   Shield,
   LogOut,
   Bell,
   CheckCircle,
   Building
 } from "lucide-react";
+import NotificationDropdown from "../../components/NotificationDropdown";
 
 export default function SuperAdminNavbar({ toggleSidebar, sidebarVisible, isMobile }) {
   const { logout, user } = useAuth();
@@ -78,14 +79,14 @@ export default function SuperAdminNavbar({ toggleSidebar, sidebarVisible, isMobi
       <div className="flex items-center justify-between h-full px-4 lg:px-6">
         {/* Partie gauche - Bouton toggle et titre */}
         <div className="flex items-center space-x-4">
-          <button 
+          <button
             onClick={handleToggleSidebar}
             className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 lg:hidden"
             title="Toggle Sidebar"
           >
             <Menu className="w-5 h-5" />
           </button>
-          
+
           <div className="flex items-center space-x-3">
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
@@ -105,7 +106,7 @@ export default function SuperAdminNavbar({ toggleSidebar, sidebarVisible, isMobi
           </span>
 
           {/* Bouton changement de thème */}
-          <button 
+          <button
             onClick={toggleTheme}
             className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
             title={`Passer au thème ${theme === "dark" ? "clair" : "sombre"}`}
@@ -118,18 +119,18 @@ export default function SuperAdminNavbar({ toggleSidebar, sidebarVisible, isMobi
           </button>
 
           {/* Notifications */}
-          <button className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
-          </button>
+          {/* Notifications */}
+          <div className="relative">
+            <NotificationDropdown />
+          </div>
 
           {/* Dropdown utilisateur Super Admin */}
           <div className="relative group">
             <button className="flex items-center space-x-3 p-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
               <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-semibold border border-white border-opacity-30">
                 {user?.profil_url ? (
-                  <img 
-                    src={user.profil_url} 
+                  <img
+                    src={user.profil_url}
                     alt={user.name || "Super Admin"}
                     className="w-full h-full rounded-full object-cover"
                     onError={(e) => {

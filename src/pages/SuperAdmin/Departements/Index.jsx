@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  FolderTree, 
-  Plus, 
-  Search, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import {
+  FolderTree,
+  Plus,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
   RefreshCw,
   Download,
   AlertCircle,
@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function DepartementList() {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ export default function DepartementList() {
     const total = data.length;
     const avecChef = data.filter(dept => dept.chef_departement).length;
     const sansChef = total - avecChef;
-    
+
     setStats({ total, avecChef, sansChef });
   };
 
@@ -79,11 +80,11 @@ export default function DepartementList() {
   };
 
   const filteredDepartements = departements.filter(dept => {
-    const matchesSearch = 
+    const matchesSearch =
       dept.nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dept.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dept.chef_info?.name?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesSearch;
   });
 
@@ -173,11 +174,11 @@ export default function DepartementList() {
       dept.chef_info?.name || 'Non assigné',
       formatDate(dept.created_at)
     ]);
-    
+
     const csvContent = [headers, ...csvData]
       .map(row => row.map(field => `"${field}"`).join(','))
       .join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -185,7 +186,7 @@ export default function DepartementList() {
     link.download = `departements_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    
+
     showToastMessage('Export CSV généré avec succès', 'success');
   };
 
@@ -208,7 +209,7 @@ export default function DepartementList() {
     <SuperAdminLayout>
       <div className="space-y-6 mb-4">
         {/* En-tête amélioré */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -240,7 +241,7 @@ export default function DepartementList() {
 
         {/* Cartes de statistiques améliorées */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -260,7 +261,7 @@ export default function DepartementList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -280,7 +281,7 @@ export default function DepartementList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -302,7 +303,7 @@ export default function DepartementList() {
         </div>
 
         {/* Panel principal */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
@@ -418,7 +419,7 @@ export default function DepartementList() {
                 Aucun département trouvé
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {hasActiveFilters 
+                {hasActiveFilters
                   ? "Aucun département ne correspond à vos critères de recherche."
                   : "Commencez par créer votre premier département."}
               </p>
@@ -555,28 +556,12 @@ export default function DepartementList() {
         </motion.div>
       </div>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
 
       {/* Modal de suppression individuelle */}
       <AnimatePresence>
@@ -606,7 +591,7 @@ export default function DepartementList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer le département <strong>{departementToDelete?.nom}</strong> ? 
+                Êtes-vous sûr de vouloir supprimer le département <strong>{departementToDelete?.nom}</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
@@ -656,7 +641,7 @@ export default function DepartementList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer <strong>{selectedDepartements.size} département(s)</strong> ? 
+                Êtes-vous sûr de vouloir supprimer <strong>{selectedDepartements.size} département(s)</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
