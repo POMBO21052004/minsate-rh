@@ -1,39 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock, User, Key, Shield, AlertCircle, Sun, Moon, CheckCircle, ArrowLeft, RefreshCw, Users, Building } from "lucide-react";
-import api from "../../services/api";
-import { useAuth } from "../../contexts/AuthContext";
-
-import rhBackground from "../../assets/images/rh-background.jpg";
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Key,
+  Shield,
+  AlertCircle,
+  Sun,
+  Moon,
+  ArrowLeft,
+  RefreshCw,
+  HeartPulse,
+  Building,
+} from "lucide-react";
+import { useAuth } from "@/hooks";
+import api from "@/services/api";
+import rhBackground from "@/assets/images/rh-background.jpg";
+import { useThemeStore } from "@/store/theme";
+import { AuthLoginIcons } from "@/constants";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const Login = () => {
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState({ email: "", password: "", otp_code: "" });
-  const [error, setError] = useState(null);
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [focusedField, setFocusedField] = useState(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [theme, setTheme] = useState("light");
+  const [step, setStep] = React.useState(1);
+  const [form, setForm] = React.useState({
+    email: "",
+    password: "",
+    otp_code: "",
+  });
+  const [error, setError] = React.useState(null);
+  const [fieldErrors, setFieldErrors] = React.useState({});
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [focusedField, setFocusedField] = React.useState(null);
+  const [showPassword, setShowPassword] = React.useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const currentTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
-    setTheme(currentTheme);
-
-    const observer = new MutationObserver(() => {
-      const newTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
-      setTheme(newTheme);
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const theme = useThemeStore((state) => state.theme);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,21 +53,31 @@ const Login = () => {
     setFieldErrors({});
     setIsLoading(true);
 
-    try {
-      const res = await api.post("/users/login", form);
-      if (res.data.message) {
-        setStep(2);
-      }
-    } catch (err) {
-      const response = err.response;
-      if (response?.status === 422 && response.data?.errors) {
-        setFieldErrors(response.data.errors);
-      } else {
-        setError(response?.data?.error || "Erreur de connexion");
-      }
-    } finally {
-      setIsLoading(false);
+    // TODO: Sync with backend
+
+    // try {
+    //   const res = await api.post("/users/login", form);
+    //   if (res.data.message) {
+    //     setStep(2);
+    //   }
+    // } catch (err) {
+    //   const response = err.response;
+    //   if (response?.status === 422 && response.data?.errors) {
+    //     setFieldErrors(response.data.errors);
+    //   } else {
+    //     setError(err.message || response?.data?.error || "Erreur de connexion");
+    //   }
+    // } finally {
+    //   setIsLoading(false);
+    // }
+
+    // Actual mock
+    if (form.email === "admin@admin.com" && form.password === "admin") {
+      setStep(2);
+    } else {
+      setError("Email ou mot de passe incorrect");
     }
+    setIsLoading(false);
   };
 
   const handleOTPSubmit = async (e) => {
@@ -71,22 +87,29 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await api.post("/users/verify-otp", {
-        email: form.email,
-        otp_code: form.otp_code
-      });
 
-      const { user, tokens } = res.data;
-      await login(user, tokens.access);
+      // Actual mock
 
-      // Redirection basée sur le rôle
-      if (user.is_superadmin) {
-        navigate("/superadmin/dashboard");
-      } else if (user.is_admin) {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/employe/dashboard");
-      }
+      if (form.otp_code === "123456") navigate("/employe/dashboard");
+
+      // TODO: Sync with backend
+
+      // const res = await api.post("/users/verify-otp", {
+      //   email: form.email,
+      //   otp_code: form.otp_code,
+      // });
+
+      // const { user, tokens } = res.data;
+      // await login(user, tokens.access);
+
+      // // Redirection basée sur le rôle
+      // if (user.is_superadmin) {
+      //   navigate("/superadmin/dashboard");
+      // } else if (user.is_admin) {
+      //   navigate("/admin/dashboard");
+      // } else {
+      //   navigate("/employe/dashboard");
+      // }
     } catch (err) {
       const response = err.response;
       if (response?.status === 422 && response.data?.errors) {
@@ -104,16 +127,12 @@ const Login = () => {
       await api.post("/users/resend-otp", { email: form.email });
       setError(null);
     } catch (err) {
-      setError("Erreur lors de l'envoi du code OTP");
+      setError(
+        "Erreur lors de l'envoi du code OTP.",
+        err.response.data.error || err.message || err
+      );
+      console.error(err);
     }
-  };
-
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    html.classList.toggle("dark");
-    const newTheme = html.classList.contains("dark") ? "dark" : "light";
-    localStorage.setItem("theme", newTheme);
-    setTheme(newTheme);
   };
 
   return (
@@ -121,33 +140,38 @@ const Login = () => {
       className="min-h-screen flex items-center justify-center py-8 relative"
       style={{
         backgroundImage: `url(${rhBackground})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       {/* Overlay vert foncé pour mieux faire ressortir le vert de la charte */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-900/40 via-black/30 to-green-800/30 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-linear-to-br from-green-900/40 via-black/30 to-green-800/30 backdrop-blur-sm"></div>
 
       <div className="w-full max-w-4xl mx-4 relative z-10">
         {/* En-tête avec logo et branding RH */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <div className="relative">
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-green-500">
-                <Users className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center shadow-lg border-2 border-green-500">
+                <HeartPulse className="w-8 h-8 text-green-300" />
               </div>
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
                 <Shield className="w-3 h-3 text-white" />
               </div>
             </div>
             <div className="ml-4 text-left">
-              <h1 className="text-3xl font-bold text-white drop-shadow-lg">MINSANTE</h1>
-              <p className="text-lg text-green-300 font-semibold drop-shadow-md">Portail Intelligent</p>
+              <h1 className="text-3xl font-bold text-white drop-shadow-lg">
+                MINSANTE
+              </h1>
+              <p className="text-lg text-green-300 font-semibold drop-shadow-md">
+                Portail Intelligent
+              </p>
             </div>
           </div>
           <p className="text-white/90 drop-shadow-lg mb-4 max-w-2xl mx-auto text-lg">
-            Solution de gestion des ressources humaines intelligente et sécurisée
+            Solution de gestion des ressources humaines intelligente et
+            sécurisée
           </p>
           <div className="inline-flex items-center gap-4">
             <div className="flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm border border-green-300/30">
@@ -176,17 +200,17 @@ const Login = () => {
 
               {/* Points forts */}
               <div className="space-y-4">
-                {[
-                  { icon: Users, text: "Gestion centralisée du personnel", color: "green" },
-                  { icon: CheckCircle, text: "Processus automatisés", color: "green" },
-                  { icon: Shield, text: "Données sécurisées", color: "green" },
-                  { icon: Building, text: "Collaboration optimisée", color: "green" }
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center p-3 rounded-lg bg-green-500/10 backdrop-blur-sm border border-green-400/30">
+                {AuthLoginIcons.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center p-3 rounded-lg bg-green-500/10 backdrop-blur-sm border border-green-400/30"
+                  >
                     <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center mr-3 border border-green-400/30">
                       <item.icon className="w-4 h-4 text-green-300" />
                     </div>
-                    <span className="text-white font-medium drop-shadow-sm">{item.text}</span>
+                    <span className="text-white font-medium drop-shadow-sm">
+                      {item.text}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -219,24 +243,32 @@ const Login = () => {
           {/* Carte de connexion */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border-2 border-green-500">
             {/* Barre de progression */}
-            <div className="h-1 bg-gradient-to-r from-green-500 to-green-700"></div>
+            <div className="h-1 bg-linear-to-r from-green-500 to-green-700"></div>
 
             {/* En-tête de la carte */}
-            <div className="px-6 py-6 border-b border-green-200 dark:border-green-800 bg-gradient-to-r from-green-50 to-white dark:from-green-900/30 dark:to-gray-900">
+            <div className="px-6 py-6 border-b border-green-200 dark:border-green-800 bg-linear-to-r from-green-50 to-white dark:from-green-900/30 dark:to-gray-900">
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {step === 1 ? "Connexion au Portail RH" : "Vérification de Sécurité"}
+                    {step === 1
+                      ? "Connexion au Portail RH"
+                      : "Vérification de Sécurité"}
                   </h2>
                   <p className="text-sm text-green-700 dark:text-green-300">
-                    {step === 1 ? "Accédez à votre espace personnel" : "Authentification à deux facteurs"}
+                    {step === 1
+                      ? "Accédez à votre espace personnel"
+                      : "Authentification à deux facteurs"}
                   </p>
                 </div>
                 <button
                   onClick={toggleTheme}
                   className="p-2 rounded-lg transition-colors text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30"
                 >
-                  {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  {theme === "dark" ? (
+                    <Sun className="w-5 h-5" />
+                  ) : (
+                    <Moon className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -246,17 +278,24 @@ const Login = () => {
               {/* Alerte d'erreur */}
               {error && (
                 <div className="flex items-start p-4 mb-6 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-                  <AlertCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" />
+                  <AlertCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5 shrink-0" />
                   <div>
-                    <div className="font-medium text-red-800 dark:text-red-400">Erreur d'authentification</div>
-                    <div className="text-sm text-red-700 dark:text-red-300 mt-1">{error}</div>
+                    <div className="font-medium text-red-800 dark:text-red-400">
+                      Erreur d'authentification
+                    </div>
+                    <div className="text-sm text-red-700 dark:text-red-300 mt-1">
+                      {error}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Étape 1: Email et mot de passe */}
               {step === 1 && (
-                <form onSubmit={handleEmailPasswordSubmit} className="space-y-6">
+                <form
+                  onSubmit={handleEmailPasswordSubmit}
+                  className="space-y-6"
+                >
                   {/* Email */}
                   <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
@@ -267,10 +306,14 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className={`w-5 h-5 ${focusedField === 'email'
-                          ? 'text-green-500'
-                          : 'text-green-400'
-                          }`} />
+                        <User
+                          className={cn(
+                            "w-5 h-5",
+                            focusedField === "email"
+                              ? "text-green-500"
+                              : "text-green-400"
+                          )}
+                        />
                       </div>
                       <input
                         type="email"
@@ -278,14 +321,17 @@ const Login = () => {
                         placeholder="prenom.nom@minsante.com"
                         value={form.email}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('email')}
+                        onFocus={() => setFocusedField("email")}
                         onBlur={() => setFocusedField(null)}
-                        className={`w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${fieldErrors.email
-                          ? 'border-red-500 focus:border-red-500'
-                          : focusedField === 'email'
-                            ? 'border-green-500 focus:border-green-500'
-                            : 'border-green-200 dark:border-green-800 focus:border-green-500'
-                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        className={cn(
+                          "w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors",
+                          fieldErrors.email
+                            ? "border-red-500 focus:border-red-500"
+                            : focusedField === "email"
+                            ? "border-green-500 focus:border-green-500"
+                            : "border-green-200 dark:border-green-800 focus:border-green-500",
+                          "text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        )}
                         required
                       />
                     </div>
@@ -307,10 +353,14 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Key className={`w-5 h-5 ${focusedField === 'password'
-                          ? 'text-green-500'
-                          : 'text-green-400'
-                          }`} />
+                        <Key
+                          className={cn(
+                            "w-5 h-5",
+                            focusedField === "password"
+                              ? "text-green-500"
+                              : "text-green-400"
+                          )}
+                        />
                       </div>
                       <input
                         type={showPassword ? "text" : "password"}
@@ -318,14 +368,17 @@ const Login = () => {
                         placeholder="••••••••"
                         value={form.password}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('password')}
+                        onFocus={() => setFocusedField("password")}
                         onBlur={() => setFocusedField(null)}
-                        className={`w-full pl-10 pr-12 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${fieldErrors.password
-                          ? 'border-red-500 focus:border-red-500'
-                          : focusedField === 'password'
-                            ? 'border-green-500 focus:border-green-500'
-                            : 'border-green-200 dark:border-green-800 focus:border-green-500'
-                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        className={cn(
+                          "w-full pl-10 pr-12 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors",
+                          fieldErrors.password
+                            ? "border-red-500 focus:border-red-500"
+                            : focusedField === "password"
+                            ? "border-green-500 focus:border-green-500"
+                            : "border-green-200 dark:border-green-800 focus:border-green-500",
+                          "text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        )}
                         required
                       />
                       <button
@@ -360,7 +413,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 px-4 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none border border-green-500"
+                    className="w-full bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 px-4 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none border border-green-500"
                   >
                     {isLoading ? (
                       <div className="flex items-center justify-center">
@@ -380,13 +433,14 @@ const Login = () => {
                   {/* Instructions */}
                   <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                     <div className="flex items-start">
-                      <Shield className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <Shield className="w-5 h-5 text-green-500 mr-3 mt-0.5 shrink-0" />
                       <div>
                         <div className="font-medium text-green-800 dark:text-green-400">
                           Vérification de sécurité requise
                         </div>
                         <div className="text-sm mt-1 text-green-700 dark:text-green-300">
-                          Un code de vérification a été envoyé à <strong>{form.email}</strong>
+                          Un code de vérification a été envoyé à{" "}
+                          <strong>{form.email}</strong>
                         </div>
                       </div>
                     </div>
@@ -402,10 +456,14 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Shield className={`w-5 h-5 ${focusedField === 'otp_code'
-                          ? 'text-green-500'
-                          : 'text-green-400'
-                          }`} />
+                        <Shield
+                          className={cn(
+                            "w-5 h-5",
+                            focusedField === "otp_code"
+                              ? "text-green-500"
+                              : "text-green-400"
+                          )}
+                        />
                       </div>
                       <input
                         type="text"
@@ -413,15 +471,18 @@ const Login = () => {
                         placeholder="123456"
                         value={form.otp_code}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('otp_code')}
+                        onFocus={() => setFocusedField("otp_code")}
                         onBlur={() => setFocusedField(null)}
                         maxLength={6}
-                        className={`w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors ${fieldErrors.otp_code
-                          ? 'border-red-500 focus:border-red-500'
-                          : focusedField === 'otp_code'
-                            ? 'border-green-500 focus:border-green-500'
-                            : 'border-green-200 dark:border-green-800 focus:border-green-500'
-                          } text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400`}
+                        className={cn(
+                          "w-full pl-10 pr-4 py-3 rounded-lg border-2 bg-white dark:bg-gray-800 transition-colors",
+                          fieldErrors.otp_code
+                            ? "border-red-500 focus:border-red-500"
+                            : focusedField === "otp_code"
+                            ? "border-green-500 focus:border-green-500"
+                            : "border-green-200 dark:border-green-800 focus:border-green-500",
+                          "text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        )}
                         required
                       />
                     </div>
@@ -449,7 +510,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 px-4 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none border border-green-500"
+                    className="w-full bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 px-4 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none border border-green-500"
                   >
                     {isLoading ? (
                       <div className="flex items-center justify-center">
@@ -482,7 +543,7 @@ const Login = () => {
                   Sécurité RH
                 </div>
                 <div className="flex items-center text-green-700 dark:text-green-400">
-                  <Users className="w-4 h-4 mr-1" />
+                  <HeartPulse className="w-4 h-4 mr-1" />
                   Portail Intelligent
                 </div>
                 <div className="flex items-center text-green-700 dark:text-green-400">
