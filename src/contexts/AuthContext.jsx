@@ -1,7 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import api from "../services/api";
-
-const AuthContext = createContext();
+import { AuthContext } from "@/hooks";
+import api from "@/services/api";
+import React, { useEffect, useState } from "react";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -12,16 +11,20 @@ export const AuthProvider = ({ children }) => {
   // Vérifier la cohérence des rôles
   const validateUserRoles = (userData) => {
     if (!userData) return false;
-    
-    const roles = [userData.is_superadmin, userData.is_admin, userData.is_employe];
+
+    const roles = [
+      userData.is_superadmin,
+      userData.is_admin,
+      userData.is_employe,
+    ];
     const trueCount = roles.filter(Boolean).length;
-    
+
     // Un utilisateur ne peut avoir qu'un seul rôle
     if (trueCount !== 1) {
       console.error("Incohérence des rôles utilisateur:", userData);
       return false;
     }
-    
+
     return true;
   };
 
@@ -36,7 +39,7 @@ export const AuthProvider = ({ children }) => {
       setToken(authToken);
       setUser(userData);
       localStorage.setItem("token", authToken);
-      
+
       // Récupérer les données fraîches du profil après connexion
       await fetchUser();
     } else {
@@ -62,7 +65,7 @@ export const AuthProvider = ({ children }) => {
   // Fonction pour récupérer les infos utilisateur depuis l'API
   const fetchUser = async () => {
     const storedToken = localStorage.getItem("token");
-    
+
     if (!storedToken) {
       setUser(null);
       setInitializing(false);
@@ -73,17 +76,17 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const response = await api.get("/users/profile");
       const userData = response.data;
-      
+
       // Valider les rôles
       if (!validateUserRoles(userData)) {
         throw new Error("Incohérence dans les rôles utilisateur");
       }
-      
+
       setUser(userData);
       setToken(storedToken);
     } catch (error) {
       console.error("Erreur lors de la récupération de l'utilisateur :", error);
-      
+
       if (error.response?.status === 401) {
         logout();
       } else if (error.message === "Incohérence dans les rôles utilisateur") {
@@ -102,11 +105,11 @@ export const AuthProvider = ({ children }) => {
   // Déterminer le rôle numérique pour les routes
   const getUserRole = () => {
     if (!user) return null;
-    
+
     if (user.is_superadmin) return 2; // Super Admin
     if (user.is_admin) return 1; // Admin
     if (user.is_employe) return 0; // Employé
-    
+
     return null;
   };
 
@@ -114,7 +117,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const storedToken = localStorage.getItem("token");
-      
+
       if (storedToken) {
         await fetchUser();
       } else {
@@ -126,20 +129,20 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      token, 
-      loading, 
-      initializing,
-      userRole: getUserRole(),
-      login, 
-      logout, 
-      refreshUser,
-      fetchUser 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        initializing,
+        userRole: getUserRole(),
+        login,
+        logout,
+        refreshUser,
+        fetchUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
