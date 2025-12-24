@@ -82,7 +82,7 @@ export default function CongeShow() {
 
     try {
       setProcessing(true);
-      await api.put(`/users/leaves/${id}/`, {
+      await api.patch(`/users/leaves/${id}/`, {
         statut: 'approuve',
         description: demande.description,
         raison: raison
@@ -93,7 +93,23 @@ export default function CongeShow() {
       setRaison("");
     } catch (error) {
       console.error('Erreur lors de l\'approbation:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de l\'approbation';
+      let errorMsg = 'Erreur lors de l\'approbation';
+      
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (typeof data === 'object') {
+          // Si c'est un objet (ex: validation errors), on prend le premier message
+          const messages = Object.values(data).flat();
+          if (messages.length > 0) {
+            errorMsg = messages[0];
+          }
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.error) {
+          errorMsg = data.error;
+        }
+      }
+      
       showToastMessage(errorMsg, 'error');
     } finally {
       setProcessing(false);
@@ -110,7 +126,7 @@ export default function CongeShow() {
 
     try {
       setProcessing(true);
-      await api.put(`/users/leaves/${id}/`, {
+      await api.patch(`/users/leaves/${id}/`, {
         statut: 'rejete',
         description: demande.description,
         raison: raison
@@ -121,7 +137,23 @@ export default function CongeShow() {
       setRaison("");
     } catch (error) {
       console.error('Erreur lors du rejet:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors du rejet';
+      let errorMsg = 'Erreur lors du rejet';
+      
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (typeof data === 'object') {
+          // Si c'est un objet (ex: validation errors), on prend le premier message
+          const messages = Object.values(data).flat();
+          if (messages.length > 0) {
+            errorMsg = messages[0];
+          }
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.error) {
+          errorMsg = data.error;
+        }
+      }
+      
       showToastMessage(errorMsg, 'error');
     } finally {
       setProcessing(false);
@@ -138,7 +170,23 @@ export default function CongeShow() {
       }, 2000);
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de la suppression';
+      let errorMsg = 'Erreur lors de la suppression';
+      
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (typeof data === 'object') {
+          // Si c'est un objet (ex: validation errors), on prend le premier message
+          const messages = Object.values(data).flat();
+          if (messages.length > 0) {
+            errorMsg = messages[0];
+          }
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.error) {
+          errorMsg = data.error;
+        }
+      }
+      
       showToastMessage(errorMsg, 'error');
     } finally {
       setProcessing(false);

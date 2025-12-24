@@ -322,6 +322,8 @@ export default function AppRouter() {
           }
         />
 
+        <Route path="/superadmin/audit" element={<PrivateRoute allowedRoles={[2]}> <AuditList /> </PrivateRoute>} />
+
         {/* Catch-all pour les routes inexistantes */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -265,10 +265,10 @@ export default function SuperAdminList() {
             </div>
             <div>
               <h2 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">
-                Gestion des Administrateurs Système
+                Gestion des Supers Administrateurs
               </h2>
               <p className="mb-0 text-gray-600 dark:text-gray-400">
-                Administration système - Gestion des super administrateurs
+                Administration - Gestion des super administrateurs
               </p>
             </div>
           </div>
@@ -356,7 +356,7 @@ export default function SuperAdminList() {
               <div className="flex items-center">
                 <Settings className="w-5 h-5 text-[#179150] mr-3" />
                 <span className="text-lg font-bold text-gray-900 dark:text-white">
-                  Liste des Administrateurs Système
+                  Liste des Supers Administrateurs
                 </span>
               </div>
 
@@ -376,7 +376,7 @@ export default function SuperAdminList() {
                   className="flex items-center px-4 py-2 bg-[#179150] text-white font-medium hover:bg-[#147a43] focus:ring-2 focus:ring-[#179150] focus:ring-offset-2 transition-colors rounded-lg"
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Nouvel Admin Système
+                  Nouvel Super Admin
                 </Link>
               </div>
             </div>

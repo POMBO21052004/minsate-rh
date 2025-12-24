@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  Users, 
-  Plus, 
-  Search, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import {
+  Users,
+  Plus,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
   RefreshCw,
   Download,
   AlertCircle,
@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function EmployeList() {
   const navigate = useNavigate();
@@ -91,7 +92,7 @@ export default function EmployeList() {
     const inactifs = data.filter(emp => emp.statut === 'inactif').length;
     const suspendus = data.filter(emp => emp.statut === 'suspendu').length;
     const enConge = data.filter(emp => emp.statut === 'congé').length;
-    
+
     setStats({ total, actifs, inactifs, suspendus, enConge });
   };
 
@@ -99,35 +100,34 @@ export default function EmployeList() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
   };
 
   const filteredEmployes = employes.filter(emp => {
-    const matchesSearch = 
+    const matchesSearch =
       emp.user?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.user?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.matricule?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.poste_details?.titre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.poste_details?.departement_details?.nom?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesDepartement = !departementFilter || 
+
+    const matchesDepartement = !departementFilter ||
       emp.poste_details?.departement?.toString() === departementFilter;
-    
+
     const matchesStatut = !statutFilter || emp.statut === statutFilter;
-    
+
     return matchesSearch && matchesDepartement && matchesStatut;
   });
 
   const groupEmployesByDepartementAndPoste = () => {
     const grouped = {};
-    
+
     filteredEmployes.forEach(emp => {
       const deptId = emp.poste_details?.departement || 'sans-departement';
       const deptNom = emp.poste_details?.departement_details?.nom || 'Sans département';
       const posteId = emp.poste?.toString() || 'sans-poste';
       const posteTitre = emp.poste_details?.titre || 'Sans poste';
-      
+
       if (!grouped[deptId]) {
         grouped[deptId] = {
           nom: deptNom,
@@ -135,7 +135,7 @@ export default function EmployeList() {
           postes: {}
         };
       }
-      
+
       if (!grouped[deptId].postes[posteId]) {
         grouped[deptId].postes[posteId] = {
           titre: posteTitre,
@@ -143,10 +143,10 @@ export default function EmployeList() {
           employes: []
         };
       }
-      
+
       grouped[deptId].postes[posteId].employes.push(emp);
     });
-    
+
     setGroupedEmployes(grouped);
   };
 
@@ -222,11 +222,11 @@ export default function EmployeList() {
       emp.statut || '',
       formatDate(emp.date_embauche)
     ]);
-    
+
     const csvContent = [headers, ...csvData]
       .map(row => row.map(field => `"${field}"`).join(','))
       .join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -234,7 +234,7 @@ export default function EmployeList() {
     link.download = `employes_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    
+
     showToastMessage('Export CSV généré avec succès', 'success');
   };
 
@@ -264,7 +264,7 @@ export default function EmployeList() {
     <SuperAdminLayout>
       <div className="space-y-6 mb-4">
         {/* En-tête amélioré */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -296,7 +296,7 @@ export default function EmployeList() {
 
         {/* Cartes de statistiques */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -316,7 +316,7 @@ export default function EmployeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -336,7 +336,7 @@ export default function EmployeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -356,7 +356,7 @@ export default function EmployeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -376,7 +376,7 @@ export default function EmployeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.4 }}
@@ -398,7 +398,7 @@ export default function EmployeList() {
         </div>
 
         {/* Panel principal */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.5 }}
@@ -434,7 +434,7 @@ export default function EmployeList() {
           {/* Filtres */}
           <div className="p-4 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-b border-gray-200 dark:border-gray-700">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
+              <div className="md:col-span-1">
                 <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center">
                   <Search className="w-3.5 h-3.5 mr-1" />
                   Recherche Globale
@@ -558,7 +558,7 @@ export default function EmployeList() {
                   Aucun employé trouvé
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {hasActiveFilters 
+                  {hasActiveFilters
                     ? "Aucun employé ne correspond à vos critères de recherche."
                     : "Commencez par créer votre premier employé."}
                 </p>
@@ -637,7 +637,7 @@ export default function EmployeList() {
                             {poste.employes.map((emp) => {
                               const statutBadge = getStatutBadge(emp.statut);
                               const StatutIcon = statutBadge.icon;
-                              
+
                               return (
                                 <motion.div
                                   key={emp.id}
@@ -664,7 +664,7 @@ export default function EmployeList() {
                                       {emp.statut}
                                     </span>
                                   </div>
-                                  
+
                                   <div className="space-y-2 text-sm">
                                     <div className="flex items-center text-gray-600 dark:text-gray-400">
                                       <Mail className="w-3 h-3 mr-2" />
@@ -721,27 +721,12 @@ export default function EmployeList() {
       </div>
 
       {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
 
       {/* Modal de suppression individuelle */}
       <AnimatePresence>
@@ -771,7 +756,7 @@ export default function EmployeList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer l'employé <strong>{employeToDelete?.user?.first_name} {employeToDelete?.user?.last_name}</strong> ? 
+                Êtes-vous sûr de vouloir supprimer l'employé <strong>{employeToDelete?.user?.first_name} {employeToDelete?.user?.last_name}</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
@@ -821,7 +806,7 @@ export default function EmployeList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer <strong>{selectedEmployes.size} employé(s)</strong> ? 
+                Êtes-vous sûr de vouloir supprimer <strong>{selectedEmployes.size} employé(s)</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
