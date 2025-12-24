@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  Calendar, 
-  Plus, 
-  Search, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import {
+  Calendar,
+  Plus,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
   RefreshCw,
   Download,
   AlertCircle,
@@ -93,7 +93,7 @@ export default function CongeList() {
     const enAttente = data.filter(d => d.statut === 'en_attente').length;
     const approuvees = data.filter(d => d.statut === 'approuve').length;
     const rejetees = data.filter(d => d.statut === 'rejete').length;
-    
+
     setStats({ total, enAttente, approuvees, rejetees });
   };
 
@@ -108,17 +108,17 @@ export default function CongeList() {
     // Gérer le cas où employe peut être un ID ou un objet
     const employeData = typeof demande.employe === 'object' ? demande.employe : null;
     const employeId = typeof demande.employe === 'number' ? demande.employe : null;
-    
-    const matchesSearch = 
+
+    const matchesSearch =
       employeData?.user?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employeData?.user?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employeData?.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employeData?.matricule?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       demande.type_conge?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatut = !statutFilter || demande.statut === statutFilter;
     const matchesType = !typeFilter || demande.type_conge === typeFilter;
-    
+
     return matchesSearch && matchesStatut && matchesType;
   });
 
@@ -138,7 +138,7 @@ export default function CongeList() {
     if (!demandeToAction) return;
 
     try {
-      await api.put(`/users/leaves/${demandeToAction.id}/`, {
+      await api.patch(`/users/leaves/${demandeToAction.id}/`, {
         statut: 'approuve',
         description: demandeToAction.description,
         raison: raison
@@ -150,7 +150,22 @@ export default function CongeList() {
       setRaison("");
     } catch (error) {
       console.error('Erreur lors de l\'approbation:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de l\'approbation';
+      let errorMsg = 'Erreur lors de l\'approbation';
+
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (typeof data === 'object') {
+          const messages = Object.values(data).flat();
+          if (messages.length > 0) {
+            errorMsg = messages[0];
+          }
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.error) {
+          errorMsg = data.error;
+        }
+      }
+
       showToastMessage(errorMsg, 'error');
     }
   };
@@ -164,7 +179,7 @@ export default function CongeList() {
     }
 
     try {
-      await api.put(`/users/leaves/${demandeToAction.id}/`, {
+      await api.patch(`/users/leaves/${demandeToAction.id}/`, {
         statut: 'rejete',
         description: demandeToAction.description,
         raison: raison
@@ -176,7 +191,22 @@ export default function CongeList() {
       setRaison("");
     } catch (error) {
       console.error('Erreur lors du rejet:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors du rejet';
+      let errorMsg = 'Erreur lors du rejet';
+
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (typeof data === 'object') {
+          const messages = Object.values(data).flat();
+          if (messages.length > 0) {
+            errorMsg = messages[0];
+          }
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.error) {
+          errorMsg = data.error;
+        }
+      }
+
       showToastMessage(errorMsg, 'error');
     }
   };
@@ -196,7 +226,22 @@ export default function CongeList() {
       setSelectedDemandes(new Set());
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de la suppression';
+      let errorMsg = 'Erreur lors de la suppression';
+
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (typeof data === 'object') {
+          const messages = Object.values(data).flat();
+          if (messages.length > 0) {
+            errorMsg = messages[0];
+          }
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.error) {
+          errorMsg = data.error;
+        }
+      }
+
       showToastMessage(errorMsg, 'error');
     } finally {
       setShowDeleteModal(false);
@@ -256,11 +301,11 @@ export default function CongeList() {
         formatDateTime(demande.created_at)
       ];
     });
-    
+
     const csvContent = [headers, ...csvData]
       .map(row => row.map(field => `"${field}"`).join(','))
       .join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -268,7 +313,7 @@ export default function CongeList() {
     link.download = `demandes_conges_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    
+
     showToastMessage('Export CSV généré avec succès', 'success');
   };
 
@@ -298,7 +343,7 @@ export default function CongeList() {
     <SuperAdminLayout>
       <div className="space-y-6 mb-4">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -323,7 +368,7 @@ export default function CongeList() {
 
         {/* Cartes de statistiques */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -343,7 +388,7 @@ export default function CongeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -363,7 +408,7 @@ export default function CongeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -383,7 +428,7 @@ export default function CongeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -405,7 +450,7 @@ export default function CongeList() {
         </div>
 
         {/* Panel principal */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
@@ -543,7 +588,7 @@ export default function CongeList() {
                   Aucune demande trouvée
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {hasActiveFilters 
+                  {hasActiveFilters
                     ? "Aucune demande ne correspond à vos critères de recherche."
                     : "Aucune demande de congé n'a été soumise pour le moment."}
                 </p>
@@ -593,7 +638,7 @@ export default function CongeList() {
                     const jours = calculateDays(demande.date_debut, demande.date_fin);
                     // Gérer le cas où employe peut être un ID ou un objet
                     const employeData = typeof demande.employe === 'object' ? demande.employe : null;
-                    
+
                     return (
                       <motion.tr
                         key={demande.id}
@@ -635,13 +680,12 @@ export default function CongeList() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
-                            statutBadge.value === 'en_attente' 
+                          <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${statutBadge.value === 'en_attente'
                               ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400'
                               : statutBadge.value === 'approuve'
-                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
-                          }`}>
+                                ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
+                                : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
+                            }`}>
                             <StatutIcon className="w-3 h-3 mr-1" />
                             {statutBadge.label}
                           </span>
@@ -702,11 +746,10 @@ export default function CongeList() {
             initial={{ opacity: 0, y: 50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
+            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${toastType === 'success'
+                ? 'bg-green-500 text-white'
                 : 'bg-red-500 text-white'
-            }`}
+              }`}
           >
             {toastType === 'success' ? (
               <CheckCircle className="w-5 h-5" />
@@ -747,7 +790,7 @@ export default function CongeList() {
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Êtes-vous sûr de vouloir approuver la demande de congé de <strong>{
-                  typeof demandeToAction?.employe === 'object' 
+                  typeof demandeToAction?.employe === 'object'
                     ? `${demandeToAction.employe?.user?.first_name || ''} ${demandeToAction.employe?.user?.last_name || ''}`.trim() || 'cet employé'
                     : 'cet employé'
                 }</strong> ?
@@ -812,7 +855,7 @@ export default function CongeList() {
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Êtes-vous sûr de vouloir rejeter la demande de congé de <strong>{
-                  typeof demandeToAction?.employe === 'object' 
+                  typeof demandeToAction?.employe === 'object'
                     ? `${demandeToAction.employe?.user?.first_name || ''} ${demandeToAction.employe?.user?.last_name || ''}`.trim() || 'cet employé'
                     : 'cet employé'
                 }</strong> ?

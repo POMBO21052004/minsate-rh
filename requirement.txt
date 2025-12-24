@@ -18,3 +18,4 @@ npm install @fullcalendar/list @fullcalendar/rrule
 npm install lucide-react
 npm install -D tailwindcss@^3.4.0 postcss@^8.4.0 autoprefixer@^10.4.0
 npx tailwindcss init -p
+npm install react-use-websocket

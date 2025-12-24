@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import {
+  ArrowLeft,
+  Save,
   UserCheck,
   User,
   Mail,
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function AdminEdit() {
   const { id } = useParams();
@@ -58,7 +59,7 @@ export default function AdminEdit() {
       const response = await api.get(`/users/superadmins/${id}/`);
       const adminData = response.data;
       setAdmin(adminData);
-      
+
       setFormData({
         first_name: adminData.first_name || '',
         last_name: adminData.last_name || '',
@@ -85,7 +86,7 @@ export default function AdminEdit() {
       ...prev,
       [name]: value
     }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -112,18 +113,18 @@ export default function AdminEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const response = await api.put(`/users/superadmins/${id}/`, {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email
       });
-      
+
       if (response.data) {
         showToastMessage('Super Administrateur mis à jour avec succès !', 'success');
         setTimeout(() => {
@@ -143,18 +144,18 @@ export default function AdminEdit() {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (passwordForm.password !== passwordForm.confirm_password) {
       showToastMessage('Les mots de passe ne correspondent pas', 'error');
       return;
     }
-    
+
     try {
       setChangingPassword(true);
       await api.put(`/users/superadmins/${id}/password`, {
         password: passwordForm.password
       });
-      
+
       showToastMessage('Mot de passe modifié avec succès', 'success');
       setShowPasswordModal(false);
       setPasswordForm({ password: '', confirm_password: '' });
@@ -205,7 +206,7 @@ export default function AdminEdit() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -233,7 +234,7 @@ export default function AdminEdit() {
       {/* Alertes */}
       <AnimatePresence>
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -253,7 +254,7 @@ export default function AdminEdit() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formulaire principal */}
           <div className="lg:col-span-2">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -305,11 +306,10 @@ export default function AdminEdit() {
                       name="first_name"
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.first_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      className={`w-full px-4 py-3 border ${errors.first_name
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="Prénom de l'admin"
                       required
                     />
@@ -330,11 +330,10 @@ export default function AdminEdit() {
                       name="last_name"
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.last_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      className={`w-full px-4 py-3 border ${errors.last_name
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="Nom de l'admin"
                       required
                     />
@@ -355,11 +354,10 @@ export default function AdminEdit() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.email 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      className={`w-full px-4 py-3 border ${errors.email
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="admin@example.com"
                       required
                     />
@@ -403,7 +401,7 @@ export default function AdminEdit() {
                       Changer le mot de passe
                     </button>
                   </div>
-                  
+
                   <div className="flex space-x-3">
                     <Link
                       to={`/superadmin/super-admins/${id}`}
@@ -411,7 +409,7 @@ export default function AdminEdit() {
                     >
                       Annuler
                     </Link>
-                    
+
                     <button
                       type="submit"
                       disabled={saving}
@@ -438,7 +436,7 @@ export default function AdminEdit() {
           {/* Colonne latérale */}
           <div className="space-y-6">
             {/* Conseils */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
@@ -473,7 +471,7 @@ export default function AdminEdit() {
             </motion.div>
 
             {/* Informations importantes */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -501,13 +499,13 @@ export default function AdminEdit() {
       {/* Modal de changement de mot de passe */}
       <AnimatePresence>
         {showPasswordModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           >
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -622,44 +620,12 @@ export default function AdminEdit() {
         )}
       </AnimatePresence>
 
-      {/* Notifications Toast */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div 
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            className="fixed bottom-4 right-4 z-50"
-          >
-            <div className={`border ${
-              toastType === 'success' 
-                ? 'bg-[#179150]/10 border-[#179150]/20' 
-                : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            } p-4 max-w-sm`}>
-              <div className="flex items-center">
-                <div className={`flex-shrink-0 ${
-                  toastType === 'success' ? 'text-[#179150]' : 'text-red-600'
-                }`}>
-                  {toastType === 'success' ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm font-medium ${
-                    toastType === 'success' 
-                      ? 'text-[#179150]' 
-                      : 'text-red-800 dark:text-red-400'
-                  }`}>
-                    {toastMessage}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

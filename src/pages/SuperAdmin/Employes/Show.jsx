@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Edit, 
+import {
+  ArrowLeft,
+  Edit,
   Trash2,
   Users,
   Mail,
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function EmployeShow() {
   const { id } = useParams();
@@ -59,7 +60,6 @@ export default function EmployeShow() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
   };
 
   const handleDelete = async () => {
@@ -151,7 +151,7 @@ export default function EmployeShow() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -196,7 +196,7 @@ export default function EmployeShow() {
           {/* Contenu principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Carte principale */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -207,15 +207,15 @@ export default function EmployeShow() {
                 <div className="flex flex-col md:flex-row md:items-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="md:w-1/4 text-center mb-4 md:mb-0">
                     <div className="relative inline-block">
-                      <div 
+                      <div
                         className="rounded-lg border-4 border-[#179150] flex items-center justify-center"
-                        style={{ 
-                          width: '120px', 
-                          height: '120px', 
-                          background: 'linear-gradient(135deg, #179150 0%, #147a43 100%)', 
-                          color: 'white', 
-                          fontSize: '3rem', 
-                          fontWeight: '700' 
+                        style={{
+                          width: '120px',
+                          height: '120px',
+                          background: 'linear-gradient(135deg, #179150 0%, #147a43 100%)',
+                          color: 'white',
+                          fontSize: '3rem',
+                          fontWeight: '700'
                         }}
                       >
                         {getInitials(employe.user?.first_name, employe.user?.last_name)}
@@ -252,7 +252,7 @@ export default function EmployeShow() {
                       <User className="w-5 h-5 mr-2 text-[#179150]" />
                       Informations personnelles
                     </h5>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-3">
                         <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
@@ -284,7 +284,7 @@ export default function EmployeShow() {
                           <span className="font-medium text-gray-900 dark:text-white">{employe.user?.email}</span>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-3">
                         {employe.telephone && (
                           <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
@@ -331,7 +331,7 @@ export default function EmployeShow() {
 
             {/* Poste et département */}
             {employe.poste_details && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -342,7 +342,7 @@ export default function EmployeShow() {
                     <Briefcase className="w-5 h-5 mr-2 text-[#179150]" />
                     Informations professionnelles
                   </h5>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {employe.poste_details.departement_details && (
                       <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -390,7 +390,7 @@ export default function EmployeShow() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Actions rapides */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -434,7 +434,7 @@ export default function EmployeShow() {
             </motion.div>
 
             {/* Informations système */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.3 }}
@@ -485,27 +485,12 @@ export default function EmployeShow() {
       </div>
 
       {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
 
       {/* Modal de suppression */}
       <AnimatePresence>
@@ -535,7 +520,7 @@ export default function EmployeShow() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer l'employé <strong>{employe.user?.first_name} {employe.user?.last_name}</strong> ? 
+                Êtes-vous sûr de vouloir supprimer l'employé <strong>{employe.user?.first_name} {employe.user?.last_name}</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">

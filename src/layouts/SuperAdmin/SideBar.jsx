@@ -16,7 +16,10 @@ import {
   Network,
   Server,
   Circle,
-  File
+  File,
+  Calendar,
+  CalendarArrowUp,
+  CalendarArrowDownIcon
 } from "lucide-react";
 
 export default function SuperAdminSidebar({ user, collapsed, onClose }) {
@@ -43,6 +46,13 @@ export default function SuperAdminSidebar({ user, collapsed, onClose }) {
         { label: "Super administrateurs", icon: Users, path: "/superadmin/super-admins" },
         { label: "Administrateurs", icon: Users, path: "/superadmin/admins" },
         { label: "Employes", icon: Users, path: "/superadmin/employes" },
+      ]
+    },
+    {
+      title: "Gestion des presence",     
+      items: [
+        { label: "Presences", icon: CalendarArrowUp, path: "/superadmin/super-admins" },
+        { label: "Absences", icon: CalendarArrowDownIcon, path: "/superadmin/admins" },
       ]
     },
     {

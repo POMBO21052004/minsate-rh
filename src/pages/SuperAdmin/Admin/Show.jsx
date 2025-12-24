@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Edit, 
-  Trash2, 
-  Mail, 
-  Calendar, 
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Mail,
+  Calendar,
   UserCheck,
   CheckCircle,
   X,
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function AdminView() {
   const { id } = useParams();
@@ -126,7 +127,7 @@ export default function AdminView() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -159,7 +160,7 @@ export default function AdminView() {
               </h1>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Détails du compte administrateur 
+              Détails du compte administrateur
             </p>
           </div>
 
@@ -183,7 +184,7 @@ export default function AdminView() {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.1 }}
@@ -224,11 +225,10 @@ export default function AdminView() {
                       <UserCheck className="w-4 h-4 mr-1.5" />
                       Administrateur
                     </span>
-                    <span className={`inline-flex items-center px-3 py-1 text-sm font-medium ${
-                      admin.is_verified
-                        ? 'bg-[#179150]/10 text-[#179150] border border-[#179150]/20'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600'
-                    }`}>
+                    <span className={`inline-flex items-center px-3 py-1 text-sm font-medium ${admin.is_verified
+                      ? 'bg-[#179150]/10 text-[#179150] border border-[#179150]/20'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600'
+                      }`}>
                       {admin.is_verified ? (
                         <>
                           <CheckCircle className="w-4 h-4 mr-1.5" />
@@ -251,7 +251,7 @@ export default function AdminView() {
                     <User className="w-4 h-4 mr-2 text-gray-500" />
                     Identité
                   </h4>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400">
                       Prénom
@@ -260,7 +260,7 @@ export default function AdminView() {
                       {admin.first_name}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400">
                       Nom
@@ -269,7 +269,7 @@ export default function AdminView() {
                       {admin.last_name}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400">
                       Email professionnel
@@ -279,26 +279,25 @@ export default function AdminView() {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <h4 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide flex items-center">
                     <Activity className="w-4 h-4 mr-2 text-gray-500" />
                     Activité
                   </h4>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400">
                       Statut du compte
                     </span>
-                    <span className={`font-medium ${
-                      admin.is_verified 
-                        ? 'text-[#179150]' 
-                        : 'text-yellow-600 dark:text-yellow-400'
-                    }`}>
+                    <span className={`font-medium ${admin.is_verified
+                      ? 'text-[#179150]'
+                      : 'text-yellow-600 dark:text-yellow-400'
+                      }`}>
                       {admin.is_verified ? 'Actif' : 'En attente'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400">
                       Date de création
@@ -307,7 +306,7 @@ export default function AdminView() {
                       {formatDate(admin.created_at)}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
                     <span className="text-gray-600 dark:text-gray-400">
                       Dernière modification
@@ -322,7 +321,7 @@ export default function AdminView() {
           </div>
 
           {/* Rôle et permissions */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -384,7 +383,7 @@ export default function AdminView() {
         {/* Colonne latérale */}
         <div className="space-y-6">
           {/* Actions rapides */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -409,7 +408,7 @@ export default function AdminView() {
                   →
                 </div>
               </Link>
-              
+
               <button
                 onClick={handleDeleteClick}
                 className="flex items-center justify-between w-full p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-700 transition-colors duration-200 group rounded-lg"
@@ -422,7 +421,7 @@ export default function AdminView() {
                   →
                 </div>
               </button>
-              
+
               <Link
                 to="/superadmin/admins"
                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition-colors duration-200 group rounded-lg"
@@ -439,7 +438,7 @@ export default function AdminView() {
           </motion.div>
 
           {/* Informations système */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.4 }}
@@ -472,7 +471,7 @@ export default function AdminView() {
           </motion.div>
 
           {/* Statut */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.5 }}
@@ -484,11 +483,10 @@ export default function AdminView() {
                 <h4 className="text-sm font-semibold text-[#179150] mb-2">
                   Statut du compte
                 </h4>
-                <div className={`inline-flex items-center px-3 py-1 text-sm font-medium ${
-                  admin.is_verified
-                    ? 'bg-[#179150]/10 text-[#179150] border border-[#179150]/20'
-                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-700'
-                }`}>
+                <div className={`inline-flex items-center px-3 py-1 text-sm font-medium ${admin.is_verified
+                  ? 'bg-[#179150]/10 text-[#179150] border border-[#179150]/20'
+                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-700'
+                  }`}>
                   {admin.is_verified ? (
                     <>
                       <CheckCircle className="w-4 h-4 mr-1.5" />
@@ -510,13 +508,13 @@ export default function AdminView() {
       {/* Modal de confirmation de suppression */}
       <AnimatePresence>
         {showDeleteModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           >
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -536,7 +534,7 @@ export default function AdminView() {
                 <p className="text-gray-700 dark:text-gray-300 mb-4">
                   Êtes-vous sûr de vouloir supprimer l'administrateur <strong>{admin.first_name} {admin.last_name}</strong> ?
                 </p>
-                
+
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 p-4 mb-4">
                   <div className="flex items-center">
                     <AlertCircle className="w-4 h-4 text-red-600 mr-2 flex-shrink-0" />
@@ -567,28 +565,12 @@ export default function AdminView() {
         )}
       </AnimatePresence>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import {
+  ArrowLeft,
+  Save,
   Users,
   User,
   Mail,
@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function EmployeEdit() {
   const { id } = useParams();
@@ -83,7 +84,7 @@ export default function EmployeEdit() {
       const response = await api.get(`/users/employe-profiles/${id}/`);
       const empData = response.data;
       setEmploye(empData);
-      
+
       setFormData({
         first_name: empData.user?.first_name || '',
         last_name: empData.user?.last_name || '',
@@ -132,12 +133,11 @@ export default function EmployeEdit() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'departement') {
       setSelectedDepartement(value);
       setFormData(prev => ({ ...prev, poste: '' }));
@@ -147,7 +147,7 @@ export default function EmployeEdit() {
         [name]: value
       }));
     }
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -173,12 +173,12 @@ export default function EmployeEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const submitData = {
         user: {
           first_name: formData.first_name,
@@ -193,9 +193,9 @@ export default function EmployeEdit() {
         telephone: formData.telephone || null,
         poste: formData.poste ? parseInt(formData.poste) : null
       };
-      
+
       const response = await api.put(`/users/employe-profiles/${id}/`, submitData);
-      
+
       if (response.data) {
         showToastMessage('Employé modifié avec succès !', 'success');
         setTimeout(() => {
@@ -217,18 +217,18 @@ export default function EmployeEdit() {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (passwordForm.password !== passwordForm.confirm_password) {
       showToastMessage('Les mots de passe ne correspondent pas', 'error');
       return;
     }
-    
+
     try {
       setChangingPassword(true);
       await api.put(`/users/employe-profiles/${id}/password/`, {
         password: passwordForm.password
       });
-      
+
       showToastMessage('Mot de passe modifié avec succès', 'success');
       setShowPasswordModal(false);
       setPasswordForm({ password: '', confirm_password: '' });
@@ -280,7 +280,7 @@ export default function EmployeEdit() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -306,7 +306,7 @@ export default function EmployeEdit() {
         {/* Alertes */}
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -327,7 +327,7 @@ export default function EmployeEdit() {
             {/* Formulaire principal */}
             <div className="lg:col-span-2 space-y-6">
               {/* Informations utilisateur */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -378,11 +378,10 @@ export default function EmployeEdit() {
                         name="first_name"
                         value={formData.first_name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.first_name 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.first_name
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         required
                       />
                       {errors.first_name && (
@@ -402,11 +401,10 @@ export default function EmployeEdit() {
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.last_name 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.last_name
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         required
                       />
                       {errors.last_name && (
@@ -426,11 +424,10 @@ export default function EmployeEdit() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.email 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.email
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         required
                       />
                       {errors.email && (
@@ -444,7 +441,7 @@ export default function EmployeEdit() {
               </motion.div>
 
               {/* Informations employé */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -469,11 +466,10 @@ export default function EmployeEdit() {
                         name="matricule"
                         value={formData.matricule}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.matricule 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.matricule
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         required
                       />
                       {errors.matricule && (
@@ -493,11 +489,10 @@ export default function EmployeEdit() {
                         name="date_embauche"
                         value={formData.date_embauche}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.date_embauche 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                        className={`w-full px-4 py-3 border ${errors.date_embauche
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         required
                       />
                       {errors.date_embauche && (
@@ -626,7 +621,7 @@ export default function EmployeEdit() {
                     Changer le mot de passe
                   </button>
                 </div>
-                
+
                 <div className="flex gap-3">
                   <Link
                     to={`/superadmin/employes/${id}`}
@@ -635,7 +630,7 @@ export default function EmployeEdit() {
                     <X className="w-4 h-4 mr-2" />
                     Annuler
                   </Link>
-                  
+
                   <button
                     type="submit"
                     disabled={saving}
@@ -660,7 +655,7 @@ export default function EmployeEdit() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Conseils */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
@@ -701,14 +696,14 @@ export default function EmployeEdit() {
       {/* Modal de changement de mot de passe */}
       <AnimatePresence>
         {showPasswordModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowPasswordModal(false)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -820,27 +815,12 @@ export default function EmployeEdit() {
       </AnimatePresence>
 
       {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }
