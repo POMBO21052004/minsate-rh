@@ -29,18 +29,16 @@ export default function AdminSidebar({ user, collapsed, onClose, location }) {
           )}
         >
           <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0">
-            DP
+            <Building className="w-6 h-6" />
           </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
-                DigiPlus RH
-              </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                Portail Admin
-              </p>
-            </div>
-          )}
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
+              MINSANTE RH
+            </h1>
+            <p className="text-xs text-green-600 dark:text-green-400 font-semibold truncate">
+              Administration
+            </p>
+          </div>
         </div>
       </div>
 
@@ -113,8 +111,17 @@ export default function AdminSidebar({ user, collapsed, onClose, location }) {
               </p>
             </div>
           </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              {user?.first_name || 'Admin'}
+            </p>
+            <p className="text-xs text-green-600 dark:text-green-400 truncate">
+              Connecté
+            </p>
+          </div>
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="En ligne"></div>
         </div>
-      )}
+      </div>
     </aside>
   );
 }

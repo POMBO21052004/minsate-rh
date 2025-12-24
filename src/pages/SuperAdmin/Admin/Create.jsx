@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import {
+  ArrowLeft,
+  Save,
   UserCheck,
   User,
   Mail,
@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function AdminCreate() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function AdminCreate() {
       ...prev,
       [name]: value
     }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -62,24 +63,24 @@ export default function AdminCreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirm_password) {
       showToastMessage('Les mots de passe ne correspondent pas', 'error');
       return;
     }
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const response = await api.post('/users/admins/', {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
         password: formData.password
       });
-      
+
       if (response.data) {
         showToastMessage('Administrateur créé avec succès !', 'success');
         setTimeout(() => {
@@ -103,7 +104,7 @@ export default function AdminCreate() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -123,7 +124,7 @@ export default function AdminCreate() {
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            Création d'un nouveau compte administrateur 
+            Création d'un nouveau compte administrateur
           </p>
         </div>
       </motion.div>
@@ -131,7 +132,7 @@ export default function AdminCreate() {
       {/* Alertes */}
       <AnimatePresence>
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -151,7 +152,7 @@ export default function AdminCreate() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formulaire principal */}
           <div className="lg:col-span-2">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -197,11 +198,10 @@ export default function AdminCreate() {
                       name="first_name"
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.first_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      className={`w-full px-4 py-3 border ${errors.first_name
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="Prénom de l'admin"
                       required
                     />
@@ -222,11 +222,10 @@ export default function AdminCreate() {
                       name="last_name"
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.last_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      className={`w-full px-4 py-3 border ${errors.last_name
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="Nom de l'admin"
                       required
                     />
@@ -247,11 +246,10 @@ export default function AdminCreate() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.email 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      className={`w-full px-4 py-3 border ${errors.email
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                       placeholder="admin@minsante.com"
                       required
                     />
@@ -273,11 +271,10 @@ export default function AdminCreate() {
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.password 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={`w-full px-4 py-3 border ${errors.password
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Mot de passe sécurisé"
                         required
                       />
@@ -310,11 +307,10 @@ export default function AdminCreate() {
                         name="confirm_password"
                         value={formData.confirm_password}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.confirm_password 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={`w-full px-4 py-3 border ${errors.confirm_password
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                          } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
                         placeholder="Confirmez le mot de passe"
                         required
                       />
@@ -357,7 +353,7 @@ export default function AdminCreate() {
                 {/* Boutons d'action */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
                   <div></div>
-                  
+
                   <div className="flex gap-3">
                     <Link
                       to="/superadmin/admins"
@@ -366,7 +362,7 @@ export default function AdminCreate() {
                       <X className="w-4 h-4 mr-2" />
                       Annuler
                     </Link>
-                    
+
                     <button
                       type="submit"
                       disabled={saving}
@@ -393,7 +389,7 @@ export default function AdminCreate() {
           {/* Colonne latérale */}
           <div className="space-y-6">
             {/* Conseils */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
@@ -428,7 +424,7 @@ export default function AdminCreate() {
             </motion.div>
 
             {/* Permissions */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -471,28 +467,12 @@ export default function AdminCreate() {
         </div>
       </form>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

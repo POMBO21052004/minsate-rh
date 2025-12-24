@@ -97,7 +97,6 @@ export default function EmployeList() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
   };
 
   const filteredEmployes = employes.filter((emp) => {

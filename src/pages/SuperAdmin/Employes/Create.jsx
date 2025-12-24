@@ -95,7 +95,6 @@ export default function EmployeCreate() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
   };
 
   const handleInputChange = (e) => {
@@ -290,11 +289,11 @@ export default function EmployeCreate() {
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
+                        className={cn("w-full px-4 py-3 border",
                           errors.last_name
                             ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]"
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                        "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg")}
                         placeholder="Nom de l'employé"
                         required
                       />
@@ -315,11 +314,11 @@ export default function EmployeCreate() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
+                        className={cn("w-full px-4 py-3 border",
                           errors.email
                             ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]"
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                       "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg")}
                         placeholder="employe@example.com"
                         required
                       />

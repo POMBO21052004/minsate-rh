@@ -39,13 +39,6 @@ export default function AppLayoutAdmin({ children }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Fermer la sidebar en mobile lors du changement de route
-  useEffect(() => {
-    if (isMobile && sidebarVisible) {
-      setSidebarVisible(false);
-    }
-  }, [location.pathname, isMobile, sidebarVisible]);
-
   const toggleSidebar = () => {
     setSidebarVisible((prev) => !prev);
   };

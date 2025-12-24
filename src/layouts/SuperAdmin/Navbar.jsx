@@ -109,10 +109,10 @@ export default function SuperAdminNavbar({
           </button>
 
           {/* Notifications */}
-          <button className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"></span>
-          </button>
+          {/* Notifications */}
+          <div className="relative">
+            <NotificationDropdown />
+          </div>
 
           {/* Dropdown utilisateur Super Admin */}
           <div className="relative group">

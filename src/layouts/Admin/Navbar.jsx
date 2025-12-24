@@ -45,7 +45,10 @@ export default function AdminNavbar({ toggleSidebar }) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-30 transition-colors duration-300">
+    <nav className={`
+      fixed top-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-30 transition-all duration-300
+      ${sidebarVisible && !isMobile ? 'left-64' : 'left-0'}
+    `}>
       <div className="flex items-center justify-between h-full px-4 lg:px-6">
         {/* Partie gauche - Logo et bouton toggle */}
         <div className="flex items-center space-x-4">
@@ -84,9 +87,9 @@ export default function AdminNavbar({ toggleSidebar }) {
           </div>
         </div>
 
-        {/* Partie droite - Actions utilisateur */}
+        {/* Right Side Actions */}
         <div className="flex items-center space-x-4">
-          {/* Indicateur de rôle */}
+          <NotificationDropdown />
           <span className="hidden sm:inline-block px-3 py-1 text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full border border-green-200 dark:border-green-700">
             Admin
           </span>
@@ -94,8 +97,7 @@ export default function AdminNavbar({ toggleSidebar }) {
           {/* Bouton changement de thème */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-            title={`Passer au thème ${theme === "dark" ? "clair" : "sombre"}`}
+            className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             {theme === "dark" ? (
               <svg
@@ -128,7 +130,6 @@ export default function AdminNavbar({ toggleSidebar }) {
             )}
           </button>
 
-          {/* Dropdown utilisateur */}
           <div className="relative group">
             <button className="flex items-center space-x-3 p-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
               <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-semibold border border-white border-opacity-30">
@@ -144,8 +145,8 @@ export default function AdminNavbar({ toggleSidebar }) {
                 ) : null}
                 {!user?.profil_url && getInitials(user?.first_name)}
               </div>
-              <span className="hidden sm:block text-sm font-medium max-w-32 truncate">
-                {truncateName(user?.first_name || "Utilisateur")}
+              <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {user?.first_name || "Admin"}
               </span>
               <svg
                 className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180"
@@ -224,12 +225,9 @@ export default function AdminNavbar({ toggleSidebar }) {
                   </svg>
                   <span>Paramètres</span>
                 </Link>
-
-                <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-3 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 rounded-lg transition-colors duration-200 w-full text-left"
+                  className="w-full flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg"
                 >
                   <svg
                     className="w-4 h-4"

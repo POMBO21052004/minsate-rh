@@ -1,6 +1,6 @@
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAuth } from "@/hooks";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function PrivateRoute({ children, allowedRoles }) {
   const { user, userRole, initializing } = useAuth();

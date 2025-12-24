@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  User, 
-  Mail, 
+import {
+  User,
+  Mail,
   Shield,
   Edit3,
   ArrowLeft,
@@ -19,23 +19,24 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function SuperAdminProfileEdit() {
   const { user: authUser, updateUser } = useAuth();
   const navigate = useNavigate();
-  
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [errors, setErrors] = useState({});
-  
+
   // États pour les notifications toast
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');
-  
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -49,7 +50,7 @@ export default function SuperAdminProfileEdit() {
         const response = await api.get('/users/profile');
         const userData = response.data;
         setUser(userData);
-        
+
         setFormData({
           first_name: userData.first_name || '',
           last_name: userData.last_name || '',
@@ -79,7 +80,7 @@ export default function SuperAdminProfileEdit() {
       ...prev,
       [name]: value
     }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -90,22 +91,22 @@ export default function SuperAdminProfileEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setError(null);
       setSuccess(null);
       setErrors({});
-      
+
       const response = await api.put('/users/profile/update', formData);
-      
+
       if (response.data) {
         showToastMessage('Profil mis à jour avec succès !', 'success');
-        
+
         if (updateUser) {
           updateUser(response.data);
         }
-        
+
         setTimeout(() => {
           navigate('/superadmin/profile');
         }, 2000);
@@ -152,7 +153,7 @@ export default function SuperAdminProfileEdit() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -178,7 +179,7 @@ export default function SuperAdminProfileEdit() {
       {/* Alertes */}
       <AnimatePresence>
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -198,7 +199,7 @@ export default function SuperAdminProfileEdit() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formulaire principal */}
           <div className="lg:col-span-2">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -250,11 +251,10 @@ export default function SuperAdminProfileEdit() {
                       name="first_name"
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.first_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      className={`w-full px-4 py-3 rounded-lg border ${errors.first_name
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="Votre prénom"
                       required
                     />
@@ -275,11 +275,10 @@ export default function SuperAdminProfileEdit() {
                       name="last_name"
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.last_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      className={`w-full px-4 py-3 rounded-lg border ${errors.last_name
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="Votre nom"
                       required
                     />
@@ -300,11 +299,10 @@ export default function SuperAdminProfileEdit() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.email 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      className={`w-full px-4 py-3 rounded-lg border ${errors.email
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
+                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
                       placeholder="votre@email.com"
                       required
                     />
@@ -339,7 +337,7 @@ export default function SuperAdminProfileEdit() {
                 {/* Boutons d'action */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 mt-8 border-t border-gray-200 dark:border-gray-700">
                   <div></div>
-                  
+
                   <div className="flex gap-3">
                     <Link
                       to="/superadmin/profile"
@@ -348,7 +346,7 @@ export default function SuperAdminProfileEdit() {
                       <X className="w-4 h-4 mr-2" />
                       Annuler
                     </Link>
-                    
+
                     <button
                       type="submit"
                       disabled={saving}
@@ -375,7 +373,7 @@ export default function SuperAdminProfileEdit() {
           {/* Colonne latérale */}
           <div className="space-y-6">
             {/* Conseils */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
@@ -410,7 +408,7 @@ export default function SuperAdminProfileEdit() {
             </motion.div>
 
             {/* Informations importantes */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -435,28 +433,12 @@ export default function SuperAdminProfileEdit() {
         </div>
       </form>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

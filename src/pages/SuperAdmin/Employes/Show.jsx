@@ -56,7 +56,6 @@ export default function EmployeShow() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
   };
 
   const handleDelete = async () => {

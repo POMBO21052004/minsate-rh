@@ -139,7 +139,6 @@ export default function EmployeEdit() {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleInputChange = (e) => {
