@@ -1,4 +1,4 @@
-# React + Vite
+# Minsante-RH
 
 Modern React application powered by Vite and Tailwind CSS v4.
 
