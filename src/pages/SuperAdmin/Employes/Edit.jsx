@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import SuperAdminLayout from "@/layouts/SuperAdmin/Layout";
+import {
+  ArrowLeft,
+  Save,
   Users,
   User,
   Mail,
@@ -19,10 +19,11 @@ import {
   Phone,
   MapPin,
   Calendar,
-  Hash
+  Hash,
 } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
+import { cn } from "@/lib/utils";
 
 export default function EmployeEdit() {
   const { id } = useParams();
@@ -42,26 +43,26 @@ export default function EmployeEdit() {
   const [selectedDepartement, setSelectedDepartement] = useState("");
 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    matricule: '',
-    date_embauche: '',
-    date_naissance: '',
-    statut: 'actif',
-    adresse: '',
-    telephone: '',
-    poste: ''
+    first_name: "",
+    last_name: "",
+    email: "",
+    matricule: "",
+    date_embauche: "",
+    date_naissance: "",
+    statut: "actif",
+    adresse: "",
+    telephone: "",
+    poste: "",
   });
 
   const [passwordForm, setPasswordForm] = useState({
-    password: '',
-    confirm_password: ''
+    password: "",
+    confirm_password: "",
   });
 
   const [showPasswords, setShowPasswords] = useState({
     new: false,
-    confirm: false
+    confirm: false,
   });
 
   useEffect(() => {
@@ -83,26 +84,30 @@ export default function EmployeEdit() {
       const response = await api.get(`/users/employe-profiles/${id}/`);
       const empData = response.data;
       setEmploye(empData);
-      
+
       setFormData({
-        first_name: empData.user?.first_name || '',
-        last_name: empData.user?.last_name || '',
-        email: empData.user?.email || '',
-        matricule: empData.matricule || '',
-        date_embauche: empData.date_embauche ? empData.date_embauche.split('T')[0] : '',
-        date_naissance: empData.date_naissance ? empData.date_naissance.split('T')[0] : '',
-        statut: empData.statut || 'actif',
-        adresse: empData.adresse || '',
-        telephone: empData.telephone || '',
-        poste: empData.poste?.toString() || ''
+        first_name: empData.user?.first_name || "",
+        last_name: empData.user?.last_name || "",
+        email: empData.user?.email || "",
+        matricule: empData.matricule || "",
+        date_embauche: empData.date_embauche
+          ? empData.date_embauche.split("T")[0]
+          : "",
+        date_naissance: empData.date_naissance
+          ? empData.date_naissance.split("T")[0]
+          : "",
+        statut: empData.statut || "actif",
+        adresse: empData.adresse || "",
+        telephone: empData.telephone || "",
+        poste: empData.poste?.toString() || "",
       });
 
       if (empData.poste_details?.departement) {
         setSelectedDepartement(empData.poste_details.departement.toString());
       }
     } catch (error) {
-      console.error('Erreur lors du chargement de l\'employé:', error);
-      showToastMessage('Erreur lors du chargement de l\'employé', 'error');
+      console.error("Erreur lors du chargement de l'employé:", error);
+      showToastMessage("Erreur lors du chargement de l'employé", error);
     } finally {
       setLoading(false);
     }
@@ -110,80 +115,81 @@ export default function EmployeEdit() {
 
   const fetchDepartements = async () => {
     try {
-      const response = await api.get('/users/departements/');
+      const response = await api.get("/users/departements/");
       setDepartements(response.data || []);
     } catch (error) {
-      console.error('Erreur lors du chargement des départements:', error);
+      console.error("Erreur lors du chargement des départements:", error);
     }
   };
 
   const fetchPostesByDepartement = async (deptId) => {
     try {
-      const response = await api.get('/users/postes/');
+      const response = await api.get("/users/postes/");
       const allPostes = response.data || [];
-      const deptPostes = allPostes.filter(poste => poste.departement?.toString() === deptId);
+      const deptPostes = allPostes.filter(
+        (poste) => poste.departement?.toString() === deptId
+      );
       setPostes(deptPostes);
     } catch (error) {
-      console.error('Erreur lors du chargement des postes:', error);
+      console.error("Erreur lors du chargement des postes:", error);
     }
   };
 
-  const showToastMessage = (message, type = 'success') => {
+  const showToastMessage = (message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name === 'departement') {
+
+    if (name === "departement") {
       setSelectedDepartement(value);
-      setFormData(prev => ({ ...prev, poste: '' }));
+      setFormData((prev) => ({ ...prev, poste: "" }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
-    
+
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: null
+        [name]: null,
       }));
     }
   };
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
-    setPasswordForm(prev => ({
+    setPasswordForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const submitData = {
         user: {
           first_name: formData.first_name,
           last_name: formData.last_name,
-          email: formData.email
+          email: formData.email,
         },
         matricule: formData.matricule,
         date_embauche: formData.date_embauche || null,
@@ -191,13 +197,16 @@ export default function EmployeEdit() {
         statut: formData.statut,
         adresse: formData.adresse || null,
         telephone: formData.telephone || null,
-        poste: formData.poste ? parseInt(formData.poste) : null
+        poste: formData.poste ? parseInt(formData.poste) : null,
       };
-      
-      const response = await api.put(`/users/employe-profiles/${id}/`, submitData);
-      
+
+      const response = await api.put(
+        `/users/employe-profiles/${id}/`,
+        submitData
+      );
+
       if (response.data) {
-        showToastMessage('Employé modifié avec succès !', 'success');
+        showToastMessage("Employé modifié avec succès !", "success");
         setTimeout(() => {
           navigate(`/superadmin/employes/${id}`);
         }, 2000);
@@ -205,10 +214,17 @@ export default function EmployeEdit() {
     } catch (err) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
-        showToastMessage('Veuillez corriger les erreurs du formulaire', 'error');
+        showToastMessage("Veuillez corriger les erreurs du formulaire", error);
       } else {
-        setError(err.response?.data?.message || 'Erreur lors de la modification de l\'employé');
-        showToastMessage(err.response?.data?.message || 'Erreur lors de la modification de l\'employé', 'error');
+        setError(
+          err.response?.data?.message ||
+            "Erreur lors de la modification de l'employé"
+        );
+        showToastMessage(
+          err.response?.data?.message ||
+            "Erreur lors de la modification de l'employé",
+          error
+        );
       }
     } finally {
       setSaving(false);
@@ -217,30 +233,32 @@ export default function EmployeEdit() {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (passwordForm.password !== passwordForm.confirm_password) {
-      showToastMessage('Les mots de passe ne correspondent pas', 'error');
+      showToastMessage("Les mots de passe ne correspondent pas", error);
       return;
     }
-    
+
     try {
       setChangingPassword(true);
       await api.put(`/users/employe-profiles/${id}/password/`, {
-        password: passwordForm.password
+        password: passwordForm.password,
       });
-      
-      showToastMessage('Mot de passe modifié avec succès', 'success');
+
+      showToastMessage("Mot de passe modifié avec succès", "success");
       setShowPasswordModal(false);
-      setPasswordForm({ password: '', confirm_password: '' });
+      setPasswordForm({ password: "", confirm_password: "" });
     } catch (error) {
-      showToastMessage('Erreur lors de la modification du mot de passe', 'error');
+      showToastMessage("Erreur lors de la modification du mot de passe", error);
     } finally {
       setChangingPassword(false);
     }
   };
 
   const getInitials = (firstName, lastName) => {
-    return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
+    return `${firstName?.charAt(0) || ""}${
+      lastName?.charAt(0) || ""
+    }`.toUpperCase();
   };
 
   if (loading) {
@@ -249,7 +267,9 @@ export default function EmployeEdit() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement de l'employé...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">
+              Chargement de l'employé...
+            </p>
           </div>
         </div>
       </SuperAdminLayout>
@@ -280,7 +300,7 @@ export default function EmployeEdit() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -306,9 +326,9 @@ export default function EmployeEdit() {
         {/* Alertes */}
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 mb-6 rounded-lg"
             >
@@ -327,7 +347,7 @@ export default function EmployeEdit() {
             {/* Formulaire principal */}
             <div className="lg:col-span-2 space-y-6">
               {/* Informations utilisateur */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -369,7 +389,7 @@ export default function EmployeEdit() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <User className="w-4 h-4 mr-2" />
                         Prénom *
                       </label>
@@ -378,11 +398,13 @@ export default function EmployeEdit() {
                         name="first_name"
                         value={formData.first_name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.first_name 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.first_name
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         required
                       />
                       {errors.first_name && (
@@ -393,7 +415,7 @@ export default function EmployeEdit() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <User className="w-4 h-4 mr-2" />
                         Nom *
                       </label>
@@ -402,11 +424,13 @@ export default function EmployeEdit() {
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.last_name 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.last_name
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         required
                       />
                       {errors.last_name && (
@@ -417,7 +441,7 @@ export default function EmployeEdit() {
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Mail className="w-4 h-4 mr-2" />
                         Email professionnel *
                       </label>
@@ -426,11 +450,13 @@ export default function EmployeEdit() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.email 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.email
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         required
                       />
                       {errors.email && (
@@ -444,7 +470,7 @@ export default function EmployeEdit() {
               </motion.div>
 
               {/* Informations employé */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -460,7 +486,7 @@ export default function EmployeEdit() {
                 <div className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Hash className="w-4 h-4 mr-2" />
                         Matricule *
                       </label>
@@ -469,11 +495,13 @@ export default function EmployeEdit() {
                         name="matricule"
                         value={formData.matricule}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.matricule 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.matricule
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         required
                       />
                       {errors.matricule && (
@@ -484,7 +512,7 @@ export default function EmployeEdit() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Calendar className="w-4 h-4 mr-2" />
                         Date d'embauche *
                       </label>
@@ -493,11 +521,13 @@ export default function EmployeEdit() {
                         name="date_embauche"
                         value={formData.date_embauche}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border ${
-                          errors.date_embauche 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.date_embauche
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         required
                       />
                       {errors.date_embauche && (
@@ -508,7 +538,7 @@ export default function EmployeEdit() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Calendar className="w-4 h-4 mr-2" />
                         Date de naissance
                       </label>
@@ -517,12 +547,18 @@ export default function EmployeEdit() {
                         name="date_naissance"
                         value={formData.date_naissance}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150] bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.date_naissance
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Users className="w-4 h-4 mr-2" />
                         Statut *
                       </label>
@@ -530,7 +566,13 @@ export default function EmployeEdit() {
                         name="statut"
                         value={formData.statut}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150] bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.statut
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         required
                       >
                         <option value="actif">Actif</option>
@@ -541,7 +583,7 @@ export default function EmployeEdit() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Building2 className="w-4 h-4 mr-2" />
                         Département
                       </label>
@@ -549,7 +591,13 @@ export default function EmployeEdit() {
                         name="departement"
                         value={selectedDepartement}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150] bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.departement
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                       >
                         <option value="">Sélectionner un département...</option>
                         {departements.map((dept) => (
@@ -561,7 +609,7 @@ export default function EmployeEdit() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Briefcase className="w-4 h-4 mr-2" />
                         Poste
                       </label>
@@ -570,7 +618,13 @@ export default function EmployeEdit() {
                         value={formData.poste}
                         onChange={handleInputChange}
                         disabled={!selectedDepartement}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150] bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.poste
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        )}
                       >
                         <option value="">Sélectionner un poste...</option>
                         {postes.map((poste) => (
@@ -582,7 +636,7 @@ export default function EmployeEdit() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <Phone className="w-4 h-4 mr-2" />
                         Téléphone
                       </label>
@@ -591,13 +645,19 @@ export default function EmployeEdit() {
                         name="telephone"
                         value={formData.telephone}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150] bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.telephone
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         placeholder="+237 6XX XXX XXX"
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                         <MapPin className="w-4 h-4 mr-2" />
                         Adresse
                       </label>
@@ -606,7 +666,13 @@ export default function EmployeEdit() {
                         value={formData.adresse}
                         onChange={handleInputChange}
                         rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150] bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        className={cn(
+                          "w-full px-4 py-3 border",
+                          errors.adresse
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                          "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                        )}
                         placeholder="Adresse complète..."
                       />
                     </div>
@@ -626,7 +692,7 @@ export default function EmployeEdit() {
                     Changer le mot de passe
                   </button>
                 </div>
-                
+
                 <div className="flex gap-3">
                   <Link
                     to={`/superadmin/employes/${id}`}
@@ -635,7 +701,7 @@ export default function EmployeEdit() {
                     <X className="w-4 h-4 mr-2" />
                     Annuler
                   </Link>
-                  
+
                   <button
                     type="submit"
                     disabled={saving}
@@ -660,7 +726,7 @@ export default function EmployeEdit() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Conseils */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
@@ -701,14 +767,14 @@ export default function EmployeEdit() {
       {/* Modal de changement de mot de passe */}
       <AnimatePresence>
         {showPasswordModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowPasswordModal(false)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -746,7 +812,7 @@ export default function EmployeEdit() {
                       />
                       <button
                         type="button"
-                        onClick={() => togglePasswordVisibility('new')}
+                        onClick={() => togglePasswordVisibility("new")}
                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#179150] hover:text-[#147a43]"
                       >
                         {showPasswords.new ? (
@@ -777,7 +843,7 @@ export default function EmployeEdit() {
                       />
                       <button
                         type="button"
-                        onClick={() => togglePasswordVisibility('confirm')}
+                        onClick={() => togglePasswordVisibility("confirm")}
                         className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#179150] hover:text-[#147a43]"
                       >
                         {showPasswords.confirm ? (
@@ -826,13 +892,14 @@ export default function EmployeEdit() {
             initial={{ opacity: 0, y: 50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
+            className={cn(
+              "fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3",
+              toastType === "success"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            )}
           >
-            {toastType === 'success' ? (
+            {toastType === "success" ? (
               <CheckCircle className="w-5 h-5" />
             ) : (
               <AlertCircle className="w-5 h-5" />
@@ -844,4 +911,3 @@ export default function EmployeEdit() {
     </SuperAdminLayout>
   );
 }
-

@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { AlertTriangle, Home } from "lucide-react";
 
@@ -19,21 +18,21 @@ export default function NotFound() {
         <h1 className="text-8xl font-bold text-red-500 mb-4 tracking-tighter">
           404
         </h1>
-        
+
         {/* Titre */}
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
           Page introuvable
         </h2>
-        
+
         {/* Message d'erreur */}
         <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-          Oups ! La page que vous recherchez semble s'être égarée. 
-          Elle a peut-être été déplacée, supprimée ou n'a jamais existé.
+          Oups ! La page que vous recherchez semble s'être égarée. Elle a
+          peut-être été déplacée, supprimée ou n'a jamais existé.
         </p>
 
         {/* Bouton de retour */}
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50"
         >
           <Home className="w-5 h-5 mr-3" />
@@ -44,8 +43,8 @@ export default function NotFound() {
         <div className="mt-6">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Besoin d'aide ?{" "}
-            <a 
-              href="/support" 
+            <a
+              href="/support"
               className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium transition-colors duration-200"
             >
               Contactez le support

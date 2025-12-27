@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import SuperAdminLayout from "../../layouts/SuperAdmin/Layout";
-import { 
+import {
   Shield,
-  Users, 
+  Users,
   Building2,
   Briefcase,
   UserCheck,
   Calendar,
   Settings,
   User,
-  AlertCircle,
   Clock,
   TrendingUp,
-  CheckCircle2,
-  XCircle,
-  FileText,
-  Database,
-  Wrench
+  Wrench,
 } from "lucide-react";
-import { motion } from 'framer-motion';
-import api from "../../services/api";
+import { motion } from "motion/react";
+import { useAuth } from "@/hooks";
+import api from "@/services/api";
+import { cn, getColorClasses } from "@/lib/utils";
 
 const SuperAdminDashboard = () => {
   const { user } = useAuth();
@@ -31,7 +26,7 @@ const SuperAdminDashboard = () => {
     departements: 0,
     postes: 0,
     employes: 0,
-    demandesEnAttente: 0
+    demandesEnAttente: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -43,22 +38,47 @@ const SuperAdminDashboard = () => {
     try {
       setLoading(true);
       // Récupérer les statistiques depuis les différentes APIs
-      const [superAdminsRes, adminsRes, departementsRes, postesRes, employesRes, demandesRes] = await Promise.allSettled([
-        api.get('/users/superadmins/'),
-        api.get('/users/admins/'),
-        api.get('/users/departements/'),
-        api.get('/users/postes/'),
-        api.get('/users/employes/'),
-        api.get('/users/demandes/?statut=en_attente')
+      const [
+        superAdminsRes,
+        adminsRes,
+        departementsRes,
+        postesRes,
+        employesRes,
+        demandesRes,
+      ] = await Promise.allSettled([
+        api.get("/users/superadmins/"),
+        api.get("/users/admins/"),
+        api.get("/users/departements/"),
+        api.get("/users/postes/"),
+        api.get("/users/employes/"),
+        api.get("/users/demandes/?statut=en_attente"),
       ]);
 
       setStats({
-        superAdmins: superAdminsRes.status === 'fulfilled' ? (superAdminsRes.value.data?.length || 0) : 0,
-        admins: adminsRes.status === 'fulfilled' ? (adminsRes.value.data?.length || 0) : 0,
-        departements: departementsRes.status === 'fulfilled' ? (departementsRes.value.data?.length || 0) : 0,
-        postes: postesRes.status === 'fulfilled' ? (postesRes.value.data?.length || 0) : 0,
-        employes: employesRes.status === 'fulfilled' ? (employesRes.value.data?.length || 0) : 0,
-        demandesEnAttente: demandesRes.status === 'fulfilled' ? (demandesRes.value.data?.length || 0) : 0
+        superAdmins:
+          superAdminsRes.status === "fulfilled"
+            ? superAdminsRes.value.data?.length || 0
+            : 0,
+        admins:
+          adminsRes.status === "fulfilled"
+            ? adminsRes.value.data?.length || 0
+            : 0,
+        departements:
+          departementsRes.status === "fulfilled"
+            ? departementsRes.value.data?.length || 0
+            : 0,
+        postes:
+          postesRes.status === "fulfilled"
+            ? postesRes.value.data?.length || 0
+            : 0,
+        employes:
+          employesRes.status === "fulfilled"
+            ? employesRes.value.data?.length || 0
+            : 0,
+        demandesEnAttente:
+          demandesRes.status === "fulfilled"
+            ? demandesRes.value.data?.length || 0
+            : 0,
       });
     } catch (error) {
       console.error("Erreur lors de la récupération des statistiques:", error);
@@ -67,102 +87,15 @@ const SuperAdminDashboard = () => {
     }
   };
 
-  const fonctionnalites = [
-    {
-      id: 'super-admins',
-      title: 'Gestion des Super Administrateurs',
-      description: 'Créer, modifier et gérer les comptes super administrateurs',
-      icon: Shield,
-      color: 'red',
-      link: '/superadmin/super-admins',
-      available: true
-    },
-    {
-      id: 'admins',
-      title: 'Gestion des Administrateurs',
-      description: 'Créer, modifier et gérer les comptes administrateurs',
-      icon: UserCheck,
-      color: 'blue',
-      link: '/superadmin/admins',
-      available: true
-    },
-    {
-      id: 'departements',
-      title: 'Gestion des Départements',
-      description: 'Créer et gérer les départements de l\'entreprise',
-      icon: Building2,
-      color: 'green',
-      link: '/superadmin/departements',
-      available: true
-    },
-    {
-      id: 'postes',
-      title: 'Gestion des Postes',
-      description: 'Créer et gérer les postes de travail',
-      icon: Briefcase,
-      color: 'purple',
-      link: '/superadmin/postes',
-      available: true
-    },
-    {
-      id: 'employes',
-      title: 'Gestion des Employés',
-      description: 'Créer, modifier et gérer les employés de l\'entreprise',
-      icon: Users,
-      color: 'indigo',
-      link: '/superadmin/employes',
-      available: true
-    },
-    {
-      id: 'conges',
-      title: 'Gestion des Demandes de Congé',
-      description: 'Approuver, rejeter et suivre les demandes de congé',
-      icon: Calendar,
-      color: 'yellow',
-      link: '/superadmin/conges',
-      available: true
-    },
-    {
-      id: 'rapports',
-      title: 'Rapports et Statistiques',
-      description: 'Consulter les rapports détaillés et les statistiques du système',
-      icon: TrendingUp,
-      color: 'pink',
-      link: '#',
-      available: false
-    },
-    {
-      id: 'parametres',
-      title: 'Paramètres Système',
-      description: 'Configurer les paramètres généraux du système',
-      icon: Settings,
-      color: 'gray',
-      link: '#',
-      available: false
-    }
-  ];
-
-  const getColorClasses = (color) => {
-    const colors = {
-      red: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400',
-      blue: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400',
-      green: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-600 dark:text-green-400',
-      purple: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400',
-      indigo: 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400',
-      yellow: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 text-yellow-600 dark:text-yellow-400',
-      pink: 'bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800 text-pink-600 dark:text-pink-400',
-      gray: 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400'
-    };
-    return colors[color] || colors.gray;
-  };
-
   if (loading) {
     return (
       <SuperAdminLayout>
         <div className="flex items-center justify-center min-h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Chargement du tableau de bord...</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Chargement du tableau de bord...
+            </p>
           </div>
         </div>
       </SuperAdminLayout>
@@ -173,7 +106,7 @@ const SuperAdminDashboard = () => {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -199,7 +132,7 @@ const SuperAdminDashboard = () => {
 
         {/* Statistiques rapides */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -207,8 +140,12 @@ const SuperAdminDashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Super Admins</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.superAdmins}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Super Admins
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.superAdmins}
+                </p>
               </div>
               <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
                 <Shield className="w-6 h-6 text-red-600 dark:text-red-400" />
@@ -216,7 +153,7 @@ const SuperAdminDashboard = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -224,8 +161,12 @@ const SuperAdminDashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Admins</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.admins}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Admins
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.admins}
+                </p>
               </div>
               <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <UserCheck className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -233,7 +174,7 @@ const SuperAdminDashboard = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -241,8 +182,12 @@ const SuperAdminDashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Départements</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.departements}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Départements
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.departements}
+                </p>
               </div>
               <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <Building2 className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -250,7 +195,7 @@ const SuperAdminDashboard = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.4 }}
@@ -258,8 +203,12 @@ const SuperAdminDashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Postes</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.postes}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Postes
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.postes}
+                </p>
               </div>
               <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Briefcase className="w-6 h-6 text-purple-600 dark:text-purple-400" />
@@ -267,7 +216,7 @@ const SuperAdminDashboard = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.5 }}
@@ -275,8 +224,12 @@ const SuperAdminDashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Employés</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.employes}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Employés
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.employes}
+                </p>
               </div>
               <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
                 <Users className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
@@ -284,7 +237,7 @@ const SuperAdminDashboard = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.6 }}
@@ -292,8 +245,12 @@ const SuperAdminDashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Congés en attente</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.demandesEnAttente}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Congés en attente
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stats.demandesEnAttente}
+                </p>
               </div>
               <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                 <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
@@ -303,7 +260,7 @@ const SuperAdminDashboard = () => {
         </div>
 
         {/* Fonctionnalités */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.7 }}
@@ -325,13 +282,16 @@ const SuperAdminDashboard = () => {
               {fonctionnalites.map((fonctionnalite, index) => {
                 const Icon = fonctionnalite.icon;
                 const isAvailable = fonctionnalite.available;
-                
+
                 const CardContent = (
-                  <div className={`relative border-2 rounded-lg p-6 transition-all duration-200 ${
-                    isAvailable 
-                      ? 'border-gray-200 dark:border-gray-700 hover:border-[#179150] hover:shadow-md cursor-pointer' 
-                      : 'border-gray-200 dark:border-gray-700 opacity-60 cursor-not-allowed'
-                  }`}>
+                  <div
+                    className={cn(
+                      "relative border-2 rounded-lg p-6 transition-all duration-200",
+                      isAvailable
+                        ? "border-gray-200 dark:border-gray-700 hover:border-[#179150] hover:shadow-md cursor-pointer"
+                        : "border-gray-200 dark:border-gray-700 opacity-60 cursor-not-allowed"
+                    )}
+                  >
                     {!isAvailable && (
                       <div className="absolute top-2 right-2">
                         <span className="px-2 py-1 text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded">
@@ -339,7 +299,12 @@ const SuperAdminDashboard = () => {
                         </span>
                       </div>
                     )}
-                    <div className={`w-12 h-12 ${getColorClasses(fonctionnalite.color)} rounded-lg flex items-center justify-center mb-4`}>
+                    <div
+                      className={cn(
+                        "w-12 h-12",
+                        getColorClasses(fonctionnalite.color)
+                      )}
+                    >
                       <Icon className="w-6 h-6" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -365,9 +330,7 @@ const SuperAdminDashboard = () => {
                     transition={{ duration: 0.3, delay: 0.1 * (index + 1) }}
                   >
                     {isAvailable ? (
-                      <Link to={fonctionnalite.link}>
-                        {CardContent}
-                      </Link>
+                      <Link to={fonctionnalite.link}>{CardContent}</Link>
                     ) : (
                       CardContent
                     )}
@@ -379,7 +342,7 @@ const SuperAdminDashboard = () => {
         </motion.div>
 
         {/* Avertissement de développement */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.8 }}
@@ -394,8 +357,10 @@ const SuperAdminDashboard = () => {
                 Fonctionnalités en développement
               </h3>
               <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                Certaines fonctionnalités du tableau de bord sont actuellement en cours de développement. 
-                Les sections marquées "En développement" seront disponibles dans une prochaine mise à jour.
+                Certaines fonctionnalités du tableau de bord sont actuellement
+                en cours de développement. Les sections marquées "En
+                développement" seront disponibles dans une prochaine mise à
+                jour.
               </p>
             </div>
           </div>

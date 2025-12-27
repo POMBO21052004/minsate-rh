@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
+import SuperAdminLayout from "@/layouts/SuperAdmin/Layout";
+import {
+  ArrowLeft,
   Trash2,
   Calendar,
   Mail,
@@ -13,17 +13,18 @@ import {
   Activity,
   Clock,
   CalendarDays,
-  FileText,
   CheckCircle2,
   XCircle as XCircleIcon,
   Clock as ClockIcon,
   Building2,
   Briefcase,
   Info,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
+import { STATUTS, TYPES } from "@/constants";
+import { cn, formatDate, formatDateTime } from "@/lib/utils";
 
 export default function CongeShow() {
   const { id } = useParams();
@@ -39,20 +40,7 @@ export default function CongeShow() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
 
-  // Statuts et types depuis le backend
-  const STATUTS = [
-    { value: 'en_attente', label: 'En attente', icon: ClockIcon, color: 'yellow' },
-    { value: 'approuve', label: 'Approuvé', icon: CheckCircle2, color: 'green' },
-    { value: 'rejete', label: 'Rejeté', icon: XCircleIcon, color: 'red' }
-  ];
-
-  const TYPES = [
-    { value: 'annuel', label: 'Congé annuel', icon: CalendarDays },
-    { value: 'maladie', label: 'Congé maladie', icon: FileText },
-    { value: 'sans_solde', label: 'Congé sans solde', icon: Calendar }
-  ];
-
-  const showToastMessage = React.useCallback((message, type = 'success') => {
+  const showToastMessage = React.useCallback((message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
@@ -66,8 +54,8 @@ export default function CongeShow() {
       const response = await api.get(`/users/leaves/${id}/`);
       setDemande(response.data);
     } catch (error) {
-      console.error('Erreur lors du chargement:', error);
-      showToastMessage('Erreur lors du chargement de la demande', 'error');
+      console.error("Erreur lors du chargement:", error);
+      showToastMessage("Erreur lors du chargement de la demande", "error");
     } finally {
       setLoading(false);
     }
@@ -83,18 +71,21 @@ export default function CongeShow() {
     try {
       setProcessing(true);
       await api.put(`/users/leaves/${id}/`, {
-        statut: 'approuve',
+        statut: "approuve",
         description: demande.description,
-        raison: raison
+        raison: raison,
       });
-      showToastMessage('Demande approuvée avec succès', 'success');
+      showToastMessage("Demande approuvée avec succès", "success");
       fetchDemande();
       setShowApproveModal(false);
       setRaison("");
     } catch (error) {
-      console.error('Erreur lors de l\'approbation:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de l\'approbation';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors de l'approbation:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors de l'approbation";
+      showToastMessage(errorMsg, "error");
     } finally {
       setProcessing(false);
     }
@@ -104,25 +95,28 @@ export default function CongeShow() {
     if (!demande) return;
 
     if (!raison.trim()) {
-      showToastMessage('Veuillez indiquer une raison pour le rejet', 'error');
+      showToastMessage("Veuillez indiquer une raison pour le rejet", "error");
       return;
     }
 
     try {
       setProcessing(true);
       await api.put(`/users/leaves/${id}/`, {
-        statut: 'rejete',
+        statut: "rejete",
         description: demande.description,
-        raison: raison
+        raison: raison,
       });
-      showToastMessage('Demande rejetée avec succès', 'success');
+      showToastMessage("Demande rejetée avec succès", "success");
       fetchDemande();
       setShowRejectModal(false);
       setRaison("");
     } catch (error) {
-      console.error('Erreur lors du rejet:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors du rejet';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors du rejet:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors du rejet";
+      showToastMessage(errorMsg, "error");
     } finally {
       setProcessing(false);
     }
@@ -132,38 +126,21 @@ export default function CongeShow() {
     try {
       setProcessing(true);
       await api.delete(`/users/leaves/${id}/`);
-      showToastMessage('Demande supprimée avec succès', 'success');
+      showToastMessage("Demande supprimée avec succès", "success");
       setTimeout(() => {
-        navigate('/superadmin/conges');
+        navigate("/superadmin/conges");
       }, 2000);
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de la suppression';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors de la suppression:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors de la suppression";
+      showToastMessage(errorMsg, "error");
     } finally {
       setProcessing(false);
       setShowDeleteModal(false);
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Non renseigné';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-
-  const formatDateTime = (dateString) => {
-    if (!dateString) return 'Non renseigné';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   };
 
   const calculateDays = (dateDebut, dateFin) => {
@@ -176,15 +153,17 @@ export default function CongeShow() {
   };
 
   const getStatutBadge = (statut) => {
-    return STATUTS.find(s => s.value === statut) || STATUTS[0];
+    return STATUTS.find((s) => s.value === statut) || STATUTS[0];
   };
 
   const getTypeBadge = (type) => {
-    return TYPES.find(t => t.value === type) || TYPES[0];
+    return TYPES.find((t) => t.value === type) || TYPES[0];
   };
 
   const getInitials = (firstName, lastName) => {
-    return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
+    return `${firstName?.charAt(0) || ""}${
+      lastName?.charAt(0) || ""
+    }`.toUpperCase();
   };
 
   if (loading) {
@@ -193,7 +172,9 @@ export default function CongeShow() {
         <div className="flex items-center justify-center min-h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Chargement de la demande...</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Chargement de la demande...
+            </p>
           </div>
         </div>
       </SuperAdminLayout>
@@ -229,7 +210,7 @@ export default function CongeShow() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -252,7 +233,7 @@ export default function CongeShow() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {demande.statut === 'en_attente' && (
+              {demande.statut === "en_attente" && (
                 <>
                   <button
                     onClick={() => {
@@ -291,7 +272,7 @@ export default function CongeShow() {
           {/* Contenu principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Carte principale */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -302,26 +283,30 @@ export default function CongeShow() {
                 <div className="flex flex-col md:flex-row md:items-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="md:w-1/4 text-center mb-4 md:mb-0">
                     <div className="relative inline-block">
-                      <div 
+                      <div
                         className="rounded-lg border-4 border-[#179150] flex items-center justify-center"
-                        style={{ 
-                          width: '120px', 
-                          height: '120px', 
-                          background: 'linear-gradient(135deg, #179150 0%, #147a43 100%)', 
-                          color: 'white', 
-                          fontSize: '3rem', 
-                          fontWeight: '700' 
+                        style={{
+                          width: "120px",
+                          height: "120px",
+                          background:
+                            "linear-gradient(135deg, #179150 0%, #147a43 100%)",
+                          color: "white",
+                          fontSize: "3rem",
+                          fontWeight: "700",
                         }}
                       >
                         <TypeIcon className="w-16 h-16" />
                       </div>
-                      <span className={`absolute -bottom-2 -right-2 text-white p-2 border-2 border-white dark:border-gray-800 rounded-lg ${
-                        statutBadge.value === 'en_attente' 
-                          ? 'bg-yellow-500'
-                          : statutBadge.value === 'approuve'
-                          ? 'bg-green-500'
-                          : 'bg-red-500'
-                      }`}>
+                      <span
+                        className={cn(
+                          "absolute -bottom-2 -right-2 text-white p-2 border-2 border-white dark:border-gray-800 rounded-lg",
+                          statutBadge.value === "en_attente"
+                            ? "bg-yellow-500"
+                            : statutBadge.value === "approuve"
+                            ? "bg-green-500"
+                            : "bg-red-500"
+                        )}
+                      >
                         <StatutIcon className="w-4 h-4" />
                       </span>
                     </div>
@@ -331,13 +316,16 @@ export default function CongeShow() {
                       {typeBadge.label}
                     </h4>
                     <div className="flex flex-wrap gap-2 items-center mb-3">
-                      <span className={`inline-flex items-center px-3 py-1 rounded text-sm font-medium ${
-                        statutBadge.value === 'en_attente' 
-                          ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400'
-                          : statutBadge.value === 'approuve'
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                          : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
-                      }`}>
+                      <span
+                        className={cn(
+                          "inline-flex items-center px-3 py-1 rounded text-sm font-medium",
+                          statutBadge.value === "en_attente"
+                            ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400"
+                            : statutBadge.value === "approuve"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
+                            : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"
+                        )}
+                      >
                         <StatutIcon className="w-4 h-4 mr-1.5" />
                         {statutBadge.label}
                       </span>
@@ -348,7 +336,8 @@ export default function CongeShow() {
                     <div className="text-sm text-gray-600 dark:text-gray-400">
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-2" />
-                        {formatDate(demande.date_debut)} → {formatDate(demande.date_fin)}
+                        {formatDate(demande.date_debut)} →{" "}
+                        {formatDate(demande.date_fin)}
                       </div>
                     </div>
                   </div>
@@ -358,7 +347,7 @@ export default function CongeShow() {
 
             {/* Informations de l'employé */}
             {demande.employe && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -369,16 +358,20 @@ export default function CongeShow() {
                     <User className="w-5 h-5 mr-2 text-[#179150]" />
                     Informations de l'employé
                   </h5>
-                  
-                  {typeof demande.employe === 'object' ? (
+
+                  {typeof demande.employe === "object" ? (
                     <>
                       <div className="flex items-center mb-6">
                         <div className="w-16 h-16 bg-gradient-to-br from-[#179150] to-[#147a43] rounded-lg flex items-center justify-center text-white font-bold text-lg mr-4">
-                          {getInitials(demande.employe?.user?.first_name, demande.employe?.user?.last_name)}
+                          {getInitials(
+                            demande.employe?.user?.first_name,
+                            demande.employe?.user?.last_name
+                          )}
                         </div>
                         <div>
                           <h6 className="font-semibold text-gray-900 dark:text-white">
-                            {demande.employe?.user?.first_name} {demande.employe?.user?.last_name}
+                            {demande.employe?.user?.first_name}{" "}
+                            {demande.employe?.user?.last_name}
                           </h6>
                           <div className="text-sm text-gray-600 dark:text-gray-400">
                             Matricule: {demande.employe?.matricule}
@@ -394,13 +387,19 @@ export default function CongeShow() {
 
                       {demande.employe?.poste_details && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {demande.employe.poste_details.departement_details && (
+                          {demande.employe.poste_details
+                            .departement_details && (
                             <div className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <Building2 className="w-4 h-4 text-[#179150] mr-2" />
                               <div>
-                                <div className="text-xs text-gray-600 dark:text-gray-400">Département</div>
+                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                  Département
+                                </div>
                                 <div className="font-medium text-gray-900 dark:text-white">
-                                  {demande.employe.poste_details.departement_details.nom}
+                                  {
+                                    demande.employe.poste_details
+                                      .departement_details.nom
+                                  }
                                 </div>
                               </div>
                             </div>
@@ -408,7 +407,9 @@ export default function CongeShow() {
                           <div className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <Briefcase className="w-4 h-4 text-[#179150] mr-2" />
                             <div>
-                              <div className="text-xs text-gray-600 dark:text-gray-400">Poste</div>
+                              <div className="text-xs text-gray-600 dark:text-gray-400">
+                                Poste
+                              </div>
                               <div className="font-medium text-gray-900 dark:text-white">
                                 {demande.employe.poste_details.titre}
                               </div>
@@ -435,7 +436,7 @@ export default function CongeShow() {
             )}
 
             {/* Détails de la demande */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -446,7 +447,7 @@ export default function CongeShow() {
                   <Info className="w-5 h-5 mr-2 text-[#179150]" />
                   Détails de la demande
                 </h5>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
@@ -477,7 +478,7 @@ export default function CongeShow() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                       <span className="text-gray-600 dark:text-gray-400 flex items-center">
@@ -493,13 +494,16 @@ export default function CongeShow() {
                         <ClockIcon className="w-4 h-4 mr-2" />
                         Statut :
                       </span>
-                      <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
-                        statutBadge.value === 'en_attente' 
-                          ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400'
-                          : statutBadge.value === 'approuve'
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                          : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
-                      }`}>
+                      <span
+                        className={cn(
+                          "inline-flex items-center px-2 py-1 text-xs font-medium rounded",
+                          statutBadge.value === "en_attente"
+                            ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400"
+                            : statutBadge.value === "approuve"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
+                            : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"
+                        )}
+                      >
                         <StatutIcon className="w-3 h-3 mr-1" />
                         {statutBadge.label}
                       </span>
@@ -534,17 +538,19 @@ export default function CongeShow() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Actions rapides */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.3 }}
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
             >
               <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Actions rapides</h4>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                  Actions rapides
+                </h4>
               </div>
               <div className="p-4 space-y-2">
-                {demande.statut === 'en_attente' && (
+                {demande.statut === "en_attente" && (
                   <>
                     <button
                       onClick={() => {
@@ -586,7 +592,7 @@ export default function CongeShow() {
             </motion.div>
 
             {/* Informations système */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.4 }}
@@ -601,15 +607,25 @@ export default function CongeShow() {
               <div className="p-4 space-y-3 text-sm">
                 <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                   <span className="text-gray-600 dark:text-gray-400">ID</span>
-                  <span className="font-mono text-gray-900 dark:text-white">{demande.id}</span>
+                  <span className="font-mono text-gray-900 dark:text-white">
+                    {demande.id}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                  <span className="text-gray-600 dark:text-gray-400">Créé le</span>
-                  <span className="text-gray-900 dark:text-white">{formatDateTime(demande.created_at)}</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Créé le
+                  </span>
+                  <span className="text-gray-900 dark:text-white">
+                    {formatDateTime(demande.created_at)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600 dark:text-gray-400">Modifié le</span>
-                  <span className="text-gray-900 dark:text-white">{formatDateTime(demande.updated_at)}</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Modifié le
+                  </span>
+                  <span className="text-gray-900 dark:text-white">
+                    {formatDateTime(demande.updated_at)}
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -624,13 +640,14 @@ export default function CongeShow() {
             initial={{ opacity: 0, y: 50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
+            className={cn(
+              "fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3",
+              toastType === "success"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            )}
           >
-            {toastType === 'success' ? (
+            {toastType === "success" ? (
               <CheckCircle className="w-5 h-5" />
             ) : (
               <AlertCircle className="w-5 h-5" />
@@ -668,11 +685,15 @@ export default function CongeShow() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Êtes-vous sûr de vouloir approuver la demande de congé de <strong>{
-                  typeof demande?.employe === 'object' 
-                    ? `${demande.employe?.user?.first_name || ''} ${demande.employe?.user?.last_name || ''}`.trim() || 'cet employé'
-                    : 'cet employé'
-                }</strong> ?
+                Êtes-vous sûr de vouloir approuver la demande de congé de{" "}
+                <strong>
+                  {typeof demande?.employe === "object"
+                    ? `${demande.employe?.user?.first_name || ""} ${
+                        demande.employe?.user?.last_name || ""
+                      }`.trim() || "cet employé"
+                    : "cet employé"}
+                </strong>{" "}
+                ?
               </p>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -698,7 +719,7 @@ export default function CongeShow() {
                   disabled={processing}
                   className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
-                  {processing ? 'Traitement...' : 'Approuver'}
+                  {processing ? "Traitement..." : "Approuver"}
                 </button>
               </div>
             </motion.div>
@@ -734,11 +755,15 @@ export default function CongeShow() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Êtes-vous sûr de vouloir rejeter la demande de congé de <strong>{
-                  typeof demande?.employe === 'object' 
-                    ? `${demande.employe?.user?.first_name || ''} ${demande.employe?.user?.last_name || ''}`.trim() || 'cet employé'
-                    : 'cet employé'
-                }</strong> ?
+                Êtes-vous sûr de vouloir rejeter la demande de congé de{" "}
+                <strong>
+                  {typeof demande?.employe === "object"
+                    ? `${demande.employe?.user?.first_name || ""} ${
+                        demande.employe?.user?.last_name || ""
+                      }`.trim() || "cet employé"
+                    : "cet employé"}
+                </strong>{" "}
+                ?
               </p>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -768,7 +793,7 @@ export default function CongeShow() {
                   disabled={processing}
                   className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
-                  {processing ? 'Traitement...' : 'Rejeter'}
+                  {processing ? "Traitement..." : "Rejeter"}
                 </button>
               </div>
             </motion.div>
@@ -804,7 +829,8 @@ export default function CongeShow() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer cette demande de congé ? Cette action est irréversible.
+                Êtes-vous sûr de vouloir supprimer cette demande de congé ?
+                Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -818,7 +844,7 @@ export default function CongeShow() {
                   disabled={processing}
                   className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
-                  {processing ? 'Suppression...' : 'Supprimer'}
+                  {processing ? "Suppression..." : "Supprimer"}
                 </button>
               </div>
             </motion.div>
@@ -828,4 +854,3 @@ export default function CongeShow() {
     </SuperAdminLayout>
   );
 }
-

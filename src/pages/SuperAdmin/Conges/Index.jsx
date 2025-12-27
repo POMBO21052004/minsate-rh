@@ -1,35 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  Calendar, 
-  Plus, 
-  Search, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import SuperAdminLayout from "@/layouts/SuperAdmin/Layout";
+import {
+  Calendar,
+  Search,
+  Eye,
+  Trash2,
   RefreshCw,
   Download,
   AlertCircle,
   CheckCircle,
   X,
   XCircle,
-  Clock,
   Filter,
-  User,
-  Mail,
-  CalendarDays,
-  FileText,
   CheckCircle2,
   XCircle as XCircleIcon,
   Clock as ClockIcon,
-  TrendingUp,
-  Users,
-  Building2,
-  Briefcase
 } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
+import { STATUTS, TYPES } from "@/constants";
+import { cn } from "@/lib/utils";
 
 export default function CongeList() {
   const navigate = useNavigate();
@@ -51,21 +42,8 @@ export default function CongeList() {
     total: 0,
     enAttente: 0,
     approuvees: 0,
-    rejetees: 0
+    rejetees: 0,
   });
-
-  // Statuts et types depuis le backend
-  const STATUTS = [
-    { value: 'en_attente', label: 'En attente', icon: ClockIcon, color: 'yellow' },
-    { value: 'approuve', label: 'Approuvé', icon: CheckCircle2, color: 'green' },
-    { value: 'rejete', label: 'Rejeté', icon: XCircleIcon, color: 'red' }
-  ];
-
-  const TYPES = [
-    { value: 'annuel', label: 'Congé annuel', icon: CalendarDays },
-    { value: 'maladie', label: 'Congé maladie', icon: FileText },
-    { value: 'sans_solde', label: 'Congé sans solde', icon: Calendar }
-  ];
 
   useEffect(() => {
     fetchDemandes();
@@ -78,11 +56,14 @@ export default function CongeList() {
   const fetchDemandes = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/users/demandes/');
+      const response = await api.get("/users/demandes/");
       setDemandes(response.data || []);
     } catch (error) {
-      console.error('Erreur lors du chargement:', error);
-      showToastMessage('Erreur lors du chargement des demandes de congé', 'error');
+      console.error("Erreur lors du chargement:", error);
+      showToastMessage(
+        "Erreur lors du chargement des demandes de congé",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -90,35 +71,45 @@ export default function CongeList() {
 
   const calculateStats = (data) => {
     const total = data.length;
-    const enAttente = data.filter(d => d.statut === 'en_attente').length;
-    const approuvees = data.filter(d => d.statut === 'approuve').length;
-    const rejetees = data.filter(d => d.statut === 'rejete').length;
-    
+    const enAttente = data.filter((d) => d.statut === "en_attente").length;
+    const approuvees = data.filter((d) => d.statut === "approuve").length;
+    const rejetees = data.filter((d) => d.statut === "rejete").length;
+
     setStats({ total, enAttente, approuvees, rejetees });
   };
 
-  const showToastMessage = (message, type = 'success') => {
+  const showToastMessage = (message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 4000);
   };
 
-  const filteredDemandes = demandes.filter(demande => {
+  const filteredDemandes = demandes.filter((demande) => {
     // Gérer le cas où employe peut être un ID ou un objet
-    const employeData = typeof demande.employe === 'object' ? demande.employe : null;
-    const employeId = typeof demande.employe === 'number' ? demande.employe : null;
-    
-    const matchesSearch = 
-      employeData?.user?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employeData?.user?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employeData?.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employeData?.matricule?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const employeData =
+      typeof demande.employe === "object" ? demande.employe : null;
+    const employeId =
+      typeof demande.employe === "number" ? demande.employe : null;
+
+    const matchesSearch =
+      employeData?.user?.first_name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      employeData?.user?.last_name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      employeData?.user?.email
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      employeData?.matricule
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       demande.type_conge?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatut = !statutFilter || demande.statut === statutFilter;
     const matchesType = !typeFilter || demande.type_conge === typeFilter;
-    
+
     return matchesSearch && matchesStatut && matchesType;
   });
 
@@ -139,19 +130,22 @@ export default function CongeList() {
 
     try {
       await api.put(`/users/leaves/${demandeToAction.id}/`, {
-        statut: 'approuve',
+        statut: "approuve",
         description: demandeToAction.description,
-        raison: raison
+        raison: raison,
       });
-      showToastMessage('Demande approuvée avec succès', 'success');
+      showToastMessage("Demande approuvée avec succès", "success");
       fetchDemandes();
       setShowApproveModal(false);
       setDemandeToAction(null);
       setRaison("");
     } catch (error) {
-      console.error('Erreur lors de l\'approbation:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de l\'approbation';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors de l'approbation:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors de l'approbation";
+      showToastMessage(errorMsg, "error");
     }
   };
 
@@ -159,25 +153,28 @@ export default function CongeList() {
     if (!demandeToAction) return;
 
     if (!raison.trim()) {
-      showToastMessage('Veuillez indiquer une raison pour le rejet', 'error');
+      showToastMessage("Veuillez indiquer une raison pour le rejet", "error");
       return;
     }
 
     try {
       await api.put(`/users/leaves/${demandeToAction.id}/`, {
-        statut: 'rejete',
+        statut: "rejete",
         description: demandeToAction.description,
-        raison: raison
+        raison: raison,
       });
-      showToastMessage('Demande rejetée avec succès', 'success');
+      showToastMessage("Demande rejetée avec succès", "success");
       fetchDemandes();
       setShowRejectModal(false);
       setDemandeToAction(null);
       setRaison("");
     } catch (error) {
-      console.error('Erreur lors du rejet:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors du rejet';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors du rejet:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors du rejet";
+      showToastMessage(errorMsg, "error");
     }
   };
 
@@ -191,13 +188,16 @@ export default function CongeList() {
 
     try {
       await api.delete(`/users/leaves/${demandeToAction.id}/`);
-      showToastMessage('Demande supprimée avec succès', 'success');
+      showToastMessage("Demande supprimée avec succès", "success");
       fetchDemandes();
       setSelectedDemandes(new Set());
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de la suppression';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors de la suppression:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors de la suppression";
+      showToastMessage(errorMsg, "error");
     } finally {
       setShowDeleteModal(false);
       setDemandeToAction(null);
@@ -205,31 +205,31 @@ export default function CongeList() {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Non renseigné';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    if (!dateString) return "Non renseigné";
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   };
 
   const formatDateTime = (dateString) => {
-    if (!dateString) return 'Non renseigné';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    if (!dateString) return "Non renseigné";
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getStatutBadge = (statut) => {
-    return STATUTS.find(s => s.value === statut) || STATUTS[0];
+    return STATUTS.find((s) => s.value === statut) || STATUTS[0];
   };
 
   const getTypeBadge = (type) => {
-    return TYPES.find(t => t.value === type) || TYPES[0];
+    return TYPES.find((t) => t.value === type) || TYPES[0];
   };
 
   const calculateDays = (dateDebut, dateFin) => {
@@ -242,34 +242,48 @@ export default function CongeList() {
   };
 
   const exportToCSV = () => {
-    const headers = ['Matricule', 'Employé', 'Type', 'Date début', 'Date fin', 'Durée (jours)', 'Statut', 'Date demande'];
-    const csvData = filteredDemandes.map(demande => {
-      const employeData = typeof demande.employe === 'object' ? demande.employe : null;
+    const headers = [
+      "Matricule",
+      "Employé",
+      "Type",
+      "Date début",
+      "Date fin",
+      "Durée (jours)",
+      "Statut",
+      "Date demande",
+    ];
+    const csvData = filteredDemandes.map((demande) => {
+      const employeData =
+        typeof demande.employe === "object" ? demande.employe : null;
       return [
-        employeData?.matricule || '',
-        `${employeData?.user?.first_name || ''} ${employeData?.user?.last_name || ''}`.trim() || 'N/A',
+        employeData?.matricule || "",
+        `${employeData?.user?.first_name || ""} ${
+          employeData?.user?.last_name || ""
+        }`.trim() || "N/A",
         getTypeBadge(demande.type_conge).label,
         formatDate(demande.date_debut),
         formatDate(demande.date_fin),
         calculateDays(demande.date_debut, demande.date_fin),
         getStatutBadge(demande.statut).label,
-        formatDateTime(demande.created_at)
+        formatDateTime(demande.created_at),
       ];
     });
-    
+
     const csvContent = [headers, ...csvData]
-      .map(row => row.map(field => `"${field}"`).join(','))
-      .join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      .map((row) => row.map((field) => `"${field}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `demandes_conges_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `demandes_conges_${
+      new Date().toISOString().split("T")[0]
+    }.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    
-    showToastMessage('Export CSV généré avec succès', 'success');
+
+    showToastMessage("Export CSV généré avec succès", "success");
   };
 
   const clearFilters = () => {
@@ -287,7 +301,9 @@ export default function CongeList() {
         <div className="flex items-center justify-center min-h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Chargement des demandes de congé...</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Chargement des demandes de congé...
+            </p>
           </div>
         </div>
       </SuperAdminLayout>
@@ -298,7 +314,7 @@ export default function CongeList() {
     <SuperAdminLayout>
       <div className="space-y-6 mb-4">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -323,19 +339,21 @@ export default function CongeList() {
 
         {/* Cartes de statistiques */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
             whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" }}
-            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 border border-blue-200/50 dark:border-blue-700/50 p-4"
+            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 sm:border border-blue-200/50 dark:border-blue-700/50 p-4"
           >
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
                   {stats.total}
                 </h4>
-                <small className="text-gray-600 dark:text-gray-400 text-sm">Total</small>
+                <small className="text-gray-600 dark:text-gray-400 text-sm">
+                  Total
+                </small>
               </div>
               <div className="text-blue-600 dark:text-blue-400">
                 <Calendar className="w-5 h-5" />
@@ -343,19 +361,21 @@ export default function CongeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
             whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" }}
-            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-yellow-50 to-yellow-100/50 dark:from-yellow-900/20 dark:to-yellow-800/10 border border-yellow-200/50 dark:border-yellow-700/50 p-4"
+            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-yellow-50 to-yellow-100/50 dark:from-yellow-900/20 dark:to-yellow-800/10 sm:border border-yellow-200/50 dark:border-yellow-700/50 p-4"
           >
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-1">
                   {stats.enAttente}
                 </h4>
-                <small className="text-gray-600 dark:text-gray-400 text-sm">En attente</small>
+                <small className="text-gray-600 dark:text-gray-400 text-sm">
+                  En attente
+                </small>
               </div>
               <div className="text-yellow-600 dark:text-yellow-400">
                 <ClockIcon className="w-5 h-5" />
@@ -363,19 +383,21 @@ export default function CongeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
             whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" }}
-            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/10 border border-green-200/50 dark:border-green-700/50 p-4"
+            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/10 sm:border border-green-200/50 dark:border-green-700/50 p-4"
           >
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">
                   {stats.approuvees}
                 </h4>
-                <small className="text-gray-600 dark:text-gray-400 text-sm">Approuvées</small>
+                <small className="text-gray-600 dark:text-gray-400 text-sm">
+                  Approuvées
+                </small>
               </div>
               <div className="text-green-600 dark:text-green-400">
                 <CheckCircle2 className="w-5 h-5" />
@@ -383,19 +405,21 @@ export default function CongeList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
             whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" }}
-            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-900/20 dark:to-red-800/10 border border-red-200/50 dark:border-red-700/50 p-4"
+            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-900/20 dark:to-red-800/10 sm:border border-red-200/50 dark:border-red-700/50 p-4"
           >
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-1">
                   {stats.rejetees}
                 </h4>
-                <small className="text-gray-600 dark:text-gray-400 text-sm">Rejetées</small>
+                <small className="text-gray-600 dark:text-gray-400 text-sm">
+                  Rejetées
+                </small>
               </div>
               <div className="text-red-600 dark:text-red-400">
                 <XCircleIcon className="w-5 h-5" />
@@ -405,7 +429,7 @@ export default function CongeList() {
         </div>
 
         {/* Panel principal */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
@@ -442,7 +466,7 @@ export default function CongeList() {
           <div className="p-4 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 border-b border-gray-200 dark:border-gray-700">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center">
+                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 md:flex items-center">
                   <Search className="w-3.5 h-3.5 mr-1" />
                   Recherche Globale
                 </label>
@@ -467,7 +491,7 @@ export default function CongeList() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center">
+                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 md:flex items-center">
                   <Filter className="w-3.5 h-3.5 mr-1" />
                   Statut
                 </label>
@@ -486,7 +510,7 @@ export default function CongeList() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center">
+                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 md:flex items-center">
                   <Filter className="w-3.5 h-3.5 mr-1" />
                   Type de congé
                 </label>
@@ -507,7 +531,9 @@ export default function CongeList() {
 
             {hasActiveFilters && (
               <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-gray-600 dark:text-gray-400">Filtres actifs:</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Filtres actifs:
+                </span>
                 {searchTerm && (
                   <span className="px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded">
                     Recherche: "{searchTerm}"
@@ -515,12 +541,13 @@ export default function CongeList() {
                 )}
                 {statutFilter && (
                   <span className="px-2 py-1 bg-yellow-500 text-white text-xs font-medium rounded">
-                    Statut: {STATUTS.find(s => s.value === statutFilter)?.label}
+                    Statut:{" "}
+                    {STATUTS.find((s) => s.value === statutFilter)?.label}
                   </span>
                 )}
                 {typeFilter && (
                   <span className="px-2 py-1 bg-indigo-500 text-white text-xs font-medium rounded">
-                    Type: {TYPES.find(t => t.value === typeFilter)?.label}
+                    Type: {TYPES.find((t) => t.value === typeFilter)?.label}
                   </span>
                 )}
                 <button
@@ -543,7 +570,7 @@ export default function CongeList() {
                   Aucune demande trouvée
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {hasActiveFilters 
+                  {hasActiveFilters
                     ? "Aucune demande ne correspond à vos critères de recherche."
                     : "Aucune demande de congé n'a été soumise pour le moment."}
                 </p>
@@ -590,10 +617,16 @@ export default function CongeList() {
                     const typeBadge = getTypeBadge(demande.type_conge);
                     const StatutIcon = statutBadge.icon;
                     const TypeIcon = typeBadge.icon;
-                    const jours = calculateDays(demande.date_debut, demande.date_fin);
+                    const jours = calculateDays(
+                      demande.date_debut,
+                      demande.date_fin
+                    );
                     // Gérer le cas où employe peut être un ID ou un objet
-                    const employeData = typeof demande.employe === 'object' ? demande.employe : null;
-                    
+                    const employeData =
+                      typeof demande.employe === "object"
+                        ? demande.employe
+                        : null;
+
                     return (
                       <motion.tr
                         key={demande.id}
@@ -604,14 +637,16 @@ export default function CongeList() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="w-10 h-10 bg-gradient-to-br from-[#179150] to-[#147a43] rounded-lg flex items-center justify-center text-white font-semibold text-sm mr-3">
-                              {employeData?.user?.first_name?.charAt(0) || ''}{employeData?.user?.last_name?.charAt(0) || ''}
+                              {employeData?.user?.first_name?.charAt(0) || ""}
+                              {employeData?.user?.last_name?.charAt(0) || ""}
                             </div>
                             <div>
                               <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                {employeData?.user?.first_name} {employeData?.user?.last_name || 'N/A'}
+                                {employeData?.user?.first_name}{" "}
+                                {employeData?.user?.last_name || "N/A"}
                               </div>
                               <div className="text-xs text-gray-500 dark:text-gray-400">
-                                {employeData?.matricule || 'N/A'}
+                                {employeData?.matricule || "N/A"}
                               </div>
                             </div>
                           </div>
@@ -626,7 +661,8 @@ export default function CongeList() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900 dark:text-white">
-                            {formatDate(demande.date_debut)} → {formatDate(demande.date_fin)}
+                            {formatDate(demande.date_debut)} →{" "}
+                            {formatDate(demande.date_fin)}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -635,13 +671,15 @@ export default function CongeList() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
-                            statutBadge.value === 'en_attente' 
-                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400'
-                              : statutBadge.value === 'approuve'
-                              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                              : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
+                              statutBadge.value === "en_attente"
+                                ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400"
+                                : statutBadge.value === "approuve"
+                                ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
+                                : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"
+                            }`}
+                          >
                             <StatutIcon className="w-3 h-3 mr-1" />
                             {statutBadge.label}
                           </span>
@@ -658,7 +696,7 @@ export default function CongeList() {
                             >
                               <Eye className="w-4 h-4" />
                             </Link>
-                            {demande.statut === 'en_attente' && (
+                            {demande.statut === "en_attente" && (
                               <>
                                 <button
                                   onClick={() => handleApproveClick(demande)}
@@ -702,13 +740,14 @@ export default function CongeList() {
             initial={{ opacity: 0, y: 50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
+            className={cn(
+              "fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3",
+              toastType === "success"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            )}
           >
-            {toastType === 'success' ? (
+            {toastType === "success" ? (
               <CheckCircle className="w-5 h-5" />
             ) : (
               <AlertCircle className="w-5 h-5" />
@@ -746,11 +785,15 @@ export default function CongeList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Êtes-vous sûr de vouloir approuver la demande de congé de <strong>{
-                  typeof demandeToAction?.employe === 'object' 
-                    ? `${demandeToAction.employe?.user?.first_name || ''} ${demandeToAction.employe?.user?.last_name || ''}`.trim() || 'cet employé'
-                    : 'cet employé'
-                }</strong> ?
+                Êtes-vous sûr de vouloir approuver la demande de congé de{" "}
+                <strong>
+                  {typeof demandeToAction?.employe === "object"
+                    ? `${demandeToAction.employe?.user?.first_name || ""} ${
+                        demandeToAction.employe?.user?.last_name || ""
+                      }`.trim() || "cet employé"
+                    : "cet employé"}
+                </strong>{" "}
+                ?
               </p>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -811,11 +854,15 @@ export default function CongeList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Êtes-vous sûr de vouloir rejeter la demande de congé de <strong>{
-                  typeof demandeToAction?.employe === 'object' 
-                    ? `${demandeToAction.employe?.user?.first_name || ''} ${demandeToAction.employe?.user?.last_name || ''}`.trim() || 'cet employé'
-                    : 'cet employé'
-                }</strong> ?
+                Êtes-vous sûr de vouloir rejeter la demande de congé de{" "}
+                <strong>
+                  {typeof demandeToAction?.employe === "object"
+                    ? `${demandeToAction.employe?.user?.first_name || ""} ${
+                        demandeToAction.employe?.user?.last_name || ""
+                      }`.trim() || "cet employé"
+                    : "cet employé"}
+                </strong>{" "}
+                ?
               </p>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -880,7 +927,8 @@ export default function CongeList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer cette demande de congé ? Cette action est irréversible.
+                Êtes-vous sûr de vouloir supprimer cette demande de congé ?
+                Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -903,4 +951,3 @@ export default function CongeList() {
     </SuperAdminLayout>
   );
 }
-

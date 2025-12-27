@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  Users, 
-  UserPlus, 
-  Search, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import {
+  Users,
+  UserPlus,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
   UserCheck,
   UserX,
   CheckCircle,
@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function AdminList() {
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ export default function AdminList() {
     const total = data.length;
     const actifs = data.filter(admin => admin.is_verified).length;
     const inactifs = total - actifs;
-    
+
     setStats({ total, actifs, inactifs });
   };
 
@@ -87,15 +88,15 @@ export default function AdminList() {
   };
 
   const filteredAdmins = admins.filter(admin => {
-    const matchesSearch = 
+    const matchesSearch =
       admin.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       admin.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       admin.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = !statusFilter || 
+
+    const matchesStatus = !statusFilter ||
       (statusFilter === 'active' && admin.is_verified) ||
       (statusFilter === 'inactive' && !admin.is_verified);
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -149,11 +150,11 @@ export default function AdminList() {
   const handleBulkToggleStatus = async (newStatus) => {
     try {
       const idsArray = Array.from(selectedAdmins);
-      await Promise.all(idsArray.map(id => 
+      await Promise.all(idsArray.map(id =>
         api.patch(`/users/admins/${id}/`, { is_verified: newStatus === 'activate' })
       ));
       showToastMessage(
-        `${idsArray.length} administrateur(s) ${newStatus === 'activate' ? 'activé(s)' : 'désactivé(s)'} avec succès`, 
+        `${idsArray.length} administrateur(s) ${newStatus === 'activate' ? 'activé(s)' : 'désactivé(s)'} avec succès`,
         'success'
       );
       fetchAdmins();
@@ -212,11 +213,11 @@ export default function AdminList() {
       admin.is_verified ? 'Actif' : 'Inactif',
       formatDate(admin.created_at)
     ]);
-    
+
     const csvContent = [headers, ...csvData]
       .map(row => row.map(field => `"${field}"`).join(','))
       .join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -224,7 +225,7 @@ export default function AdminList() {
     link.download = 'administrateurs.csv';
     link.click();
     URL.revokeObjectURL(url);
-    
+
     showToastMessage('Export CSV généré avec succès', 'success');
   };
 
@@ -245,7 +246,7 @@ export default function AdminList() {
     <SuperAdminLayout>
       <div className="space-y-6 mb-4">
         {/* En-tête amélioré */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -277,7 +278,7 @@ export default function AdminList() {
 
         {/* Cartes de statistiques améliorées */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -297,7 +298,7 @@ export default function AdminList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
@@ -317,7 +318,7 @@ export default function AdminList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -339,7 +340,7 @@ export default function AdminList() {
         </div>
 
         {/* Panel principal */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
@@ -491,7 +492,7 @@ export default function AdminList() {
                 Aucun administrateur trouvé
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {hasActiveFilters 
+                {hasActiveFilters
                   ? "Aucun administrateur ne correspond à vos critères de recherche."
                   : "Commencez par créer votre premier administrateur."}
               </p>
@@ -579,11 +580,10 @@ export default function AdminList() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                          admin.is_verified
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                        }`}>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${admin.is_verified
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                          }`}>
                           {admin.is_verified ? (
                             <>
                               <CheckCircle className="w-3 h-3 mr-1" />
@@ -660,7 +660,7 @@ export default function AdminList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer l'administrateur <strong>{adminToDelete?.first_name} {adminToDelete?.last_name}</strong> ? 
+                Êtes-vous sûr de vouloir supprimer l'administrateur <strong>{adminToDelete?.first_name} {adminToDelete?.last_name}</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
@@ -710,7 +710,7 @@ export default function AdminList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer <strong>{selectedAdmins.size} administrateur(s)</strong> ? 
+                Êtes-vous sûr de vouloir supprimer <strong>{selectedAdmins.size} administrateur(s)</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
@@ -830,28 +830,12 @@ export default function AdminList() {
         )}
       </AnimatePresence>
 
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
-          >
-            {toastType === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </SuperAdminLayout>
   );
 }

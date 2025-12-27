@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Edit, 
+import SuperAdminLayout from "@/layouts/SuperAdmin/Layout";
+import {
+  ArrowLeft,
+  Edit,
   Trash2,
   Briefcase,
   AlertCircle,
@@ -14,10 +14,11 @@ import {
   Clock,
   DollarSign,
   Settings,
-  Key
+  Key,
 } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
+import { formatCurrency, formatDate, getInitials } from "@/lib/utils";
 
 export default function PosteShow() {
   const { id } = useParams();
@@ -39,14 +40,14 @@ export default function PosteShow() {
       const response = await api.get(`/users/postes/${id}/`);
       setPoste(response.data);
     } catch (error) {
-      console.error('Erreur lors du chargement du poste:', error);
-      showToastMessage('Erreur lors du chargement du poste', 'error');
+      console.error("Erreur lors du chargement du poste:", error);
+      showToastMessage("Erreur lors du chargement du poste", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const showToastMessage = (message, type = 'success') => {
+  const showToastMessage = (message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
@@ -56,41 +57,20 @@ export default function PosteShow() {
   const handleDelete = async () => {
     try {
       await api.delete(`/users/postes/${id}/`);
-      showToastMessage('Poste supprimé avec succès', 'success');
+      showToastMessage("Poste supprimé avec succès", "success");
       setTimeout(() => {
-        navigate('/superadmin/postes');
+        navigate("/superadmin/postes");
       }, 2000);
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de la suppression';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors de la suppression:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors de la suppression";
+      showToastMessage(errorMsg, error);
     } finally {
       setShowDeleteModal(false);
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Non renseigné';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const formatCurrency = (amount) => {
-    if (!amount) return 'Non renseigné';
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'XAF'
-    }).format(amount);
-  };
-
-  const getInitials = (name) => {
-    if (!name) return 'P';
-    return name.charAt(0).toUpperCase();
   };
 
   if (loading) {
@@ -99,7 +79,9 @@ export default function PosteShow() {
         <div className="flex items-center justify-center min-h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Chargement du poste...</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Chargement du poste...
+            </p>
           </div>
         </div>
       </SuperAdminLayout>
@@ -129,7 +111,7 @@ export default function PosteShow() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -174,7 +156,7 @@ export default function PosteShow() {
           {/* Contenu principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Carte principale */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -185,15 +167,16 @@ export default function PosteShow() {
                 <div className="flex flex-col md:flex-row md:items-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="md:w-1/4 text-center mb-4 md:mb-0">
                     <div className="relative inline-block">
-                      <div 
+                      <div
                         className="rounded-lg border-4 border-[#179150] flex items-center justify-center"
-                        style={{ 
-                          width: '120px', 
-                          height: '120px', 
-                          background: 'linear-gradient(135deg, #179150 0%, #147a43 100%)', 
-                          color: 'white', 
-                          fontSize: '3rem', 
-                          fontWeight: '700' 
+                        style={{
+                          width: "120px",
+                          height: "120px",
+                          background:
+                            "linear-gradient(135deg, #179150 0%, #147a43 100%)",
+                          color: "white",
+                          fontSize: "3rem",
+                          fontWeight: "700",
                         }}
                       >
                         {getInitials(poste.titre)}
@@ -204,9 +187,13 @@ export default function PosteShow() {
                     </div>
                   </div>
                   <div className="md:w-3/4 md:pl-8">
-                    <h4 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">{poste.titre}</h4>
+                    <h4 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+                      {poste.titre}
+                    </h4>
                     <div className="flex flex-wrap gap-2 items-center">
-                      <span className="px-3 py-1 bg-[#179150] text-white text-sm font-medium rounded">Poste</span>
+                      <span className="px-3 py-1 bg-[#179150] text-white text-sm font-medium rounded">
+                        Poste
+                      </span>
                       {poste.departement_details && (
                         <span className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded flex items-center">
                           <Building2 className="w-3 h-3 mr-1" />
@@ -223,36 +210,52 @@ export default function PosteShow() {
                     <FileText className="w-5 h-5 mr-2 text-[#179150]" />
                     Informations générales
                   </h5>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
-                        <span className="text-gray-600 dark:text-gray-400">Titre :</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{poste.titre}</span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Titre :
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {poste.titre}
+                        </span>
                       </div>
                       <div className="flex justify-between items-start py-3 border-b border-gray-200 dark:border-gray-700">
-                        <span className="text-gray-600 dark:text-gray-400">Description :</span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Description :
+                        </span>
                         <span className="font-medium text-gray-900 dark:text-white text-right max-w-xs">
-                          {poste.description || 'Aucune description'}
+                          {poste.description || "Aucune description"}
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
-                        <span className="text-gray-600 dark:text-gray-400">Salaire de base :</span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Salaire de base :
+                        </span>
                         <span className="font-semibold text-green-600 dark:text-green-400 flex items-center">
                           <DollarSign className="w-4 h-4 mr-1" />
                           {formatCurrency(poste.salaire_de_base)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
-                        <span className="text-gray-600 dark:text-gray-400">Créé le :</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{formatDate(poste.created_at)}</span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Créé le :
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {formatDate(poste.created_at)}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
-                        <span className="text-gray-600 dark:text-gray-400">Modifié le :</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{formatDate(poste.updated_at)}</span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Modifié le :
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {formatDate(poste.updated_at)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -262,7 +265,7 @@ export default function PosteShow() {
 
             {/* Département */}
             {poste.departement_details && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -273,7 +276,7 @@ export default function PosteShow() {
                     <Building2 className="w-5 h-5 mr-2 text-[#179150]" />
                     Département
                   </h5>
-                  
+
                   <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg mr-4 rounded-lg">
                       <Building2 className="w-8 h-8" />
@@ -297,14 +300,16 @@ export default function PosteShow() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Actions rapides */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm"
             >
               <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Actions rapides</h4>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                  Actions rapides
+                </h4>
               </div>
               <div className="p-4 space-y-2">
                 <Link
@@ -332,7 +337,7 @@ export default function PosteShow() {
             </motion.div>
 
             {/* Informations système */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.3 }}
@@ -348,30 +353,44 @@ export default function PosteShow() {
                 <div className="flex items-start">
                   <Key className="w-4 h-4 text-gray-600 mr-2 mt-1" />
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-white">ID Poste</div>
-                    <div className="text-gray-600 dark:text-gray-400 font-mono">{poste.id}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      ID Poste
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-400 font-mono">
+                      {poste.id}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <Calendar className="w-4 h-4 text-gray-600 mr-2 mt-1" />
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-white">Date de création</div>
-                    <div className="text-gray-600 dark:text-gray-400">{formatDate(poste.created_at)}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      Date de création
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-400">
+                      {formatDate(poste.created_at)}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <Clock className="w-4 h-4 text-gray-600 mr-2 mt-1" />
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-white">Dernière modification</div>
-                    <div className="text-gray-600 dark:text-gray-400">{formatDate(poste.updated_at)}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      Dernière modification
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-400">
+                      {formatDate(poste.updated_at)}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <Building2 className="w-4 h-4 text-gray-600 mr-2 mt-1" />
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-white">Département assigné</div>
+                    <div className="font-medium text-gray-900 dark:text-white">
+                      Département assigné
+                    </div>
                     <div className="text-gray-600 dark:text-gray-400">
-                      {poste.departement_details ? 'Oui' : 'Non'}
+                      {poste.departement_details ? "Oui" : "Non"}
                     </div>
                   </div>
                 </div>
@@ -388,13 +407,15 @@ export default function PosteShow() {
             initial={{ opacity: 0, y: 50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
+            className={cn(
+              "fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3",
+              {
+                "bg-green-500 text-white": toastType === "success",
+                "bg-red-500 text-white": toastType === "error",
+              }
+            )}
           >
-            {toastType === 'success' ? (
+            {toastType === "success" ? (
               <CheckCircle className="w-5 h-5" />
             ) : (
               <AlertCircle className="w-5 h-5" />
@@ -432,8 +453,8 @@ export default function PosteShow() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer le poste <strong>{poste.titre}</strong> ? 
-                Cette action est irréversible.
+                Êtes-vous sûr de vouloir supprimer le poste{" "}
+                <strong>{poste.titre}</strong> ? Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -456,4 +477,3 @@ export default function PosteShow() {
     </SuperAdminLayout>
   );
 }
-

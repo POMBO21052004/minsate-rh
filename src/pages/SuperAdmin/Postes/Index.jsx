@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  Briefcase, 
-  Plus, 
-  Search, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import SuperAdminLayout from "@/layouts/SuperAdmin/Layout";
+import {
+  Briefcase,
+  Plus,
+  Search,
+  Eye,
+  Edit,
+  Trash2,
   RefreshCw,
   Download,
   AlertCircle,
   Calendar,
   X,
   XCircle,
-  Clock,
   Building2,
   DollarSign,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
+import { formatDate, formatCurrency, cn } from "@/lib/utils";
 
 export default function PosteList() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function PosteList() {
   const [stats, setStats] = useState({
     total: 0,
     avecDepartement: 0,
-    sansDepartement: 0
+    sansDepartement: 0,
   });
 
   useEffect(() => {
@@ -52,12 +52,12 @@ export default function PosteList() {
   const fetchPostes = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/users/postes/');
+      const response = await api.get("/users/postes/");
       setPostes(response.data);
       calculateStats(response.data);
     } catch (error) {
-      console.error('Erreur lors du chargement:', error);
-      showToastMessage('Erreur lors du chargement des postes', 'error');
+      console.error("Erreur lors du chargement:", error);
+      showToastMessage("Erreur lors du chargement des postes", error);
     } finally {
       setLoading(false);
     }
@@ -65,49 +65,55 @@ export default function PosteList() {
 
   const fetchDepartements = async () => {
     try {
-      const response = await api.get('/users/departements/');
+      const response = await api.get("/users/departements/");
       setDepartements(response.data || []);
     } catch (error) {
-      console.error('Erreur lors du chargement des départements:', error);
+      console.error("Erreur lors du chargement des départements:", error);
     }
   };
 
   const calculateStats = (data) => {
     const total = data.length;
-    const avecDepartement = data.filter(poste => poste.departement).length;
+    const avecDepartement = data.filter((poste) => poste.departement).length;
     const sansDepartement = total - avecDepartement;
-    
+
     setStats({ total, avecDepartement, sansDepartement });
   };
 
-  const showToastMessage = (message, type = 'success') => {
+  const showToastMessage = (message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 4000);
   };
 
-  const filteredPostes = postes.filter(poste => {
-    const matchesSearch = 
+  const filteredPostes = postes.filter((poste) => {
+    const matchesSearch =
       poste.titre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       poste.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      poste.departement_details?.nom?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesDepartement = !departementFilter || 
-      poste.departement?.toString() === departementFilter;
-    
+      poste.departement_details?.nom
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    const matchesDepartement =
+      !departementFilter || poste.departement?.toString() === departementFilter;
+
     return matchesSearch && matchesDepartement;
   });
 
   // Gestion des sélections
   useEffect(() => {
     setShowBulkActions(selectedPostes.size > 0);
-    setSelectAll(selectedPostes.size === filteredPostes.length && filteredPostes.length > 0);
+    setSelectAll(
+      selectedPostes.size === filteredPostes.length && filteredPostes.length > 0
+    );
   }, [selectedPostes, filteredPostes.length]);
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      const allIds = new Set(filteredPostes.map(poste => poste.id.toString()));
+      const allIds = new Set(
+        filteredPostes.map((poste) => poste.id.toString())
+      );
       setSelectedPostes(allIds);
       setSelectAll(true);
     } else {
@@ -142,13 +148,16 @@ export default function PosteList() {
 
     try {
       await api.delete(`/users/postes/${posteToDelete.id}/`);
-      showToastMessage('Poste supprimé avec succès', 'success');
+      showToastMessage("Poste supprimé avec succès", "success");
       fetchPostes();
       setSelectedPostes(new Set());
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de la suppression';
-      showToastMessage(errorMsg, 'error');
+      console.error("Erreur lors de la suppression:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erreur lors de la suppression";
+      showToastMessage(errorMsg, error);
     } finally {
       setShowDeleteModal(false);
       setPosteToDelete(null);
@@ -158,56 +167,49 @@ export default function PosteList() {
   const handleBulkDelete = async () => {
     try {
       const idsArray = Array.from(selectedPostes);
-      await Promise.all(idsArray.map(id => api.delete(`/users/postes/${id}/`)));
-      showToastMessage(`${idsArray.length} poste(s) supprimé(s) avec succès`, 'success');
+      await Promise.all(
+        idsArray.map((id) => api.delete(`/users/postes/${id}/`))
+      );
+      showToastMessage(
+        `${idsArray.length} poste(s) supprimé(s) avec succès`,
+        "success"
+      );
       fetchPostes();
       setSelectedPostes(new Set());
       setShowDeleteGroupModal(false);
     } catch (error) {
-      console.error('Erreur lors de la suppression groupée:', error);
-      showToastMessage('Erreur lors de la suppression groupée', 'error');
+      console.error("Erreur lors de la suppression groupée:", error);
+      showToastMessage("Erreur lors de la suppression groupée", error);
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Non renseigné';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-
-  const formatCurrency = (amount) => {
-    if (!amount) return 'Non renseigné';
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'XAF'
-    }).format(amount);
-  };
-
   const exportToCSV = () => {
-    const headers = ['Titre', 'Département', 'Salaire de base', 'Date création'];
-    const csvData = filteredPostes.map(poste => [
-      poste.titre || '',
-      poste.departement_details?.nom || 'Non assigné',
-      poste.salaire_de_base || '',
-      formatDate(poste.created_at)
+    const headers = [
+      "Titre",
+      "Département",
+      "Salaire de base",
+      "Date création",
+    ];
+    const csvData = filteredPostes.map((poste) => [
+      poste.titre || "",
+      poste.departement_details?.nom || "Non assigné",
+      poste.salaire_de_base || "",
+      formatDate(poste.created_at),
     ]);
-    
+
     const csvContent = [headers, ...csvData]
-      .map(row => row.map(field => `"${field}"`).join(','))
-      .join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      .map((row) => row.map((field) => `"${field}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `postes_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `postes_${new Date().toISOString().split("T")[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    
-    showToastMessage('Export CSV généré avec succès', 'success');
+
+    showToastMessage("Export CSV généré avec succès", "success");
   };
 
   const hasActiveFilters = searchTerm || departementFilter;
@@ -218,7 +220,9 @@ export default function PosteList() {
         <div className="flex items-center justify-center min-h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400">Chargement des postes...</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Chargement des postes...
+            </p>
           </div>
         </div>
       </SuperAdminLayout>
@@ -229,7 +233,7 @@ export default function PosteList() {
     <SuperAdminLayout>
       <div className="space-y-6 mb-4">
         {/* En-tête amélioré */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -261,19 +265,21 @@ export default function PosteList() {
 
         {/* Cartes de statistiques améliorées */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
             whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" }}
-            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 border border-blue-200/50 dark:border-blue-700/50 p-4"
+            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 sm:border border-blue-200/50 dark:border-blue-700/50 p-4"
           >
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
                   {stats.total}
                 </h4>
-                <small className="text-gray-600 dark:text-gray-400 text-sm">Total Postes</small>
+                <small className="text-gray-600 dark:text-gray-400 text-sm">
+                  Total Postes
+                </small>
               </div>
               <div className="text-blue-600 dark:text-blue-400">
                 <Briefcase className="w-5 h-5" />
@@ -281,19 +287,21 @@ export default function PosteList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
             whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" }}
-            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/10 border border-green-200/50 dark:border-green-700/50 p-4"
+            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/10 sm:border border-green-200/50 dark:border-green-700/50 p-4"
           >
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">
                   {stats.avecDepartement}
                 </h4>
-                <small className="text-gray-600 dark:text-gray-400 text-sm">Avec Département</small>
+                <small className="text-gray-600 dark:text-gray-400 text-sm">
+                  Avec Département
+                </small>
               </div>
               <div className="text-green-600 dark:text-green-400">
                 <Building2 className="w-5 h-5" />
@@ -301,19 +309,21 @@ export default function PosteList() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
             whileHover={{ y: -5, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" }}
-            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10 border border-orange-200/50 dark:border-orange-700/50 p-4"
+            className="card border-0 shadow-sm rounded-xl bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10 sm:border border-orange-200/50 dark:border-orange-700/50 p-4"
           >
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-2xl font-bold text-orange-600 dark:text-orange-400 mb-1">
                   {stats.sansDepartement}
                 </h4>
-                <small className="text-gray-600 dark:text-gray-400 text-sm">Sans Département</small>
+                <small className="text-gray-600 dark:text-gray-400 text-sm">
+                  Sans Département
+                </small>
               </div>
               <div className="text-orange-600 dark:text-orange-400">
                 <AlertCircle className="w-5 h-5" />
@@ -323,7 +333,7 @@ export default function PosteList() {
         </div>
 
         {/* Panel principal */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
@@ -361,7 +371,7 @@ export default function PosteList() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Recherche Globale */}
               <div>
-                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center">
+                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 md:flex items-center">
                   <Search className="w-3.5 h-3.5 mr-1" />
                   Recherche Globale
                 </label>
@@ -387,7 +397,7 @@ export default function PosteList() {
 
               {/* Filtre par département */}
               <div>
-                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center">
+                <label className="block text-sm font-bold text-blue-600 dark:text-blue-400 mb-2 md:flex items-center">
                   <Building2 className="w-3.5 h-3.5 mr-1" />
                   Département
                 </label>
@@ -409,7 +419,9 @@ export default function PosteList() {
             {/* Badge de résultats de recherche */}
             {hasActiveFilters && (
               <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-gray-600 dark:text-gray-400">Filtres actifs:</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Filtres actifs:
+                </span>
                 {searchTerm && (
                   <span className="px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded">
                     Recherche: "{searchTerm}"
@@ -417,7 +429,12 @@ export default function PosteList() {
                 )}
                 {departementFilter && (
                   <span className="px-2 py-1 bg-green-500 text-white text-xs font-medium rounded">
-                    Département: {departements.find(d => d.id.toString() === departementFilter)?.nom}
+                    Département:{" "}
+                    {
+                      departements.find(
+                        (d) => d.id.toString() === departementFilter
+                      )?.nom
+                    }
                   </span>
                 )}
                 <button
@@ -436,7 +453,7 @@ export default function PosteList() {
             {showBulkActions && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
+                animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 className="px-6 py-3 bg-[#179150]/10 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between"
               >
@@ -464,7 +481,7 @@ export default function PosteList() {
                 Aucun poste trouvé
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {hasActiveFilters 
+                {hasActiveFilters
                   ? "Aucun poste ne correspond à vos critères de recherche."
                   : "Commencez par créer votre premier poste."}
               </p>
@@ -518,7 +535,10 @@ export default function PosteList() {
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {filteredPostes.map((poste) => (
-                    <tr key={poste.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <tr
+                      key={poste.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    >
                       <td className="px-4 py-4 w-12">
                         <input
                           type="checkbox"
@@ -603,13 +623,14 @@ export default function PosteList() {
             initial={{ opacity: 0, y: 50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
+            className={cn(
+              "fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3",
+              toastType === "success"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            )}
           >
-            {toastType === 'success' ? (
+            {toastType === "success" ? (
               <CheckCircle className="w-5 h-5" />
             ) : (
               <AlertCircle className="w-5 h-5" />
@@ -647,8 +668,9 @@ export default function PosteList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer le poste <strong>{posteToDelete?.titre}</strong> ? 
-                Cette action est irréversible.
+                Êtes-vous sûr de vouloir supprimer le poste{" "}
+                <strong>{posteToDelete?.titre}</strong> ? Cette action est
+                irréversible.
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -697,8 +719,9 @@ export default function PosteList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer <strong>{selectedPostes.size} poste(s)</strong> ? 
-                Cette action est irréversible.
+                Êtes-vous sûr de vouloir supprimer{" "}
+                <strong>{selectedPostes.size} poste(s)</strong> ? Cette action
+                est irréversible.
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -721,4 +744,3 @@ export default function PosteList() {
     </SuperAdminLayout>
   );
 }
-

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import SuperAdminLayout from "@/layouts/SuperAdmin/Layout";
+import {
+  ArrowLeft,
+  Save,
   UserCheck,
   User,
   Mail,
@@ -13,12 +13,13 @@ import {
   HelpCircle,
   Eye,
   EyeOff,
-  X
+  X,
 } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
+import { cn } from "@/lib/utils";
 
-export default function AdminEdit() {
+export default function SuperAdminEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
@@ -33,19 +34,19 @@ export default function AdminEdit() {
   const [toastType, setToastType] = useState("success");
 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: ''
+    first_name: "",
+    last_name: "",
+    email: "",
   });
 
   const [passwordForm, setPasswordForm] = useState({
-    password: '',
-    confirm_password: ''
+    password: "",
+    confirm_password: "",
   });
 
   const [showPasswords, setShowPasswords] = useState({
     new: false,
-    confirm: false
+    confirm: false,
   });
 
   useEffect(() => {
@@ -58,21 +59,27 @@ export default function AdminEdit() {
       const response = await api.get(`/users/superadmins/${id}/`);
       const adminData = response.data;
       setAdmin(adminData);
-      
+
       setFormData({
-        first_name: adminData.first_name || '',
-        last_name: adminData.last_name || '',
-        email: adminData.email || ''
+        first_name: adminData.first_name || "",
+        last_name: adminData.last_name || "",
+        email: adminData.email || "",
       });
     } catch (error) {
-      console.error('Erreur lors du chargement du super administrateur:', error);
-      showToastMessage('Erreur lors du chargement du super administrateur', 'error');
+      console.error(
+        "Erreur lors du chargement du super administrateur:",
+        error
+      );
+      showToastMessage(
+        "Erreur lors du chargement du super administrateur",
+        error
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const showToastMessage = (message, type = 'success') => {
+  const showToastMessage = (message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
@@ -81,51 +88,53 @@ export default function AdminEdit() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: null
+        [name]: null,
       }));
     }
   };
 
-
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
-    setPasswordForm(prev => ({
+    setPasswordForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const response = await api.put(`/users/superadmins/${id}/`, {
         first_name: formData.first_name,
         last_name: formData.last_name,
-        email: formData.email
+        email: formData.email,
       });
-      
+
       if (response.data) {
-        showToastMessage('Super Administrateur mis à jour avec succès !', 'success');
+        showToastMessage(
+          "Super Administrateur mis à jour avec succès !",
+          "success"
+        );
         setTimeout(() => {
           navigate(`/superadmin/super-admins/${id}`);
         }, 2000);
@@ -134,7 +143,10 @@ export default function AdminEdit() {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
       } else {
-        setError(err.response?.data?.message || 'Erreur lors de la mise à jour du super administrateur');
+        setError(
+          err.response?.data?.message ||
+            "Erreur lors de la mise à jour du super administrateur"
+        );
       }
     } finally {
       setSaving(false);
@@ -143,30 +155,32 @@ export default function AdminEdit() {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (passwordForm.password !== passwordForm.confirm_password) {
-      showToastMessage('Les mots de passe ne correspondent pas', 'error');
+      showToastMessage("Les mots de passe ne correspondent pas", error);
       return;
     }
-    
+
     try {
       setChangingPassword(true);
       await api.put(`/users/superadmins/${id}/password`, {
-        password: passwordForm.password
+        password: passwordForm.password,
       });
-      
-      showToastMessage('Mot de passe modifié avec succès', 'success');
+
+      showToastMessage("Mot de passe modifié avec succès", "success");
       setShowPasswordModal(false);
-      setPasswordForm({ password: '', confirm_password: '' });
+      setPasswordForm({ password: "", confirm_password: "" });
     } catch (error) {
-      showToastMessage('Erreur lors de la modification du mot de passe', 'error');
+      showToastMessage("Erreur lors de la modification du mot de passe", error);
     } finally {
       setChangingPassword(false);
     }
   };
 
   const getInitials = (firstName, lastName) => {
-    return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
+    return `${firstName?.charAt(0) || ""}${
+      lastName?.charAt(0) || ""
+    }`.toUpperCase();
   };
 
   if (loading) {
@@ -175,7 +189,9 @@ export default function AdminEdit() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#179150] mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement du super administrateur...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">
+              Chargement du super administrateur...
+            </p>
           </div>
         </div>
       </SuperAdminLayout>
@@ -205,7 +221,7 @@ export default function AdminEdit() {
   return (
     <SuperAdminLayout>
       {/* En-tête */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -233,9 +249,9 @@ export default function AdminEdit() {
       {/* Alertes */}
       <AnimatePresence>
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 mb-6"
           >
@@ -253,7 +269,7 @@ export default function AdminEdit() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Formulaire principal */}
           <div className="lg:col-span-2">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -296,7 +312,7 @@ export default function AdminEdit() {
                 {/* Champs du formulaire */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                       <User className="w-4 h-4 mr-2" />
                       Prénom *
                     </label>
@@ -305,11 +321,12 @@ export default function AdminEdit() {
                       name="first_name"
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.first_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      className={cn(
+                        "w-full px-4 py-3 border",
+                        errors.first_name
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]"
+                      )}
                       placeholder="Prénom de l'admin"
                       required
                     />
@@ -321,7 +338,7 @@ export default function AdminEdit() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                       <User className="w-4 h-4 mr-2" />
                       Nom *
                     </label>
@@ -330,11 +347,12 @@ export default function AdminEdit() {
                       name="last_name"
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.last_name 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200`}
+                      className={cn(
+                        "w-full px-4 py-3 border",
+                        errors.last_name
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]"
+                      )}
                       placeholder="Nom de l'admin"
                       required
                     />
@@ -346,7 +364,7 @@ export default function AdminEdit() {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                       <Mail className="w-4 h-4 mr-2" />
                       Email professionnel *
                     </label>
@@ -355,11 +373,12 @@ export default function AdminEdit() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.email 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      className={cn(
+                        "w-full px-4 py-3 border",
+                        errors.email
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]"
+                      )}
                       placeholder="admin@example.com"
                       required
                     />
@@ -380,12 +399,23 @@ export default function AdminEdit() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-[#179150] font-medium">Rôle :</span>
-                      <span className="ml-2 text-[#147a43] font-semibold">Super Administrateur</span>
+                      <span className="ml-2 text-[#147a43] font-semibold">
+                        Super Administrateur
+                      </span>
                     </div>
                     <div>
-                      <span className="text-[#179150] font-medium">Statut vérification :</span>
-                      <span className={`ml-2 font-semibold ${admin.is_verified ? 'text-[#179150]' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                        {admin.is_verified ? 'Vérifié' : 'En attente'}
+                      <span className="text-[#179150] font-medium">
+                        Statut vérification :
+                      </span>
+                      <span
+                        className={cn(
+                          "ml-2 font-semibold",
+                          admin.is_verified
+                            ? "text-[#179150]"
+                            : "text-yellow-600 dark:text-yellow-400"
+                        )}
+                      >
+                        {admin.is_verified ? "Vérifié" : "En attente"}
                       </span>
                     </div>
                   </div>
@@ -403,7 +433,7 @@ export default function AdminEdit() {
                       Changer le mot de passe
                     </button>
                   </div>
-                  
+
                   <div className="flex space-x-3">
                     <Link
                       to={`/superadmin/super-admins/${id}`}
@@ -411,7 +441,7 @@ export default function AdminEdit() {
                     >
                       Annuler
                     </Link>
-                    
+
                     <button
                       type="submit"
                       disabled={saving}
@@ -438,7 +468,7 @@ export default function AdminEdit() {
           {/* Colonne latérale */}
           <div className="space-y-6">
             {/* Conseils */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
@@ -454,26 +484,29 @@ export default function AdminEdit() {
                 <div className="flex items-start">
                   <User className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Utilisez le nom complet officiel pour une identification facile dans le système.
+                    Utilisez le nom complet officiel pour une identification
+                    facile dans le système.
                   </p>
                 </div>
                 <div className="flex items-start">
                   <Mail className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    L'email sera utilisé pour toutes les communications importantes et la récupération de compte.
+                    L'email sera utilisé pour toutes les communications
+                    importantes et la récupération de compte.
                   </p>
                 </div>
                 <div className="flex items-start">
                   <UserCheck className="w-4 h-4 text-[#179150] mr-3 mt-1 flex-shrink-0" />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    En tant qu'Admin, ces informations sont importantes pour la gestion du système.
+                    En tant qu'Admin, ces informations sont importantes pour la
+                    gestion du système.
                   </p>
                 </div>
               </div>
             </motion.div>
 
             {/* Informations importantes */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
@@ -485,11 +518,11 @@ export default function AdminEdit() {
                   <h4 className="text-sm font-semibold text-yellow-800 dark:text-yellow-400 mb-2">
                     Informations importantes
                   </h4>
-                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                    <li>• Les champs marqués d'un * sont obligatoires</li>
-                    <li>• L'email doit être valide et accessible</li>
-                    <li>• Les modifications prennent effet immédiatement</li>
-                    <li>• Contactez le support en cas de problème</li>
+                  <ul className="text-sm list-disc text-yellow-700 dark:text-yellow-300 space-y-1">
+                    <li>Les champs marqués d'un * sont obligatoires</li>
+                    <li>L'email doit être valide et accessible</li>
+                    <li>Les modifications prennent effet immédiatement</li>
+                    <li>Contactez le support en cas de problème</li>
                   </ul>
                 </div>
               </div>
@@ -501,13 +534,13 @@ export default function AdminEdit() {
       {/* Modal de changement de mot de passe */}
       <AnimatePresence>
         {showPasswordModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           >
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -548,7 +581,7 @@ export default function AdminEdit() {
                         />
                         <button
                           type="button"
-                          onClick={() => togglePasswordVisibility('new')}
+                          onClick={() => togglePasswordVisibility("new")}
                           className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#179150] hover:text-[#147a43]"
                         >
                           {showPasswords.new ? (
@@ -559,7 +592,8 @@ export default function AdminEdit() {
                         </button>
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Minimum 8 caractères avec majuscules, minuscules et chiffres
+                        Minimum 8 caractères avec majuscules, minuscules et
+                        chiffres
                       </p>
                     </div>
 
@@ -579,7 +613,7 @@ export default function AdminEdit() {
                         />
                         <button
                           type="button"
-                          onClick={() => togglePasswordVisibility('confirm')}
+                          onClick={() => togglePasswordVisibility("confirm")}
                           className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#179150] hover:text-[#147a43]"
                         >
                           {showPasswords.confirm ? (
@@ -625,33 +659,48 @@ export default function AdminEdit() {
       {/* Notifications Toast */}
       <AnimatePresence>
         {showToast && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 100 }}
             className="fixed bottom-4 right-4 z-50"
           >
-            <div className={`border ${
-              toastType === 'success' 
-                ? 'bg-[#179150]/10 border-[#179150]/20' 
-                : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            } p-4 max-w-sm`}>
+            <div
+              className={cn(
+                "border",
+                toastType === "success"
+                  ? "bg-[#179150]/10 border-[#179150]/20"
+                  : "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
+                "p-4 max-w-sm"
+              )}
+            >
               <div className="flex items-center">
-                <div className={`flex-shrink-0 ${
-                  toastType === 'success' ? 'text-[#179150]' : 'text-red-600'
-                }`}>
-                  {toastType === 'success' ? (
+                <div
+                  className={cn(
+                    "flex-shrink-0",
+                    toastType === "success" ? "text-[#179150]" : "text-red-600"
+                  )}
+                >
+                  {toastType === "success" ? (
                     <CheckCircle className="w-5 h-5" />
                   ) : (
                     <AlertCircle className="w-5 h-5" />
                   )}
                 </div>
-                <div className="ml-3">
-                  <p className={`text-sm font-medium ${
-                    toastType === 'success' 
-                      ? 'text-[#179150]' 
-                      : 'text-red-800 dark:text-red-400'
-                  }`}>
+                <div
+                  className={cn(
+                    "ml-3",
+                    toastType === "success" ? "text-[#179150]" : "text-red-600"
+                  )}
+                >
+                  <p
+                    className={cn(
+                      "text-sm font-medium",
+                      toastType === "success"
+                        ? "text-[#179150]"
+                        : "text-red-800 dark:text-red-400"
+                    )}
+                  >
                     {toastMessage}
                   </p>
                 </div>

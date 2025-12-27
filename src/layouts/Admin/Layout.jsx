@@ -1,23 +1,26 @@
 // Layout.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
 import AdminSidebar from "./SideBar";
 import AdminNavbar from "./Navbar";
+import { useAuth } from "@/hooks";
+import { useThemeStore } from "@/store/theme";
+import { cn } from "@/lib/utils";
 
 export default function AppLayoutAdmin({ children }) {
   const location = useLocation();
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
   const { user } = useAuth();
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
-  const [theme, setTheme] = useState("light");
 
   // Gère le thème
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.className = savedTheme;
+    const savedTheme = localStorage.getItem("theme") || theme;
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
     setTheme(savedTheme);
-  }, []);
+  }, [theme, setTheme]);
 
   // Détection responsive
   useEffect(() => {
@@ -36,13 +39,6 @@ export default function AppLayoutAdmin({ children }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Fermer la sidebar en mobile lors du changement de route
-  useEffect(() => {
-    if (isMobile && sidebarVisible) {
-      setSidebarVisible(false);
-    }
-  }, [location.pathname, isMobile, sidebarVisible]);
-
   const toggleSidebar = () => {
     setSidebarVisible((prev) => !prev);
   };
@@ -51,14 +47,15 @@ export default function AppLayoutAdmin({ children }) {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Navbar fixe en haut */}
       <AdminNavbar toggleSidebar={toggleSidebar} />
-      
+
       {/* Sidebar */}
-      <AdminSidebar 
-        user={user} 
-        collapsed={!sidebarVisible} 
+      <AdminSidebar
+        user={user}
+        collapsed={!sidebarVisible}
         onClose={() => setSidebarVisible(false)}
+        location={location}
       />
-      
+
       {/* Overlay pour mobile */}
       {isMobile && sidebarVisible && (
         <div
@@ -66,18 +63,18 @@ export default function AppLayoutAdmin({ children }) {
           onClick={() => setSidebarVisible(false)}
         />
       )}
-      
+
       {/* Contenu principal */}
-      <div className={`
-        transition-all duration-300 ease-in-out
-        ${sidebarVisible ? 'lg:ml-64' : 'lg:ml-0'}
-        pt-16
-      `}>
+      <div
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          sidebarVisible ? "lg:ml-64" : "lg:ml-0",
+          "pt-16"
+        )}
+      >
         <main className="p-4 lg:p-6">
           <div className="container-fluid">
-            <div className="py-4">
-              {children}
-            </div>
+            <div className="py-4">{children}</div>
           </div>
         </main>
       </div>

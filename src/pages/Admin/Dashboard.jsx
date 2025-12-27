@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { 
-  LogOut, 
-  Users, 
-  BarChart3, 
-  FileText, 
+import {
+  LogOut,
+  Users,
+  BarChart3,
+  FileText,
   Calendar,
-  Settings,
-  UserCheck,
   TrendingUp,
-  Bell
+  Bell,
 } from "lucide-react";
-import api from "../../services/api";
+import { useAuth } from "@/hooks";
+import api from "@/services/api";
+import { AdminDashboardMenu } from "@/constants";
+import { cn } from "@/lib/utils";
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardData();
@@ -24,34 +24,109 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
+      setLoading(true);
       const response = await api.get("/management/admin-dashboard-data");
       setStats(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des données:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
+  // Données simulées pour les graphiques (à remplacer par des données API si disponibles)
+  const employeeData = {
+    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+    datasets: [
+      {
+        label: 'Recrutements',
+        data: [4, 2, 5, 3, 6, 4],
+        backgroundColor: 'rgba(34, 197, 94, 0.6)', // Green
+      },
+      {
+        label: 'Départs',
+        data: [1, 0, 1, 0, 2, 1],
+        backgroundColor: 'rgba(239, 68, 68, 0.6)', // Red
+      },
+    ],
   };
 
+  const leaveData = {
+    labels: ['Congés Payés', 'Maladie', 'Sans Solde', 'Autre'],
+    datasets: [
+      {
+        data: [12, 5, 3, 2],
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.7)', // Blue
+          'rgba(245, 158, 11, 0.7)', // Orange
+          'rgba(239, 68, 68, 0.7)', // Red
+          'rgba(156, 163, 175, 0.7)', // Gray
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const barOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      title: { display: false },
+    },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement du tableau de bord...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <UserCheck className="h-8 w-8 text-green-600" />
+    <AdminLayout>
+      <div className="max-w-7xl mx-auto space-y-8">
+
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Tableau de Bord Administrateur
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Vue d'ensemble des activités RH et statistiques.
+          </p>
+        </motion.div>
+
+        {/* Statistiques Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border-l-4 border-blue-500"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Employés</p>
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{stats?.employes?.total || 0}</h3>
               </div>
-              <div className="ml-4">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Portail RH - Espace Administrateur
-                </h1>
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600">
+                <Users className="w-6 h-6" />
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -92,21 +167,16 @@ const AdminDashboard = () => {
                 </div>
 
                 <nav className="space-y-2">
-                  {[
-                    { id: "dashboard", name: "Tableau de bord", icon: BarChart3 },
-                    { id: "employees", name: "Gestion Employés", icon: Users },
-                    { id: "leaves", name: "Gestion Congés", icon: Calendar },
-                    { id: "reports", name: "Rapports", icon: FileText },
-                    { id: "settings", name: "Paramètres", icon: Settings },
-                  ].map((item) => (
+                  {AdminDashboardMenu.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      className={cn(
+                        "w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                         activeTab === item.id
                           ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"
                           : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      }`}
+                      )}
                     >
                       <item.icon className="h-4 w-4 mr-3" />
                       {item.name}
@@ -115,57 +185,65 @@ const AdminDashboard = () => {
                 </nav>
               </div>
             </div>
+            <div className="mt-4 text-sm text-gray-500">
+              98% de l'effectif total
+            </div>
+          </motion.div>
 
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-                  Tableau de Bord Administrateur
-                </h3>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border-l-4 border-orange-500"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Congés en attente</p>
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">12</h3>
+              </div>
+              <div className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg text-orange-600">
+                <Clock className="w-6 h-6" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center text-sm text-orange-600 cursor-pointer hover:underline">
+              <span>Voir les demandes</span>
+            </div>
+          </motion.div>
 
-                {/* Statistiques */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                          Total Employés
-                        </p>
-                        <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
-                          {stats?.employes?.total || 0}
-                        </p>
-                      </div>
-                      <Users className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                    </div>
-                  </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border-l-4 border-purple-500"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Postes Ouverts</p>
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{stats?.postes || 0}</h3>
+              </div>
+              <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600">
+                <Briefcase className="w-6 h-6" />
+              </div>
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              Dans 3 départements
+            </div>
+          </motion.div>
+        </div>
 
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-green-800 dark:text-green-300">
-                          Employés Actifs
-                        </p>
-                        <p className="text-2xl font-bold text-green-900 dark:text-green-200">
-                          {stats?.employes?.actifs || 0}
-                        </p>
-                      </div>
-                      <TrendingUp className="h-8 w-8 text-green-600 dark:text-green-400" />
-                    </div>
-                  </div>
-
-                  <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-orange-800 dark:text-orange-300">
-                          Congés en attente
-                        </p>
-                        <p className="text-2xl font-bold text-orange-900 dark:text-orange-200">
-                          12
-                        </p>
-                      </div>
-                      <Calendar className="h-8 w-8 text-orange-600 dark:text-orange-400" />
-                    </div>
-                  </div>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
+          >
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Mouvements du personnel</h3>
+            <div className="h-64">
+              <Bar data={employeeData} options={barOptions} />
+            </div>
+          </motion.div>
 
                   <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
                     <div className="flex items-center justify-between">
@@ -189,21 +267,29 @@ const AdminDashboard = () => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Email
+                      </p>
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
                         {user?.email}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Rôle</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Rôle
+                      </p>
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
                         Administrateur RH
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Date de création</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Date de création
+                      </p>
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {user?.created_at ? new Date(user.created_at).toLocaleDateString() : "Non spécifiée"}
+                        {user?.created_at
+                          ? new Date(user.created_at).toLocaleDateString()
+                          : "Non spécifiée"}
                       </p>
                     </div>
                   </div>
@@ -243,10 +329,39 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
+
+        {/* Actions Rapides */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
+        >
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Gestion Rapide</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: Users, label: "Ajouter Employé", color: "blue" },
+              { icon: Calendar, label: "Valider Congés", color: "orange" },
+              { icon: FileText, label: "Générer Rapport", color: "green" },
+              { icon: Bell, label: "Envoyer Notification", color: "purple" },
+            ].map((action, idx) => {
+              const Icon = action.icon;
+              return (
+                <button key={idx} className={`flex items-center p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group`}>
+                  <div className={`p-3 rounded-lg bg-${action.color}-50 dark:bg-${action.color}-900/20 text-${action.color}-600 group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="ml-4 font-medium text-gray-700 dark:text-gray-200">{action.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </motion.div>
+
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

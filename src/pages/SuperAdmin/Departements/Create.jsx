@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
-import { 
-  ArrowLeft, 
-  Save, 
+import SuperAdminLayout from "@/layouts/SuperAdmin/Layout";
+import {
+  ArrowLeft,
+  Save,
   FolderTree,
   AlertCircle,
   CheckCircle,
@@ -11,17 +11,18 @@ import {
   Building2,
   FileText,
   User,
-  X
+  X,
 } from "lucide-react";
-import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../../services/api";
+import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
+import { cn } from "@/lib/utils";
 
 export default function DepartementCreate() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    nom: '',
-    description: '',
-    chef_departement: ''
+    nom: "",
+    description: "",
+    chef_departement: "",
   });
   const [errors, setErrors] = useState({});
   const [error, setError] = useState(null);
@@ -37,14 +38,14 @@ export default function DepartementCreate() {
 
   const fetchEmployes = async () => {
     try {
-      const response = await api.get('/users/employe-profiles/');
+      const response = await api.get("/users/employe-profiles/");
       setEmployes(response.data || []);
     } catch (error) {
-      console.error('Erreur lors du chargement des employés:', error);
+      console.error("Erreur lors du chargement des employés:", error);
     }
   };
 
-  const showToastMessage = (message, type = 'success') => {
+  const showToastMessage = (message, type = "success") => {
     setToastMessage(message);
     setToastType(type);
     setShowToast(true);
@@ -53,53 +54,59 @@ export default function DepartementCreate() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear error for this field
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: null
+        [name]: null,
       }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setError(null);
       setErrors({});
-      
+
       const submitData = {
         nom: formData.nom,
-        description: formData.description || null
+        description: formData.description || null,
       };
-      
+
       if (formData.chef_departement) {
         submitData.chef_departement = parseInt(formData.chef_departement);
       }
-      
-      const response = await api.post('/users/departements/', submitData);
-      
+
+      const response = await api.post("/users/departements/", submitData);
+
       if (response.data) {
-        showToastMessage('Département créé avec succès !', 'success');
+        showToastMessage("Département créé avec succès !", "success");
         setTimeout(() => {
-          navigate('/superadmin/departements');
+          navigate("/superadmin/departements");
         }, 2000);
       }
     } catch (err) {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
-        showToastMessage('Veuillez corriger les erreurs du formulaire', 'error');
+        showToastMessage(
+          "Veuillez corriger les erreurs du formulaire",
+          "error"
+        );
       } else {
-        const errorMsg = err.response?.data?.message || err.response?.data?.error || 'Erreur lors de la création du département';
+        const errorMsg =
+          err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Erreur lors de la création du département";
         setError(errorMsg);
-        showToastMessage(errorMsg, 'error');
+        showToastMessage(errorMsg, "error");
       }
     } finally {
       setSaving(false);
@@ -110,7 +117,7 @@ export default function DepartementCreate() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* En-tête */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -136,9 +143,9 @@ export default function DepartementCreate() {
         {/* Alertes */}
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 mb-6 rounded-lg"
             >
@@ -156,7 +163,7 @@ export default function DepartementCreate() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Formulaire principal */}
             <div className="lg:col-span-2">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -172,7 +179,7 @@ export default function DepartementCreate() {
                 <div className="p-6 space-y-6">
                   {/* Nom */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                       <Building2 className="w-4 h-4 mr-2" />
                       Nom du département *
                     </label>
@@ -181,11 +188,13 @@ export default function DepartementCreate() {
                       name="nom"
                       value={formData.nom}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border ${
-                        errors.nom 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      className={cn(
+                        "w-full px-4 py-3 border",
+                        errors.nom
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                        "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                      )}
                       placeholder="Ex: Ressources Humaines"
                       required
                     />
@@ -198,7 +207,7 @@ export default function DepartementCreate() {
 
                   {/* Description */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                       <FileText className="w-4 h-4 mr-2" />
                       Description
                     </label>
@@ -207,11 +216,13 @@ export default function DepartementCreate() {
                       value={formData.description}
                       onChange={handleInputChange}
                       rows={4}
-                      className={`w-full px-4 py-3 border ${
-                        errors.description 
-                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
-                      } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
+                      className={cn(
+                        "w-full px-4 py-3 border",
+                        errors.description
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]",
+                        "bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg"
+                      )}
                       placeholder="Description du département..."
                     />
                     {errors.description && (
@@ -223,7 +234,7 @@ export default function DepartementCreate() {
 
                   {/* Chef de département */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 md:flex items-center">
                       <User className="w-4 h-4 mr-2" />
                       Chef de département
                     </label>
@@ -231,12 +242,17 @@ export default function DepartementCreate() {
                       name="chef_departement"
                       value={formData.chef_departement}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[#179150] focus:ring-[#179150] transition-colors duration-200 rounded-lg"
+                      className={cn(
+                        "w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[#179150] focus:ring-[#179150] transition-colors duration-200 rounded-lg",
+                        errors.chef_departement
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]"
+                      )}
                     >
                       <option value="">Sélectionner un employé...</option>
                       {employes.map((employe) => (
                         <option key={employe.id} value={employe.id}>
-                          {employe.user?.first_name} {employe.user?.last_name} 
+                          {employe.user?.first_name} {employe.user?.last_name}
                           {employe.matricule && ` (${employe.matricule})`}
                         </option>
                       ))}
@@ -255,7 +271,7 @@ export default function DepartementCreate() {
                 {/* Boutons d'action */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 mt-8 border-t border-gray-200 dark:border-gray-700 px-6 pb-6">
                   <div></div>
-                  
+
                   <div className="flex gap-3">
                     <Link
                       to="/superadmin/departements"
@@ -264,7 +280,7 @@ export default function DepartementCreate() {
                       <X className="w-4 h-4 mr-2" />
                       Annuler
                     </Link>
-                    
+
                     <button
                       type="submit"
                       disabled={saving}
@@ -290,7 +306,7 @@ export default function DepartementCreate() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Conseils */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
@@ -335,13 +351,14 @@ export default function DepartementCreate() {
             initial={{ opacity: 0, y: 50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 ${
-              toastType === 'success' 
-                ? 'bg-green-500 text-white' 
-                : 'bg-red-500 text-white'
-            }`}
+            className={cn(
+              "fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3",
+              toastType === "success"
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            )}
           >
-            {toastType === 'success' ? (
+            {toastType === "success" ? (
               <CheckCircle className="w-5 h-5" />
             ) : (
               <AlertCircle className="w-5 h-5" />
@@ -353,4 +370,3 @@ export default function DepartementCreate() {
     </SuperAdminLayout>
   );
 }
-
