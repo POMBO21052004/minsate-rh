@@ -22,7 +22,7 @@ import AdminProfileEdit from "../pages/Admin/Profil/Edit";
 // Gerer par les super admins
 import SuperAdminDashboard from "../pages/SuperAdmin/Dashboard";
 
-import SuperAdminProfile from "../pages/SuperAdmin/Index";
+import SuperAdminProfile from "../pages/SuperAdmin/Profil/Index";
 import SuperAdminProfileEdit from "../pages/SuperAdmin/Profil/Edit";
 
 import SuperAdminList from "../pages/SuperAdmin/SuperAdmin/Index";

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import SuperAdminLayout from "../../layouts/SuperAdmin/Layout";
+import { useAuth } from "../../../contexts/AuthContext";
+import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
 import {
   User,
   Mail,
@@ -27,8 +27,8 @@ import {
   Info
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
-import api from "../../services/api";
-import Toast from "../../components/ui/Toast";
+import api from "../../../services/api";
+import Toast from "../../../components/ui/Toast";
 
 export default function SuperAdminProfile() {
   const { user: authUser } = useAuth();
