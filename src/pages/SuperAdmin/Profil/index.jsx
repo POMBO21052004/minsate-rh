@@ -36,7 +36,7 @@ export default function SuperAdminProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // États pour le modal de changement de mot de passe
+  // // États pour le modal de changement de mot de passe 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     old_password: '',
