@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../../../services/api";
-import EmployeLayout from "../../../contexts/Layout";
+import EmployeLayout from "../../../layouts/Employe/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LeaveStatusBadge = ({ status }) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
+import SuperAdminLayout from "../../../contexts/Layout";
 import {
   ArrowLeft,
   Edit,
