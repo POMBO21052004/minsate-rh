@@ -12,7 +12,7 @@ import {
     Eye
 } from "lucide-react";
 import api from "../../../services/api";
-import SuperAdminLayout from "../../../contexts/Layout";
+import SuperAdminLayout from "../../../layouts/SuperAdmin/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ActionBadge = ({ action }) => {

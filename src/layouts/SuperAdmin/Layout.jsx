@@ -1,9 +1,9 @@
 // Layout.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useAuth } from "./AuthContext";
-import SuperAdminSidebar from "../layouts/SuperAdmin/SideBar";
-import SuperAdminNavbar from "../layouts/SuperAdmin/Navbar";
+import { useAuth } from "../../contexts/AuthContext";
+import SuperAdminSidebar from "./SideBar";
+import SuperAdminNavbar from "./Navbar";
 
 export default function AppLayout({ children }) {
   const location = useLocation();

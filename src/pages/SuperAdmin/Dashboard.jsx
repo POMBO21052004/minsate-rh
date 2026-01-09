@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import SuperAdminLayout from "../../contexts/Layout";
+import SuperAdminLayout from "../../layouts/SuperAdmin/Layout";
 import { 
   Shield,
   Users, 
