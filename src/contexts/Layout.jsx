@@ -1,9 +1,9 @@
 // Layout.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import EmployeSidebar from "./SideBar";
-import EmployeNavbar from "./Navbar";
+import { useAuth } from "./AuthContext";
+import EmployeSidebar from "../layouts/Employe/SideBar";
+import EmployeNavbar from "../layouts/Employe/Navbar";
 
 export default function EmployeLayout({ children }) {
     const location = useLocation();

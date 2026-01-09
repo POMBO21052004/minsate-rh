@@ -11,7 +11,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import api from "../../services/api";
-import EmployeLayout from "../../layouts/Employe/Layout";
+import EmployeLayout from "../../contexts/Layout";
 import { motion } from "framer-motion";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';

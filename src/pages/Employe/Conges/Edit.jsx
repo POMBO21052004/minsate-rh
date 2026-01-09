@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, AlertCircle } from "lucide-react";
 import api from "../../../services/api";
-import EmployeLayout from "../../../layouts/Employe/Layout";
+import EmployeLayout from "../../../contexts/Layout";
 
 const Edit = () => {
     const { id } = useParams();

@@ -10,7 +10,7 @@ import {
     AlertCircle
 } from "lucide-react";
 import api from "../../../services/api";
-import EmployeLayout from "../../../layouts/Employe/Layout";
+import EmployeLayout from "../../../contexts/Layout";
 
 const LeaveStatusBadge = ({ status }) => {
     const styles = {
