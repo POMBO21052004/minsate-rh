@@ -81,7 +81,8 @@ export default function AdminCreate() {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        confirm_password: formData.confirm_password
       });
 
       if (response.data) {
@@ -95,7 +96,7 @@ export default function AdminCreate() {
         setErrors(err.response.data.errors);
         showToastMessage('Veuillez corriger les erreurs du formulaire', 'error');
       } else {
-        const errorMsg = err.response?.data?.message || 'Erreur lors de la création du super administrateur';
+        const errorMsg = err.response?.data?.error || 'Erreur lors de la création du super administrateur';
         setError(errorMsg);
         showToastMessage(errorMsg, 'error');
       }
