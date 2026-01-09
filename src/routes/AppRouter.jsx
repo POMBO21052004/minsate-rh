@@ -7,7 +7,6 @@ import ForgotPassword from "../pages/Auth/ForgotPassword";
 // ------------------------------------------------------------------------------
 
 // Gerer par les employes
-// Gerer par les employes
 import EmployeeDashboard from "../pages/Employe/Dashboard";
 import EmployeeProfile from "../pages/Employe/Profil/Index";
 import EmployeeProfileEdit from "../pages/Employe/Profil/Edit";
