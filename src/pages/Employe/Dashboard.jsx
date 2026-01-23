@@ -50,7 +50,7 @@ const EmployeeDashboard = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
-    congesRestants: 18,
+    congesRestants: 18, // Valeur par défaut si API échoue
     congesPris: 12,
     congesTotal: 30,
     documentsAttente: 2,
@@ -68,42 +68,70 @@ const EmployeeDashboard = () => {
   });
 
   useEffect(() => {
-    fetchProfile();
-    initCharts();
+    fetchData();
   }, []);
 
-  const fetchProfile = async () => {
+  const fetchData = async () => {
     try {
-      // In a real scenario, this endpoint would exist
-      // const response = await api.get("/employe-profiles/me");
-      // For now, we mock the profile response based on user context or static data if backend is missing
-      const mockProfile = {
-        matricule: "EMP-" + Math.floor(1000 + Math.random() * 9000),
-        statut: "Actif",
-        poste_details: { titre: "Développeur Senior" },
-        service_details: { nom: "Département IT" }
-      };
-      setProfile(mockProfile);
+      setLoading(true);
 
-      // Attempt to fetch real profile if endpoint existed
-      try {
-        const response = await api.get("/employe-profiles/me");
-        if (response.data) setProfile(response.data);
-      } catch (e) { /* ignore 404 for now */ }
+      // 1. Fetch Profile and Leave Requests concurrently
+      const [profileRes, congésRes] = await Promise.allSettled([
+        api.get("/employe-profiles/me"),
+        api.get("/demandes/me") // Assuming endpoint for employee's own requests
+      ]);
+
+      // Handle Profile
+      let currentProfile = null;
+      if (profileRes.status === 'fulfilled') {
+        setProfile(profileRes.value.data);
+        currentProfile = profileRes.value.data;
+      } else {
+        // Fallback Mock Profile if 404
+        setProfile({
+          matricule: "EMP-" + Math.floor(1000 + Math.random() * 9000),
+          statut: "Actif",
+          poste_details: { titre: "Employé" },
+          service_details: { nom: "Service Général" }
+        });
+      }
+
+      // Handle Leaves Stats
+      let prisedDays = 12;
+      let remainingDays = 18;
+
+      if (congésRes.status === 'fulfilled' && Array.isArray(congésRes.value.data)) {
+        // Calculate approved leave days
+        // Assuming structure has 'duree' or we count requests
+        const approvedLeaves = congésRes.value.data.filter(d => d.statut === 'approuve');
+        // Simple logic: count requests as days for demo if duration not explicit, or sum durations
+        // Here we mock the summation logic for safety
+        prisedDays = approvedLeaves.length * 2; // Mock avg 2 days per request
+        remainingDays = 30 - prisedDays;
+      }
+
+      setStats(prev => ({
+        ...prev,
+        congesPris: prisedDays,
+        congesRestants: remainingDays >= 0 ? remainingDays : 0
+      }));
+
+      initCharts(prisedDays, remainingDays);
 
     } catch (error) {
-      console.error("Erreur lors de la récupération du profil:", error);
+      console.error("Erreur lors du chargement du tableau de bord:", error);
+      initCharts(12, 18); // Fallback charts
     } finally {
       setLoading(false);
     }
   };
 
-  const initCharts = () => {
+  const initCharts = (taken, remaining) => {
     // 1. Leave Distribution (Doughnut)
     const leaveData = {
       labels: ['Pris', 'Restants'],
       datasets: [{
-        data: [12, 18],
+        data: [taken, remaining],
         backgroundColor: ['rgba(209, 213, 219, 0.5)', '#179150'],
         borderColor: ['rgba(209, 213, 219, 1)', '#179150'],
         borderWidth: 1,
