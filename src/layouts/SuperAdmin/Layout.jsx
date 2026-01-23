@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import SuperAdminSidebar from "./Sidebar";
+import SuperAdminSidebar from "./SideBar";
 import SuperAdminNavbar from "./Navbar";
 
 export default function AppLayout({ children }) {
