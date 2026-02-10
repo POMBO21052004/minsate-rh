@@ -20,7 +20,7 @@ const NotificationDropdown = () => {
     // Get token for WebSocket auth (if your backend supports it via query param or header)
     const token = localStorage.getItem('token');
     // const WS_URL = token ? `wss://digiplus-grh-production.up.railway.app/ws/notifications/?token=${token}` : null;
-    const WS_URL = token ? `wss://127.0.0.1:63930/ws/notifications/?token=${token}` : null;
+    const WS_URL = token ? `ws://127.0.0.1:8000/ws/notifications/?token=${token}` : null;
 
     const { lastJsonMessage, readyState } = useWebSocket(WS_URL, {
         shouldReconnect: (closeEvent) => true,

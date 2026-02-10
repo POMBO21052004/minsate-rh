@@ -84,6 +84,14 @@ export default function AppRouter() {
         <Route path="/personnel/conges/:id" element={<PrivateRoute allowedRoles={[0]}> <CongesShow /> </PrivateRoute>} />
         <Route path="/personnel/conges/:id/edit" element={<PrivateRoute allowedRoles={[0]}> <CongesEdit /> </PrivateRoute>} />
 
+        {/* Routes RH Personnel (Placeholders) */}
+        <Route path="/personnel/presences" element={<PrivateRoute allowedRoles={[0]}> <PersonnelDashboard /> </PrivateRoute>} />
+        <Route path="/personnel/heures-sup" element={<PrivateRoute allowedRoles={[0]}> <PersonnelDashboard /> </PrivateRoute>} />
+        <Route path="/personnel/formations" element={<PrivateRoute allowedRoles={[0]}> <PersonnelDashboard /> </PrivateRoute>} />
+        <Route path="/personnel/evaluations" element={<PrivateRoute allowedRoles={[0]}> <PersonnelDashboard /> </PrivateRoute>} />
+        <Route path="/personnel/documents" element={<PrivateRoute allowedRoles={[0]}> <PersonnelDashboard /> </PrivateRoute>} />
+        <Route path="/personnel/contrats" element={<PrivateRoute allowedRoles={[0]}> <PersonnelDashboard /> </PrivateRoute>} />
+
         {/* Admin */}
         <Route path="/admin/dashboard" element={<PrivateRoute allowedRoles={[1]}> <AdminDashboard /> </PrivateRoute>} />
         <Route path="/admin/profile" element={<PrivateRoute allowedRoles={[1]}> <AdminProfile /> </PrivateRoute>} />

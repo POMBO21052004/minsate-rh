@@ -7,10 +7,16 @@ import {
     User,
     FileText,
     Clock,
-    Settings,
-    LogOut,
+    ShieldCheck,
     Building,
-    Circle
+    Circle,
+    GraduationCap,
+    Award,
+    Briefcase,
+    History,
+    FileBarChart,
+    Settings,
+    LogOut
 } from "lucide-react";
 
 export default function PersonnelSidebar({ user, collapsed, onClose }) {
@@ -18,29 +24,39 @@ export default function PersonnelSidebar({ user, collapsed, onClose }) {
 
     const menuSections = [
         {
-            title: "Mon Espace",
+            title: "Pilotage Personnel",
             items: [
                 { label: "Tableau de bord", icon: LayoutDashboard, path: "/personnel/dashboard" },
             ]
         },
         {
-            title: "Mes Congés",
+            title: "Gestion du temps",
             items: [
-                { label: "Mes demandes", icon: Calendar, path: "/personnel/conges" },
-                { label: "Solde & Historique", icon: Clock, path: "/personnel/conges/historique" },
+                { label: "Mes Congés", icon: Calendar, path: "/personnel/conges" },
+                { label: "Présences & Pointage", icon: Clock, path: "/personnel/presences" },
+                { label: "Heures Supplémentaires", icon: History, path: "/personnel/heures-sup" },
             ]
         },
         {
-            title: "Documents & Infos",
+            title: "Ma Carrière",
+            items: [
+                { label: "Mes Formations", icon: GraduationCap, path: "/personnel/formations" },
+                { label: "Évaluations", icon: Award, path: "/personnel/evaluations" },
+                { label: "Mon Poste", icon: Briefcase, path: "/personnel/profile" },
+            ]
+        },
+        {
+            title: "Ma Documentation",
             items: [
                 { label: "Mon Profil", icon: User, path: "/personnel/profile" },
-                { label: "Mes Documents", icon: FileText, path: "/personnel/documents" },
+                { label: "Documents RH", icon: FileText, path: "/personnel/documents" },
+                { label: "Mes Contrats", icon: ShieldCheck, path: "/personnel/contrats" },
             ]
         },
     ];
 
     const isActiveLink = (path) => {
-        return location.pathname.startsWith(path);
+        return location.pathname === path || location.pathname.startsWith(path + "/");
     };
 
     return (
@@ -50,7 +66,7 @@ export default function PersonnelSidebar({ user, collapsed, onClose }) {
       ${collapsed ? '-translate-x-full' : 'translate-x-0'}
       w-64
     `}>
-            {/* Header avec logo */}
+            {/* Header avec logo style SuperAdmin */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-white dark:from-blue-900/30 dark:to-gray-800">
                 <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0">
@@ -67,7 +83,7 @@ export default function PersonnelSidebar({ user, collapsed, onClose }) {
                 </div>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation avec scroll comme SuperAdmin */}
             <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 h-[calc(100vh-200px)]">
                 {menuSections.map((section, sectionIndex) => (
                     <div key={sectionIndex} className="mb-6">
@@ -116,7 +132,7 @@ export default function PersonnelSidebar({ user, collapsed, onClose }) {
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                            {user?.first_name || 'Personnel'}
+                            {user?.first_name} {user?.last_name || 'Personnel'}
                         </p>
                         <p className="text-xs text-blue-600 dark:text-blue-400 truncate">
                             Connecté
