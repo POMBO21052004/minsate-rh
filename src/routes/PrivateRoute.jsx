@@ -15,8 +15,8 @@ export default function PrivateRoute({ children, allowedRoles }) {
 
   if (!allowedRoles.includes(userRole)) {
     const dashboards = {
-      0: "/employe/dashboard",
-      1: "/admin/dashboard", 
+      0: "/personnel/dashboard",
+      1: "/admin/dashboard",
       2: "/superadmin/dashboard",
     };
     return <Navigate to={dashboards[userRole] || "/"} replace />;

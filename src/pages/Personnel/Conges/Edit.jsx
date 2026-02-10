@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, AlertCircle } from "lucide-react";
 import api from "../../../services/api";
-import EmployeLayout from "../../../layouts/Employe/Layout";
+import PersonnelLayout from "../../../layouts/Personnel/Layout";
 
 const Edit = () => {
     const { id } = useParams();
@@ -14,7 +14,7 @@ const Edit = () => {
     const [formData, setFormData] = useState({
         date_debut: "",
         date_fin: "",
-        type_conge: "conge_paye",
+        type_conge: "annuel",
         description: ""
     });
 
@@ -36,7 +36,7 @@ const Edit = () => {
 
             // Empêcher l'édition si déjà traité
             if (response.data.statut !== 'en_attente') {
-                navigate(`/employe/conges/${id}`);
+                navigate(`/personnel/conges/${id}`);
             }
         } catch (error) {
             console.error("Erreur récupération:", error);
@@ -68,7 +68,7 @@ const Edit = () => {
 
         try {
             await api.patch(`/users/leaves/${id}/`, formData);
-            navigate(`/employe/conges/${id}`);
+            navigate(`/personnel/conges/${id}`);
         } catch (err) {
             console.error("Erreur modification:", err);
             setError("Erreur lors de la modification.");
@@ -79,17 +79,17 @@ const Edit = () => {
 
     if (loading) {
         return (
-            <EmployeLayout>
+            <PersonnelLayout>
                 <div className="flex items-center justify-center h-64">Chargement...</div>
-            </EmployeLayout>
+            </PersonnelLayout>
         );
     }
 
     return (
-        <EmployeLayout>
+        <PersonnelLayout>
             <div className="max-w-2xl mx-auto space-y-6">
                 <button
-                    onClick={() => navigate('/employe/conges')}
+                    onClick={() => navigate('/personnel/conges')}
                     className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
@@ -116,11 +116,9 @@ const Edit = () => {
                                 onChange={(e) => setFormData({ ...formData, type_conge: e.target.value })}
                                 className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             >
-                                <option value="conge_paye">Congé Payé</option>
-                                <option value="maladie">Maladie</option>
-                                <option value="sans_solde">Sans Solde</option>
-                                <option value="rtt">RTT</option>
-                                <option value="autre">Autre</option>
+                                <option value="annuel">Congé annuel</option>
+                                <option value="maladie">Congé maladie</option>
+                                <option value="sans_solde">Congé sans solde</option>
                             </select>
                         </div>
 
@@ -176,7 +174,7 @@ const Edit = () => {
                     </form>
                 </div>
             </div>
-        </EmployeLayout>
+        </PersonnelLayout>
     );
 };
 

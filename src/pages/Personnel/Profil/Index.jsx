@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
-import EmployeLayout from "../../../layouts/Employe/Layout";
+import PersonnelLayout from "../../../layouts/Personnel/Layout";
 import {
     User,
     Mail,
@@ -30,7 +30,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 import Toast from "../../../components/ui/Toast";
 
-export default function EmployeeProfile() {
+export default function PersonnelProfile() {
     const { user: authUser } = useAuth();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ export default function EmployeeProfile() {
         const fetchUserProfile = async () => {
             try {
                 setLoading(true);
-                const response = await api.get('/users/profile');
+                const response = await api.get('/users/profile/');
                 setUser(response.data);
             } catch (err) {
                 setError('Erreur lors du chargement du profil');
@@ -142,7 +142,7 @@ export default function EmployeeProfile() {
             setChangingPassword(true);
             setPasswordErrors({});
 
-            const response = await api.put('/users/change-password', passwordForm);
+            const response = await api.put('/users/change-password/', passwordForm);
 
             if (response.data.message) {
                 showToastMessage('Mot de passe changé avec succès !', 'success');
@@ -181,20 +181,20 @@ export default function EmployeeProfile() {
 
     if (loading) {
         return (
-            <EmployeLayout>
+            <PersonnelLayout>
                 <div className="flex items-center justify-center py-12">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                         <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement du profil...</p>
                     </div>
                 </div>
-            </EmployeLayout>
+            </PersonnelLayout>
         );
     }
 
     if (error) {
         return (
-            <EmployeLayout>
+            <PersonnelLayout>
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -207,14 +207,14 @@ export default function EmployeeProfile() {
                         </div>
                     </div>
                 </div>
-            </EmployeLayout>
+            </PersonnelLayout>
         );
     }
 
     const roleInfo = getRoleDisplay(user);
 
     return (
-        <EmployeLayout>
+        <PersonnelLayout>
             {/* En-tête */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -231,7 +231,7 @@ export default function EmployeeProfile() {
                     </p>
                 </div>
                 <Link
-                    to="/employe/profile/edit"
+                    to="/personnel/profile/edit"
                     className="inline-flex items-center px-6 py-3 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
                 >
                     <Edit3 className="w-5 h-5 mr-2" />
@@ -388,7 +388,7 @@ export default function EmployeeProfile() {
                         </div>
                         <div className="p-4 space-y-2">
                             <Link
-                                to="/employe/profile/edit"
+                                to="/personnel/profile/edit"
                                 className="flex items-center justify-between p-3 rounded-lg bg-[#2563eb]/10 hover:bg-[#2563eb]/20 border border-[#2563eb]/20 transition-colors duration-200 group"
                             >
                                 <div className="flex items-center">
@@ -414,7 +414,7 @@ export default function EmployeeProfile() {
                             </button>
 
                             <Link
-                                to="/employe/dashboard"
+                                to="/personnel/dashboard"
                                 className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 transition-colors duration-200 group"
                             >
                                 <div className="flex items-center">
@@ -660,6 +660,6 @@ export default function EmployeeProfile() {
                 isVisible={showToast}
                 onClose={() => setShowToast(false)}
             />
-        </EmployeLayout>
+        </PersonnelLayout>
     );
 }

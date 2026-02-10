@@ -13,7 +13,7 @@ import {
     LogOut
 } from "lucide-react";
 
-export default function EmployeNavbar({ toggleSidebar, sidebarVisible, isMobile }) {
+export default function PersonnelNavbar({ toggleSidebar, sidebarVisible, isMobile }) {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
     const [theme, setTheme] = useState("light");
@@ -67,7 +67,7 @@ export default function EmployeNavbar({ toggleSidebar, sidebarVisible, isMobile 
                 {/* Right Side Actions */}
                 <div className="flex items-center space-x-4">
                     <span className="hidden sm:inline-block px-3 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full border border-blue-200 dark:border-blue-700">
-                        Employé
+                        Personnel
                     </span>
 
                     <button
@@ -80,10 +80,10 @@ export default function EmployeNavbar({ toggleSidebar, sidebarVisible, isMobile 
                     <div className="relative group">
                         <button className="flex items-center space-x-3 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                {user?.first_name ? user.first_name.charAt(0).toUpperCase() : 'E'}
+                                {user?.first_name ? user.first_name.charAt(0).toUpperCase() : 'P'}
                             </div>
                             <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                {user?.first_name || "Employé"}
+                                {user?.first_name || "Personnel"}
                             </span>
                             <ChevronDown className="w-4 h-4 text-gray-500" />
                         </button>
@@ -95,11 +95,11 @@ export default function EmployeNavbar({ toggleSidebar, sidebarVisible, isMobile 
                                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
                             </div>
                             <div className="p-2 space-y-1">
-                                <Link to="/employe/profile" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                                <Link to="/personnel/profile" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                                     <User className="w-4 h-4 mr-3" />
                                     Mon Profil
                                 </Link>
-                                <Link to="/employe/settings" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                                <Link to="/personnel/settings" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                                     <Settings className="w-4 h-4 mr-3" />
                                     Paramètres
                                 </Link>

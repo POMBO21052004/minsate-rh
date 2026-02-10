@@ -16,7 +16,7 @@ import {
   GraduationCap
 } from "lucide-react";
 import api from "../../services/api";
-import EmployeLayout from "../../layouts/Employe/Layout";
+import PersonnelLayout from "../../layouts/Personnel/Layout";
 import { motion } from "framer-motion";
 import {
   Chart as ChartJS,
@@ -45,7 +45,7 @@ ChartJS.register(
   Filler
 );
 
-const EmployeeDashboard = () => {
+const PersonnelDashboard = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -91,7 +91,7 @@ const EmployeeDashboard = () => {
         setProfile({
           matricule: "EMP-" + Math.floor(1000 + Math.random() * 9000),
           statut: "Actif",
-          poste_details: { titre: "Employé" },
+          poste_details: { titre: "Personnel" },
           service_details: { nom: "Service Général" }
         });
       }
@@ -179,19 +179,19 @@ const EmployeeDashboard = () => {
 
   if (loading) {
     return (
-      <EmployeLayout>
+      <PersonnelLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="flex flex-col items-center gap-4">
             <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-[#179150]"></div>
-            <p className="text-gray-500 font-medium">Chargement de votre espace...</p>
+            <p className="text-gray-500 font-medium">Chargement de votre espace Personnel...</p>
           </div>
         </div>
-      </EmployeLayout>
+      </PersonnelLayout>
     );
   }
 
   return (
-    <EmployeLayout>
+    <PersonnelLayout>
       <div className="max-w-7xl mx-auto space-y-8 p-1">
 
         {/* Header Section */}
@@ -213,7 +213,7 @@ const EmployeeDashboard = () => {
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
                   <Briefcase size={16} />
-                  {profile?.poste_details?.titre || "Employé"}
+                  {profile?.poste_details?.titre || "Personnel"}
                   <span className="w-1 h-1 rounded-full bg-gray-300 mx-1"></span>
                   {profile?.service_details?.nom || "Service Général"}
                 </p>
@@ -458,8 +458,8 @@ const EmployeeDashboard = () => {
           </div>
         </div>
       </div>
-    </EmployeLayout>
+    </PersonnelLayout>
   );
 };
 
-export default EmployeeDashboard;
+export default PersonnelDashboard;

@@ -25,10 +25,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 import Toast from "../../../components/ui/Toast";
 
-export default function EmployeEdit() {
+export default function PersonnelEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [employe, setEmploye] = useState(null);
+  const [personnel, setpersonnel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -66,24 +66,24 @@ export default function EmployeEdit() {
   });
 
   useEffect(() => {
-    fetchEmploye();
+    fetchpersonnel();
     fetchDepartements();
   }, [id]);
 
   useEffect(() => {
     if (selectedDepartement) {
       fetchPostesByDepartement(selectedDepartement);
-    } else if (employe?.poste_details?.departement) {
-      setSelectedDepartement(employe.poste_details.departement.toString());
+    } else if (personnel?.poste_details?.departement) {
+      setSelectedDepartement(personnel.poste_details.departement.toString());
     }
-  }, [selectedDepartement, employe]);
+  }, [selectedDepartement, personnel]);
 
-  const fetchEmploye = async () => {
+  const fetchpersonnel = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/users/employe-profiles/${id}/`);
+      const response = await api.get(`/users/personnel-profiles/${id}/`);
       const empData = response.data;
-      setEmploye(empData);
+      setpersonnel(empData);
 
       setFormData({
         first_name: empData.user?.first_name || '',
@@ -194,12 +194,12 @@ export default function EmployeEdit() {
         poste: formData.poste ? parseInt(formData.poste) : null
       };
 
-      const response = await api.put(`/users/employe-profiles/${id}/`, submitData);
+      const response = await api.put(`/users/personnel-profiles/${id}/`, submitData);
 
       if (response.data) {
         showToastMessage('Employé modifié avec succès !', 'success');
         setTimeout(() => {
-          navigate(`/superadmin/employes/${id}`);
+          navigate(`/superadmin/personnel/${id}`);
         }, 2000);
       }
     } catch (err) {
@@ -225,7 +225,7 @@ export default function EmployeEdit() {
 
     try {
       setChangingPassword(true);
-      await api.put(`/users/employe-profiles/${id}/password/`, {
+      await api.put(`/users/personnel-profiles/${id}/password/`, {
         password: passwordForm.password
       });
 
@@ -256,7 +256,7 @@ export default function EmployeEdit() {
     );
   }
 
-  if (!employe) {
+  if (!personnel) {
     return (
       <SuperAdminLayout>
         <div className="text-center py-12">
@@ -265,7 +265,7 @@ export default function EmployeEdit() {
             Employé non trouvé
           </h3>
           <Link
-            to="/superadmin/employes"
+            to="/superadmin/personnel"
             className="inline-flex items-center px-4 py-2 bg-[#179150] text-white hover:bg-[#147a43] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -287,7 +287,7 @@ export default function EmployeEdit() {
         >
           <div className="flex items-center mb-4">
             <Link
-              to={`/superadmin/employes/${id}`}
+              to={`/superadmin/personnel/${id}`}
               className="mr-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -355,7 +355,7 @@ export default function EmployeEdit() {
                           <Users className="w-3 h-3 mr-1" />
                           Employé
                         </span>
-                        {employe.user?.is_verified && (
+                        {personnel.user?.is_verified && (
                           <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#179150]/10 text-[#179150] border border-[#179150]/20 ml-2 rounded">
                             <CheckCircle className="w-3 h-3 mr-1" />
                             Vérifié
@@ -624,7 +624,7 @@ export default function EmployeEdit() {
 
                 <div className="flex gap-3">
                   <Link
-                    to={`/superadmin/employes/${id}`}
+                    to={`/superadmin/personnel/${id}`}
                     className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-colors duration-200 rounded-lg"
                   >
                     <X className="w-4 h-4 mr-2" />

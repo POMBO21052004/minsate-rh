@@ -29,10 +29,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 import Toast from "../../../components/ui/Toast";
 
-export default function EmployeShow() {
+export default function PersonnelShow() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [employe, setEmploye] = useState(null);
+  const [personnel, setpersonnel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -40,14 +40,14 @@ export default function EmployeShow() {
   const [toastType, setToastType] = useState("success");
 
   useEffect(() => {
-    fetchEmploye();
+    fetchpersonnel();
   }, [id]);
 
-  const fetchEmploye = async () => {
+  const fetchpersonnel = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/users/employe-profiles/${id}/`);
-      setEmploye(response.data);
+      const response = await api.get(`/users/personnel-profiles/${id}/`);
+      setpersonnel(response.data);
     } catch (error) {
       console.error('Erreur lors du chargement:', error);
       showToastMessage('Erreur lors du chargement des données', 'error');
@@ -64,10 +64,10 @@ export default function EmployeShow() {
 
   const handleDelete = async () => {
     try {
-      await api.delete(`/users/employe-profiles/${id}/`);
+      await api.delete(`/users/personnel-profiles/${id}/`);
       showToastMessage('Employé supprimé avec succès', 'success');
       setTimeout(() => {
-        navigate('/superadmin/employes');
+        navigate('/superadmin/personnel');
       }, 2000);
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
@@ -125,7 +125,7 @@ export default function EmployeShow() {
     );
   }
 
-  if (!employe) {
+  if (!personnel) {
     return (
       <SuperAdminLayout>
         <div className="text-center py-12">
@@ -134,7 +134,7 @@ export default function EmployeShow() {
             Employé non trouvé
           </h3>
           <Link
-            to="/superadmin/employes"
+            to="/superadmin/personnel"
             className="text-[#179150] hover:text-[#147a43]"
           >
             Retour à la liste
@@ -144,7 +144,7 @@ export default function EmployeShow() {
     );
   }
 
-  const statutBadge = getStatutBadge(employe.statut);
+  const statutBadge = getStatutBadge(personnel.statut);
   const StatutIcon = statutBadge.icon;
 
   return (
@@ -159,7 +159,7 @@ export default function EmployeShow() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <Link
-                to="/superadmin/employes"
+                to="/superadmin/personnel"
                 className="mr-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -175,7 +175,7 @@ export default function EmployeShow() {
             </div>
             <div className="flex items-center gap-3">
               <Link
-                to={`/superadmin/employes/${id}/edit`}
+                to={`/superadmin/personnel/${id}/edit`}
                 className="inline-flex items-center px-4 py-2 bg-[#179150] hover:bg-[#147a43] text-white font-medium rounded-lg transition-colors"
               >
                 <Edit className="w-4 h-4 mr-2" />
@@ -218,7 +218,7 @@ export default function EmployeShow() {
                           fontWeight: '700'
                         }}
                       >
-                        {getInitials(employe.user?.first_name, employe.user?.last_name)}
+                        {getInitials(personnel.user?.first_name, personnel.user?.last_name)}
                       </div>
                       <span className="absolute -bottom-2 -right-2 bg-[#179150] text-white p-2 border-2 border-white dark:border-gray-800 rounded-lg">
                         <Users className="w-4 h-4" />
@@ -227,7 +227,7 @@ export default function EmployeShow() {
                   </div>
                   <div className="md:w-3/4 md:pl-8">
                     <h4 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
-                      {employe.user?.first_name} {employe.user?.last_name}
+                      {personnel.user?.first_name} {personnel.user?.last_name}
                     </h4>
                     <div className="flex flex-wrap gap-2 items-center">
                       <span className="px-3 py-1 bg-[#179150] text-white text-sm font-medium rounded">Employé</span>
@@ -235,7 +235,7 @@ export default function EmployeShow() {
                         <StatutIcon className="w-3 h-3 mr-1" />
                         {statutBadge.label}
                       </span>
-                      {employe.user?.is_verified && (
+                      {personnel.user?.is_verified && (
                         <span className="px-3 py-1 bg-green-600 text-white text-sm font-medium rounded flex items-center">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Vérifié
@@ -260,48 +260,48 @@ export default function EmployeShow() {
                             <Hash className="w-4 h-4 mr-2" />
                             Matricule :
                           </span>
-                          <span className="font-medium text-gray-900 dark:text-white">{employe.matricule}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{personnel.matricule}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                           <span className="text-gray-600 dark:text-gray-400 flex items-center">
                             <User className="w-4 h-4 mr-2" />
                             Prénom :
                           </span>
-                          <span className="font-medium text-gray-900 dark:text-white">{employe.user?.first_name}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{personnel.user?.first_name}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                           <span className="text-gray-600 dark:text-gray-400 flex items-center">
                             <User className="w-4 h-4 mr-2" />
                             Nom :
                           </span>
-                          <span className="font-medium text-gray-900 dark:text-white">{employe.user?.last_name}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{personnel.user?.last_name}</span>
                         </div>
                         <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                           <span className="text-gray-600 dark:text-gray-400 flex items-center">
                             <Mail className="w-4 h-4 mr-2" />
                             Email :
                           </span>
-                          <span className="font-medium text-gray-900 dark:text-white">{employe.user?.email}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{personnel.user?.email}</span>
                         </div>
                       </div>
 
                       <div className="space-y-3">
-                        {employe.telephone && (
+                        {personnel.telephone && (
                           <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                             <span className="text-gray-600 dark:text-gray-400 flex items-center">
                               <Phone className="w-4 h-4 mr-2" />
                               Téléphone :
                             </span>
-                            <span className="font-medium text-gray-900 dark:text-white">{employe.telephone}</span>
+                            <span className="font-medium text-gray-900 dark:text-white">{personnel.telephone}</span>
                           </div>
                         )}
-                        {employe.date_naissance && (
+                        {personnel.date_naissance && (
                           <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
                             <span className="text-gray-600 dark:text-gray-400 flex items-center">
                               <Calendar className="w-4 h-4 mr-2" />
                               Date de naissance :
                             </span>
-                            <span className="font-medium text-gray-900 dark:text-white">{formatDateShort(employe.date_naissance)}</span>
+                            <span className="font-medium text-gray-900 dark:text-white">{formatDateShort(personnel.date_naissance)}</span>
                           </div>
                         )}
                         <div className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
@@ -309,16 +309,16 @@ export default function EmployeShow() {
                             <Calendar className="w-4 h-4 mr-2" />
                             Date d'embauche :
                           </span>
-                          <span className="font-medium text-gray-900 dark:text-white">{formatDateShort(employe.date_embauche)}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{formatDateShort(personnel.date_embauche)}</span>
                         </div>
-                        {employe.adresse && (
+                        {personnel.adresse && (
                           <div className="flex justify-between items-start py-3 border-b border-gray-200 dark:border-gray-700">
                             <span className="text-gray-600 dark:text-gray-400 flex items-center">
                               <MapPin className="w-4 h-4 mr-2" />
                               Adresse :
                             </span>
                             <span className="font-medium text-gray-900 dark:text-white text-right max-w-xs">
-                              {employe.adresse}
+                              {personnel.adresse}
                             </span>
                           </div>
                         )}
@@ -330,7 +330,7 @@ export default function EmployeShow() {
             </motion.div>
 
             {/* Poste et département */}
-            {employe.poste_details && (
+            {personnel.poste_details && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -344,14 +344,14 @@ export default function EmployeShow() {
                   </h5>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {employe.poste_details.departement_details && (
+                    {personnel.poste_details.departement_details && (
                       <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg mr-4 rounded-lg">
                           <Building2 className="w-8 h-8" />
                         </div>
                         <div>
                           <h6 className="font-semibold text-gray-900 dark:text-white">
-                            {employe.poste_details.departement_details.nom}
+                            {personnel.poste_details.departement_details.nom}
                           </h6>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                             Département
@@ -366,17 +366,17 @@ export default function EmployeShow() {
                       </div>
                       <div>
                         <h6 className="font-semibold text-gray-900 dark:text-white">
-                          {employe.poste_details.titre}
+                          {personnel.poste_details.titre}
                         </h6>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                           Poste
                         </p>
-                        {employe.poste_details.salaire_de_base && (
+                        {personnel.poste_details.salaire_de_base && (
                           <p className="text-sm font-semibold text-green-600 dark:text-green-400 mt-1">
                             {new Intl.NumberFormat('fr-FR', {
                               style: 'currency',
                               currency: 'XAF'
-                            }).format(employe.poste_details.salaire_de_base)}
+                            }).format(personnel.poste_details.salaire_de_base)}
                           </p>
                         )}
                       </div>
@@ -401,7 +401,7 @@ export default function EmployeShow() {
               </div>
               <div className="p-4 space-y-2">
                 <Link
-                  to={`/superadmin/employes/${id}/edit`}
+                  to={`/superadmin/personnel/${id}/edit`}
                   className="flex items-center px-4 py-2 text-sm font-medium text-[#179150] bg-[#179150]/10 border border-[#179150]/20 rounded-lg hover:bg-[#179150]/20 transition-colors"
                 >
                   <Edit className="w-4 h-4 mr-2" />
@@ -414,9 +414,9 @@ export default function EmployeShow() {
                   <Trash2 className="w-4 h-4 mr-2" />
                   Supprimer l'employé
                 </button>
-                {employe.poste_details?.departement && (
+                {personnel.poste_details?.departement && (
                   <Link
-                    to={`/superadmin/employes/departement/${employe.poste_details.departement}`}
+                    to={`/superadmin/personnel/departement/${personnel.poste_details.departement}`}
                     className="flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
                   >
                     <Building2 className="w-4 h-4 mr-2" />
@@ -424,7 +424,7 @@ export default function EmployeShow() {
                   </Link>
                 )}
                 <Link
-                  to="/superadmin/employes"
+                  to="/superadmin/personnel"
                   className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
@@ -451,21 +451,21 @@ export default function EmployeShow() {
                   <Key className="w-4 h-4 text-gray-600 mr-2 mt-1" />
                   <div>
                     <div className="font-medium text-gray-900 dark:text-white">ID Employé</div>
-                    <div className="text-gray-600 dark:text-gray-400 font-mono">{employe.id}</div>
+                    <div className="text-gray-600 dark:text-gray-400 font-mono">{personnel.id}</div>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <Calendar className="w-4 h-4 text-gray-600 mr-2 mt-1" />
                   <div>
                     <div className="font-medium text-gray-900 dark:text-white">Date de création</div>
-                    <div className="text-gray-600 dark:text-gray-400">{formatDate(employe.created_at)}</div>
+                    <div className="text-gray-600 dark:text-gray-400">{formatDate(personnel.created_at)}</div>
                   </div>
                 </div>
                 <div className="flex items-start">
                   <Clock className="w-4 h-4 text-gray-600 mr-2 mt-1" />
                   <div>
                     <div className="font-medium text-gray-900 dark:text-white">Dernière modification</div>
-                    <div className="text-gray-600 dark:text-gray-400">{formatDate(employe.updated_at)}</div>
+                    <div className="text-gray-600 dark:text-gray-400">{formatDate(personnel.updated_at)}</div>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -520,7 +520,7 @@ export default function EmployeShow() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer l'employé <strong>{employe.user?.first_name} {employe.user?.last_name}</strong> ?
+                Êtes-vous sûr de vouloir supprimer l'employé <strong>{personnel.user?.first_name} {personnel.user?.last_name}</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">

@@ -13,28 +13,28 @@ import {
     Circle
 } from "lucide-react";
 
-export default function EmployeSidebar({ user, collapsed, onClose }) {
+export default function PersonnelSidebar({ user, collapsed, onClose }) {
     const location = useLocation();
 
     const menuSections = [
         {
             title: "Mon Espace",
             items: [
-                { label: "Tableau de bord", icon: LayoutDashboard, path: "/employe/dashboard" },
+                { label: "Tableau de bord", icon: LayoutDashboard, path: "/personnel/dashboard" },
             ]
         },
         {
             title: "Mes Congés",
             items: [
-                { label: "Mes demandes", icon: Calendar, path: "/employe/conges" },
-                { label: "Solde & Historique", icon: Clock, path: "/employe/conges/historique" },
+                { label: "Mes demandes", icon: Calendar, path: "/personnel/conges" },
+                { label: "Solde & Historique", icon: Clock, path: "/personnel/conges/historique" },
             ]
         },
         {
             title: "Documents & Infos",
             items: [
-                { label: "Mon Profil", icon: User, path: "/employe/profile" },
-                { label: "Mes Documents", icon: FileText, path: "/employe/documents" },
+                { label: "Mon Profil", icon: User, path: "/personnel/profile" },
+                { label: "Mes Documents", icon: FileText, path: "/personnel/documents" },
             ]
         },
     ];
@@ -61,7 +61,7 @@ export default function EmployeSidebar({ user, collapsed, onClose }) {
                             MINSANTE RH
                         </h1>
                         <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold truncate">
-                            Espace Employé
+                            Espace Personnel
                         </p>
                     </div>
                 </div>
@@ -112,11 +112,11 @@ export default function EmployeSidebar({ user, collapsed, onClose }) {
             <div className="p-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
                 <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                        {user?.first_name ? user.first_name.charAt(0).toUpperCase() : 'E'}
+                        {user?.first_name ? user.first_name.charAt(0).toUpperCase() : 'P'}
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                            {user?.first_name || 'Employé'}
+                            {user?.first_name || 'Personnel'}
                         </p>
                         <p className="text-xs text-blue-600 dark:text-blue-400 truncate">
                             Connecté

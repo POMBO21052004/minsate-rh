@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
-import EmployeLayout from "../../../layouts/Employe/Layout";
+import PersonnelLayout from "../../../layouts/Personnel/Layout";
 import {
     User,
     Mail,
@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 import Toast from "../../../components/ui/Toast";
 
-export default function EmployeeProfileEdit() {
+export default function PersonnelProfileEdit() {
     const { user: authUser, updateUser } = useAuth();
     const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ export default function EmployeeProfileEdit() {
         const fetchUserProfile = async () => {
             try {
                 setLoading(true);
-                const response = await api.get('/users/profile');
+                const response = await api.get('/users/profile/');
                 const userData = response.data;
                 setUser(userData);
 
@@ -98,7 +98,7 @@ export default function EmployeeProfileEdit() {
             setSuccess(null);
             setErrors({});
 
-            const response = await api.put('/users/profile/update', formData);
+            const response = await api.put('/users/profile/update/', formData);
 
             if (response.data) {
                 showToastMessage('Profil mis à jour avec succès !', 'success');
@@ -108,7 +108,7 @@ export default function EmployeeProfileEdit() {
                 }
 
                 setTimeout(() => {
-                    navigate('/employe/profile');
+                    navigate('/personnel/profile');
                 }, 2000);
             }
         } catch (err) {
@@ -137,21 +137,21 @@ export default function EmployeeProfileEdit() {
 
     if (loading) {
         return (
-            <EmployeLayout>
+            <PersonnelLayout>
                 <div className="flex items-center justify-center py-12">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                         <p className="mt-4 text-gray-600 dark:text-gray-400">Chargement du profil...</p>
                     </div>
                 </div>
-            </EmployeLayout>
+            </PersonnelLayout>
         );
     }
 
     const roleInfo = getRoleDisplay(user);
 
     return (
-        <EmployeLayout>
+        <PersonnelLayout>
             {/* En-tête */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -168,7 +168,7 @@ export default function EmployeeProfileEdit() {
                     </p>
                 </div>
                 <Link
-                    to="/employe/profile"
+                    to="/personnel/profile"
                     className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors duration-200"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
@@ -340,7 +340,7 @@ export default function EmployeeProfileEdit() {
 
                                     <div className="flex gap-3">
                                         <Link
-                                            to="/employe/profile"
+                                            to="/personnel/profile"
                                             className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-colors duration-200 rounded-lg"
                                         >
                                             <X className="w-4 h-4 mr-2" />
@@ -439,6 +439,6 @@ export default function EmployeeProfileEdit() {
                 isVisible={showToast}
                 onClose={() => setShowToast(false)}
             />
-        </EmployeLayout>
+        </PersonnelLayout>
     );
 }

@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import EmployeSidebar from "./SideBar";
-import EmployeNavbar from "./Navbar";
+import PersonnelSidebar from "./SideBar";
+import PersonnelNavbar from "./Navbar";
+import Chatbot from "../../components/Common/Chatbot";
 
-export default function EmployeLayout({ children }) {
+export default function PersonnelLayout({ children }) {
     const location = useLocation();
     const { user } = useAuth();
     const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -33,8 +34,8 @@ export default function EmployeLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 flex">
-            {/* Sidebar Employé */}
-            <EmployeSidebar
+            {/* Sidebar Personnel */}
+            <PersonnelSidebar
                 user={user}
                 collapsed={!sidebarVisible}
                 onClose={() => setSidebarVisible(false)}
@@ -45,8 +46,8 @@ export default function EmployeLayout({ children }) {
         flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out
         ${sidebarVisible && !isMobile ? 'lg:ml-64' : 'lg:ml-0'}
       `}>
-                {/* Navbar Employé */}
-                <EmployeNavbar
+                {/* Navbar Personnel */}
+                <PersonnelNavbar
                     toggleSidebar={toggleSidebar}
                     sidebarVisible={sidebarVisible}
                     isMobile={isMobile}
@@ -69,6 +70,7 @@ export default function EmployeLayout({ children }) {
                     </div>
                 </main>
             </div>
+            <Chatbot />
         </div>
     );
 }

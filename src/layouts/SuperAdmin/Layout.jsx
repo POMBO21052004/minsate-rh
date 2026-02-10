@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import SuperAdminSidebar from "./SideBar";
 import SuperAdminNavbar from "./Navbar";
+import Chatbot from "../../components/Common/Chatbot";
 
 export default function AppLayout({ children }) {
   const location = useLocation();
@@ -42,24 +43,24 @@ export default function AppLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 flex">
       {/* Sidebar Super Admin */}
-      <SuperAdminSidebar 
-        user={user} 
-        collapsed={!sidebarVisible} 
+      <SuperAdminSidebar
+        user={user}
+        collapsed={!sidebarVisible}
         onClose={() => setSidebarVisible(false)}
       />
-      
+
       {/* Section principale avec Navbar et contenu */}
       <div className={`
         flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out
         ${sidebarVisible && !isMobile ? 'lg:ml-64' : 'lg:ml-0'}
       `}>
         {/* Navbar Super Admin */}
-        <SuperAdminNavbar 
-          toggleSidebar={toggleSidebar} 
+        <SuperAdminNavbar
+          toggleSidebar={toggleSidebar}
           sidebarVisible={sidebarVisible}
           isMobile={isMobile}
         />
-        
+
         {/* Overlay pour mobile - SEULEMENT quand la sidebar est visible sur mobile */}
         {isMobile && sidebarVisible && (
           <div
@@ -70,7 +71,7 @@ export default function AppLayout({ children }) {
             }}
           />
         )}
-        
+
         {/* Contenu principal */}
         <main className="flex-1 p-4 lg:p-6 mt-16 overflow-auto">
           <div className="container-fluid">
@@ -80,6 +81,7 @@ export default function AppLayout({ children }) {
           </div>
         </main>
       </div>
+      <Chatbot />
     </div>
   );
 }

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../../../services/api";
-import EmployeLayout from "../../../layouts/Employe/Layout";
+import PersonnelLayout from "../../../layouts/Personnel/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LeaveStatusBadge = ({ status }) => {
@@ -44,6 +44,12 @@ const LeaveStatusBadge = ({ status }) => {
     );
 };
 
+const LEAVE_TYPES = {
+    annuel: "Congé annuel",
+    maladie: "Congé maladie",
+    sans_solde: "Congé sans solde"
+};
+
 const Index = () => {
     const [leaves, setLeaves] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -54,7 +60,7 @@ const Index = () => {
     const [formData, setFormData] = useState({
         date_debut: "",
         date_fin: "",
-        type_conge: "conge_paye",
+        type_conge: "annuel",
         description: ""
     });
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -116,7 +122,7 @@ const Index = () => {
     });
 
     return (
-        <EmployeLayout>
+        <PersonnelLayout>
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* Header */}
@@ -180,8 +186,8 @@ const Index = () => {
                                     key={status}
                                     onClick={() => setFilter(status)}
                                     className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${filter === status
-                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                                         }`}
                                 >
                                     {status === 'all' ? 'Toutes' :
@@ -194,7 +200,7 @@ const Index = () => {
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-gray-50 dark:bg-gray-750 text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            <thead className="dark:bg-gray-750 text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 <tr>
                                     <th className="px-6 py-3 font-medium">Type</th>
                                     <th className="px-6 py-3 font-medium">Dates</th>
@@ -215,8 +221,8 @@ const Index = () => {
                                 ) : (
                                     filteredLeaves.map((leave) => (
                                         <tr key={leave.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white capitalize">
-                                                {leave.type_conge.replace('_', ' ')}
+                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                                {LEAVE_TYPES[leave.type_conge] || leave.type_conge}
                                             </td>
                                             <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
                                                 {new Date(leave.date_debut).toLocaleDateString()} - {new Date(leave.date_fin).toLocaleDateString()}
@@ -230,7 +236,7 @@ const Index = () => {
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end space-x-2">
                                                     <Link
-                                                        to={`/employe/conges/${leave.id}`}
+                                                        to={`/personnel/conges/${leave.id}`}
                                                         className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
                                                         title="Voir les détails"
                                                     >
@@ -238,7 +244,7 @@ const Index = () => {
                                                     </Link>
                                                     {leave.statut === 'en_attente' && (
                                                         <Link
-                                                            to={`/employe/conges/${leave.id}/edit`}
+                                                            to={`/personnel/conges/${leave.id}/edit`}
                                                             className="p-1 text-gray-400 hover:text-orange-600 transition-colors"
                                                             title="Modifier"
                                                         >
@@ -295,11 +301,9 @@ const Index = () => {
                                         onChange={(e) => setFormData({ ...formData, type_conge: e.target.value })}
                                         className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     >
-                                        <option value="conge_paye">Congé Payé</option>
-                                        <option value="maladie">Maladie</option>
-                                        <option value="sans_solde">Sans Solde</option>
-                                        <option value="rtt">RTT</option>
-                                        <option value="autre">Autre</option>
+                                        <option value="annuel">Congé annuel</option>
+                                        <option value="maladie">Congé maladie</option>
+                                        <option value="sans_solde">Congé sans solde</option>
                                     </select>
                                 </div>
 
@@ -364,7 +368,7 @@ const Index = () => {
                     </>
                 )}
             </AnimatePresence>
-        </EmployeLayout>
+        </PersonnelLayout>
     );
 };
 

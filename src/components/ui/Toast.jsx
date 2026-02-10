@@ -33,10 +33,10 @@ export default function Toast({ message, type = 'success', onClose, isVisible })
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    initial={{ opacity: 0, y: 50, x: "-50%" }}
-                    animate={{ opacity: 1, y: 0, x: "-50%" }}
-                    exit={{ opacity: 0, y: 50, x: "-50%" }}
-                    className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 text-white ${getBackgroundColor()}`}
+                    initial={{ opacity: 0, y: 50, x: 20 }}
+                    animate={{ opacity: 1, y: 0, x: 0 }}
+                    exit={{ opacity: 0, y: 50, x: 20 }}
+                    className={`fixed bottom-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 text-white ${getBackgroundColor()}`}
                 >
                     {getIcon()}
                     <span>{message}</span>

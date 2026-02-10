@@ -30,22 +30,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 import Toast from "../../../components/ui/Toast";
 
-export default function EmployeList() {
+export default function PersonnelList() {
   const navigate = useNavigate();
-  const [employes, setEmployes] = useState([]);
+  const [personnel, setpersonnel] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [departementFilter, setDepartementFilter] = useState("");
   const [statutFilter, setStatutFilter] = useState("");
-  const [selectedEmployes, setSelectedEmployes] = useState(new Set());
+  const [selectedpersonnel, setSelectedpersonnel] = useState(new Set());
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteGroupModal, setShowDeleteGroupModal] = useState(false);
-  const [employeToDelete, setEmployeToDelete] = useState(null);
+  const [personnelToDelete, setpersonnelToDelete] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
   const [departements, setDepartements] = useState([]);
-  const [groupedEmployes, setGroupedEmployes] = useState({});
+  const [groupedpersonnel, setGroupedpersonnel] = useState({});
   const [stats, setStats] = useState({
     total: 0,
     actifs: 0,
@@ -55,19 +55,19 @@ export default function EmployeList() {
   });
 
   useEffect(() => {
-    fetchEmployes();
+    fetchpersonnel();
     fetchDepartements();
   }, []);
 
   useEffect(() => {
-    groupEmployesByDepartementAndPoste();
-  }, [employes, searchTerm, departementFilter, statutFilter]);
+    groupPersonnelByDepartementAndPoste();
+  }, [personnel, searchTerm, departementFilter, statutFilter]);
 
-  const fetchEmployes = async () => {
+  const fetchpersonnel = async () => {
     try {
       setLoading(true);
       const response = await api.get('/users/employe-profiles/');
-      setEmployes(response.data || []);
+      setpersonnel(response.data || []);
       calculateStats(response.data || []);
     } catch (error) {
       console.error('Erreur lors du chargement:', error);
@@ -102,7 +102,7 @@ export default function EmployeList() {
     setShowToast(true);
   };
 
-  const filteredEmployes = employes.filter(emp => {
+  const filteredpersonnel = personnel.filter(emp => {
     const matchesSearch =
       emp.user?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.user?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -119,10 +119,10 @@ export default function EmployeList() {
     return matchesSearch && matchesDepartement && matchesStatut;
   });
 
-  const groupEmployesByDepartementAndPoste = () => {
+  const groupPersonnelByDepartementAndPoste = () => {
     const grouped = {};
 
-    filteredEmployes.forEach(emp => {
+    filteredpersonnel.forEach(emp => {
       const deptId = emp.poste_details?.departement || 'sans-departement';
       const deptNom = emp.poste_details?.departement_details?.nom || 'Sans département';
       const posteId = emp.poste?.toString() || 'sans-poste';
@@ -140,46 +140,46 @@ export default function EmployeList() {
         grouped[deptId].postes[posteId] = {
           titre: posteTitre,
           id: posteId,
-          employes: []
+          personnel: []
         };
       }
 
-      grouped[deptId].postes[posteId].employes.push(emp);
+      grouped[deptId].postes[posteId].personnel.push(emp);
     });
 
-    setGroupedEmployes(grouped);
+    setGroupedpersonnel(grouped);
   };
 
   const handleDeleteClick = (employe) => {
-    setEmployeToDelete(employe);
+    setpersonnelToDelete(employe);
     setShowDeleteModal(true);
   };
 
   const handleDeleteConfirm = async () => {
-    if (!employeToDelete) return;
+    if (!personnelToDelete) return;
 
     try {
-      await api.delete(`/users/employe-profiles/${employeToDelete.id}/`);
+      await api.delete(`/users/employe-profiles/${personnelToDelete.id}/`);
       showToastMessage('Employé supprimé avec succès', 'success');
-      fetchEmployes();
-      setSelectedEmployes(new Set());
+      fetchpersonnel();
+      setSelectedpersonnel(new Set());
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
       const errorMsg = error.response?.data?.message || error.response?.data?.error || 'Erreur lors de la suppression';
       showToastMessage(errorMsg, 'error');
     } finally {
       setShowDeleteModal(false);
-      setEmployeToDelete(null);
+      setpersonnelToDelete(null);
     }
   };
 
   const handleBulkDelete = async () => {
     try {
-      const idsArray = Array.from(selectedEmployes);
+      const idsArray = Array.from(selectedpersonnel);
       await Promise.all(idsArray.map(id => api.delete(`/users/employe-profiles/${id}/`)));
       showToastMessage(`${idsArray.length} employé(s) supprimé(s) avec succès`, 'success');
-      fetchEmployes();
-      setSelectedEmployes(new Set());
+      fetchpersonnel();
+      setSelectedpersonnel(new Set());
       setShowDeleteGroupModal(false);
     } catch (error) {
       console.error('Erreur lors de la suppression groupée:', error);
@@ -212,7 +212,7 @@ export default function EmployeList() {
 
   const exportToCSV = () => {
     const headers = ['Matricule', 'Nom', 'Prénom', 'Email', 'Département', 'Poste', 'Statut', 'Date embauche'];
-    const csvData = filteredEmployes.map(emp => [
+    const csvData = filteredpersonnel.map(emp => [
       emp.matricule || '',
       emp.user?.last_name || '',
       emp.user?.first_name || '',
@@ -242,7 +242,7 @@ export default function EmployeList() {
     setSearchTerm("");
     setDepartementFilter("");
     setStatutFilter("");
-    setSelectedEmployes(new Set());
+    setSelectedpersonnel(new Set());
   };
 
   const hasActiveFilters = searchTerm || departementFilter || statutFilter;
@@ -285,7 +285,7 @@ export default function EmployeList() {
               </div>
             </div>
             <Link
-              to="/superadmin/employes/create"
+              to="/superadmin/personnel/create"
               className="inline-flex items-center px-4 py-2 bg-[#179150] hover:bg-[#147a43] text-white font-medium rounded-lg transition-colors duration-200"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -411,7 +411,7 @@ export default function EmployeList() {
                 Liste des Employés
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {filteredEmployes.length} employé(s) trouvé(s) - Organisés par département et poste
+                {filteredpersonnel.length} employé(s) trouvé(s) - Organisés par département et poste
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -423,7 +423,7 @@ export default function EmployeList() {
                 Exporter
               </button>
               <button
-                onClick={fetchEmployes}
+                onClick={fetchpersonnel}
                 className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -528,7 +528,7 @@ export default function EmployeList() {
 
           {/* Actions groupées */}
           <AnimatePresence>
-            {selectedEmployes.size > 0 && (
+            {selectedpersonnel.size > 0 && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -536,7 +536,7 @@ export default function EmployeList() {
                 className="px-6 py-3 bg-[#179150]/10 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between"
               >
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {selectedEmployes.size} employé(s) sélectionné(s)
+                  {selectedpersonnel.size} employé(s) sélectionné(s)
                 </span>
                 <button
                   onClick={() => setShowDeleteGroupModal(true)}
@@ -551,7 +551,7 @@ export default function EmployeList() {
 
           {/* Liste groupée par département et poste */}
           <div className="p-6">
-            {Object.keys(groupedEmployes).length === 0 ? (
+            {Object.keys(groupedpersonnel).length === 0 ? (
               <div className="text-center py-12">
                 <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -572,7 +572,7 @@ export default function EmployeList() {
                   </button>
                 ) : (
                   <Link
-                    to="/superadmin/employes/create"
+                    to="/superadmin/personnel/create"
                     className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#179150] rounded-lg hover:bg-[#147a43] transition-colors"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -582,7 +582,7 @@ export default function EmployeList() {
               </div>
             ) : (
               <div className="space-y-6">
-                {Object.values(groupedEmployes).map((dept) => (
+                {Object.values(groupedpersonnel).map((dept) => (
                   <motion.div
                     key={dept.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -601,12 +601,12 @@ export default function EmployeList() {
                               {dept.nom}
                             </h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {Object.values(dept.postes).reduce((sum, poste) => sum + poste.employes.length, 0)} employé(s)
+                              {Object.values(dept.postes).reduce((sum, poste) => sum + poste.personnel.length, 0)} employé(s)
                             </p>
                           </div>
                         </div>
                         <Link
-                          to={`/superadmin/employes/departement/${dept.id}`}
+                          to={`/superadmin/personnel/departement/${dept.id}`}
                           className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-[#179150] bg-[#179150]/10 border border-[#179150]/20 rounded hover:bg-[#179150]/20 transition-colors"
                         >
                           <Eye className="w-4 h-4 mr-1" />
@@ -627,14 +627,14 @@ export default function EmployeList() {
                                 {poste.titre}
                               </h5>
                               <span className="ml-2 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-medium rounded">
-                                {poste.employes.length} employé(s)
+                                {poste.personnel.length} employé(s)
                               </span>
                             </div>
                           </div>
 
                           {/* Liste des employés du poste */}
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {poste.employes.map((emp) => {
+                            {poste.personnel.map((emp) => {
                               const statutBadge = getStatutBadge(emp.statut);
                               const StatutIcon = statutBadge.icon;
 
@@ -684,14 +684,14 @@ export default function EmployeList() {
 
                                   <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
                                     <Link
-                                      to={`/superadmin/employes/${emp.id}`}
+                                      to={`/superadmin/personnel/${emp.id}`}
                                       className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
                                       title="Voir les détails"
                                     >
                                       <Eye className="w-4 h-4" />
                                     </Link>
                                     <Link
-                                      to={`/superadmin/employes/${emp.id}/edit`}
+                                      to={`/superadmin/personnel/${emp.id}/edit`}
                                       className="text-[#179150] hover:text-[#147a43] dark:text-green-400 dark:hover:text-green-300"
                                       title="Modifier"
                                     >
@@ -756,7 +756,7 @@ export default function EmployeList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer l'employé <strong>{employeToDelete?.user?.first_name} {employeToDelete?.user?.last_name}</strong> ?
+                Êtes-vous sûr de vouloir supprimer l'employé <strong>{personnelToDelete?.user?.first_name} {personnelToDelete?.user?.last_name}</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">
@@ -806,7 +806,7 @@ export default function EmployeList() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Êtes-vous sûr de vouloir supprimer <strong>{selectedEmployes.size} employé(s)</strong> ?
+                Êtes-vous sûr de vouloir supprimer <strong>{selectedpersonnel.size} employé(s)</strong> ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-3">

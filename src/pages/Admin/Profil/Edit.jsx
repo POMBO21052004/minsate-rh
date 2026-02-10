@@ -47,7 +47,7 @@ export default function AdminProfileEdit() {
         const fetchUserProfile = async () => {
             try {
                 setLoading(true);
-                const response = await api.get('/users/profile');
+                const response = await api.get('/users/profile/');
                 const userData = response.data;
                 setUser(userData);
 
@@ -98,7 +98,7 @@ export default function AdminProfileEdit() {
             setSuccess(null);
             setErrors({});
 
-            const response = await api.put('/users/profile/update', formData);
+            const response = await api.put('/users/profile/update/', formData);
 
             if (response.data) {
                 showToastMessage('Profil mis à jour avec succès !', 'success');

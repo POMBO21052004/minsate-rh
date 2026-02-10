@@ -6,13 +6,13 @@ import ForgotPassword from "../pages/Auth/ForgotPassword";
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
 
-// Gerer par les employes
-import EmployeeDashboard from "../pages/Employe/Dashboard";
-import EmployeeProfile from "../pages/Employe/Profil/Index";
-import EmployeeProfileEdit from "../pages/Employe/Profil/Edit";
-import CongesList from "../pages/Employe/Conges/Index";
-import CongesShow from "../pages/Employe/Conges/Show";
-import CongesEdit from "../pages/Employe/Conges/Edit";
+// Gerer par le personnel
+import PersonnelDashboard from "../pages/Personnel/Dashboard";
+import PersonnelProfile from "../pages/Personnel/Profil/Index";
+import PersonnelProfileEdit from "../pages/Personnel/Profil/Edit";
+import CongesList from "../pages/Personnel/Conges/Index";
+import CongesShow from "../pages/Personnel/Conges/Show";
+import CongesEdit from "../pages/Personnel/Conges/Edit";
 
 // Gerer par les admins
 import AdminDashboard from "../pages/Admin/Dashboard";
@@ -45,11 +45,11 @@ import PosteView from "../pages/SuperAdmin/Postes/Show";
 import PosteEdit from "../pages/SuperAdmin/Postes/Edit";
 import PosteCreate from "../pages/SuperAdmin/Postes/Create";
 
-import EmployeList from "../pages/SuperAdmin/Employes/Index";
-import EmployeView from "../pages/SuperAdmin/Employes/Show";
-import EmployeEdit from "../pages/SuperAdmin/Employes/Edit";
-import EmployeCreate from "../pages/SuperAdmin/Employes/Create";
-import DepartementEmployes from "../pages/SuperAdmin/Employes/DepartementEmployes";
+import PersonnelList from "../pages/SuperAdmin/Personnel/Index";
+import PersonnelView from "../pages/SuperAdmin/Personnel/Show";
+import PersonnelEdit from "../pages/SuperAdmin/Personnel/Edit";
+import PersonnelCreate from "../pages/SuperAdmin/Personnel/Create";
+import DepartementPersonnel from "../pages/SuperAdmin/Personnel/DepartementPersonnel";
 
 import CongeList from "../pages/SuperAdmin/Conges/Index";
 import CongeView from "../pages/SuperAdmin/Conges/Show";
@@ -76,13 +76,13 @@ export default function AppRouter() {
 
         {/* Protégées */}
 
-        {/* Employe */}
-        <Route path="/employe/dashboard" element={<PrivateRoute allowedRoles={[0]}> <EmployeeDashboard /> </PrivateRoute>} />
-        <Route path="/employe/profile" element={<PrivateRoute allowedRoles={[0]}> <EmployeeProfile /> </PrivateRoute>} />
-        <Route path="/employe/profile/edit" element={<PrivateRoute allowedRoles={[0]}> <EmployeeProfileEdit /> </PrivateRoute>} />
-        <Route path="/employe/conges" element={<PrivateRoute allowedRoles={[0]}> <CongesList /> </PrivateRoute>} />
-        <Route path="/employe/conges/:id" element={<PrivateRoute allowedRoles={[0]}> <CongesShow /> </PrivateRoute>} />
-        <Route path="/employe/conges/:id/edit" element={<PrivateRoute allowedRoles={[0]}> <CongesEdit /> </PrivateRoute>} />
+        {/* Personnel */}
+        <Route path="/personnel/dashboard" element={<PrivateRoute allowedRoles={[0]}> <PersonnelDashboard /> </PrivateRoute>} />
+        <Route path="/personnel/profile" element={<PrivateRoute allowedRoles={[0]}> <PersonnelProfile /> </PrivateRoute>} />
+        <Route path="/personnel/profile/edit" element={<PrivateRoute allowedRoles={[0]}> <PersonnelProfileEdit /> </PrivateRoute>} />
+        <Route path="/personnel/conges" element={<PrivateRoute allowedRoles={[0]}> <CongesList /> </PrivateRoute>} />
+        <Route path="/personnel/conges/:id" element={<PrivateRoute allowedRoles={[0]}> <CongesShow /> </PrivateRoute>} />
+        <Route path="/personnel/conges/:id/edit" element={<PrivateRoute allowedRoles={[0]}> <CongesEdit /> </PrivateRoute>} />
 
         {/* Admin */}
         <Route path="/admin/dashboard" element={<PrivateRoute allowedRoles={[1]}> <AdminDashboard /> </PrivateRoute>} />
@@ -115,11 +115,11 @@ export default function AppRouter() {
         <Route path="/superadmin/postes/:id" element={<PrivateRoute allowedRoles={[2]}> <PosteView /> </PrivateRoute>} />
         <Route path="/superadmin/postes/:id/edit" element={<PrivateRoute allowedRoles={[2]}> <PosteEdit /> </PrivateRoute>} />
 
-        <Route path="/superadmin/employes" element={<PrivateRoute allowedRoles={[2]}> <EmployeList /> </PrivateRoute>} />
-        <Route path="/superadmin/employes/create" element={<PrivateRoute allowedRoles={[2]}> <EmployeCreate /> </PrivateRoute>} />
-        <Route path="/superadmin/employes/departement/:id" element={<PrivateRoute allowedRoles={[2]}> <DepartementEmployes /> </PrivateRoute>} />
-        <Route path="/superadmin/employes/:id" element={<PrivateRoute allowedRoles={[2]}> <EmployeView /> </PrivateRoute>} />
-        <Route path="/superadmin/employes/:id/edit" element={<PrivateRoute allowedRoles={[2]}> <EmployeEdit /> </PrivateRoute>} />
+        <Route path="/superadmin/personnel" element={<PrivateRoute allowedRoles={[2]}> <PersonnelList /> </PrivateRoute>} />
+        <Route path="/superadmin/personnel/create" element={<PrivateRoute allowedRoles={[2]}> <PersonnelCreate /> </PrivateRoute>} />
+        <Route path="/superadmin/personnel/departement/:id" element={<PrivateRoute allowedRoles={[2]}> <DepartementPersonnel /> </PrivateRoute>} />
+        <Route path="/superadmin/personnel/:id" element={<PrivateRoute allowedRoles={[2]}> <PersonnelView /> </PrivateRoute>} />
+        <Route path="/superadmin/personnel/:id/edit" element={<PrivateRoute allowedRoles={[2]}> <PersonnelEdit /> </PrivateRoute>} />
 
         <Route path="/superadmin/conges" element={<PrivateRoute allowedRoles={[2]}> <CongeList /> </PrivateRoute>} />
         <Route path="/superadmin/conges/:id" element={<PrivateRoute allowedRoles={[2]}> <CongeView /> </PrivateRoute>} />

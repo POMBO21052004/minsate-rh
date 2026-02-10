@@ -10,7 +10,7 @@ import {
     AlertCircle
 } from "lucide-react";
 import api from "../../../services/api";
-import EmployeLayout from "../../../layouts/Employe/Layout";
+import PersonnelLayout from "../../../layouts/Personnel/Layout";
 
 const LeaveStatusBadge = ({ status }) => {
     const styles = {
@@ -39,6 +39,12 @@ const LeaveStatusBadge = ({ status }) => {
             {labels[status] || status}
         </span>
     );
+};
+
+const LEAVE_TYPES = {
+    annuel: "Congé annuel",
+    maladie: "Congé maladie",
+    sans_solde: "Congé sans solde"
 };
 
 const Show = () => {
@@ -74,32 +80,32 @@ const Show = () => {
 
     if (loading) {
         return (
-            <EmployeLayout>
+            <PersonnelLayout>
                 <div className="flex items-center justify-center h-64">
                     <div className="text-gray-500">Chargement...</div>
                 </div>
-            </EmployeLayout>
+            </PersonnelLayout>
         );
     }
 
     if (!leave) {
         return (
-            <EmployeLayout>
+            <PersonnelLayout>
                 <div className="max-w-3xl mx-auto text-center py-12">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Demande non trouvée</h2>
-                    <Link to="/employe/conges" className="text-blue-600 hover:text-blue-500 mt-4 inline-block">
+                    <Link to="/personnel/conges" className="text-blue-600 hover:text-blue-500 mt-4 inline-block">
                         Retour à la liste
                     </Link>
                 </div>
-            </EmployeLayout>
+            </PersonnelLayout>
         );
     }
 
     return (
-        <EmployeLayout>
+        <PersonnelLayout>
             <div className="max-w-3xl mx-auto space-y-6">
                 <button
-                    onClick={() => navigate('/employe/conges')}
+                    onClick={() => navigate('/personnel/conges')}
                     className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
@@ -127,7 +133,7 @@ const Show = () => {
                                     <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 mr-3">
                                         <Calendar className="w-5 h-5" />
                                     </div>
-                                    {leave.type_conge.replace('_', ' ')}
+                                    {LEAVE_TYPES[leave.type_conge] || leave.type_conge}
                                 </div>
                             </div>
 
@@ -167,7 +173,7 @@ const Show = () => {
                         {leave.statut === 'en_attente' && (
                             <div className="flex justify-end pt-4">
                                 <Link
-                                    to={`/employe/conges/${leave.id}/edit`}
+                                    to={`/personnel/conges/${leave.id}/edit`}
                                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm"
                                 >
                                     Modifier la demande
@@ -177,7 +183,7 @@ const Show = () => {
                     </div>
                 </div>
             </div>
-        </EmployeLayout>
+        </PersonnelLayout>
     );
 };
 

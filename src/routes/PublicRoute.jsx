@@ -11,7 +11,7 @@ export default function PublicRoute({ children }) {
 
   if (user) {
     const dashboards = {
-      0: "/employe/dashboard",
+      0: "/personnel/dashboard",
       1: "/admin/dashboard",
       2: "/superadmin/dashboard",
     };

@@ -60,7 +60,7 @@ export default function AdminProfile() {
         const fetchUserProfile = async () => {
             try {
                 setLoading(true);
-                const response = await api.get('/users/profile');
+                const response = await api.get('/users/profile/');
                 setUser(response.data);
             } catch (err) {
                 setError('Erreur lors du chargement du profil');
@@ -144,7 +144,7 @@ export default function AdminProfile() {
             setChangingPassword(true);
             setPasswordErrors({});
 
-            const response = await api.put('/users/change-password', passwordForm);
+            const response = await api.put('/users/change-password/', passwordForm);
 
             if (response.data.message) {
                 showToastMessage('Mot de passe changé avec succès !', 'success');

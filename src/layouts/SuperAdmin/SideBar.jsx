@@ -34,29 +34,29 @@ export default function SuperAdminSidebar({ user, collapsed, onClose }) {
       ]
     },
     {
-      title: "Gestion des organisations",     
+      title: "Gestion des organisations",
       items: [
         { label: "Départements", icon: FolderTree, path: "/superadmin/departements" },
         { label: "Postes", icon: Network, path: "/superadmin/postes" },
       ]
     },
     {
-      title: "Gestion des utilisateurs",     
+      title: "Gestion des utilisateurs",
       items: [
         { label: "Super administrateurs", icon: Users, path: "/superadmin/super-admins" },
         { label: "Administrateurs", icon: Users, path: "/superadmin/admins" },
-        { label: "Employes", icon: Users, path: "/superadmin/employes" },
+        { label: "Personnel", icon: Users, path: "/superadmin/personnel" },
       ]
     },
     {
-      title: "Gestion des presence",     
+      title: "Gestion des presence",
       items: [
         { label: "Presences", icon: CalendarArrowUp, path: "/superadmin/super-admins" },
         { label: "Absences", icon: CalendarArrowDownIcon, path: "/superadmin/admins" },
       ]
     },
     {
-      title: "Supervision & Audit",     
+      title: "Supervision & Audit",
       items: [
         { label: "Formation", icon: FileText, path: "/superadmin/formation" },
         { label: "Evaluation", icon: File, path: "/superadmin/evaluation" },
@@ -102,7 +102,7 @@ export default function SuperAdminSidebar({ user, collapsed, onClose }) {
             <h3 className="px-6 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
               {section.title}
             </h3>
-            
+
             <ul className="space-y-1">
               {section.items.map((item, itemIndex) => {
                 const IconComponent = item.icon;
@@ -113,8 +113,8 @@ export default function SuperAdminSidebar({ user, collapsed, onClose }) {
                       onClick={onClose}
                       className={`
                         flex items-center mx-3 px-3 py-3 rounded-xl transition-all duration-200 group
-                        ${isActiveLink(item.path) 
-                          ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 shadow-sm' 
+                        ${isActiveLink(item.path)
+                          ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 shadow-sm'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-green-600 dark:hover:text-green-400'
                         }
                       `}
@@ -123,7 +123,7 @@ export default function SuperAdminSidebar({ user, collapsed, onClose }) {
                       <span className="font-medium text-sm truncate flex-1">
                         {item.label}
                       </span>
-                      
+
                       {/* Indicateur visuel pour les liens actifs */}
                       {isActiveLink(item.path) && (
                         <Circle className="w-2 h-2 fill-green-500 text-green-500 ml-2" />
@@ -153,7 +153,7 @@ export default function SuperAdminSidebar({ user, collapsed, onClose }) {
           </div>
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="En ligne"></div>
         </div>
-        
+
       </div>
     </aside>
   );

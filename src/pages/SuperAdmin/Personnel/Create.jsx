@@ -25,7 +25,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from "../../../services/api";
 import Toast from "../../../components/ui/Toast";
 
-export default function EmployeCreate() {
+export default function PersonnelCreate() {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ export default function EmployeCreate() {
     email: '',
     password: '',
     confirm_password: '',
-    // Employe fields
+    // Personnel fields
     matricule: '',
     date_embauche: '',
     date_naissance: '',
@@ -136,7 +136,7 @@ export default function EmployeCreate() {
         last_name: formData.last_name,
         password: formData.password,
         confirm_password: formData.confirm_password,
-        // Employe fields
+        // Personnel fields
         matricule: formData.matricule,
         date_embauche: formData.date_embauche || null,
         poste_id: formData.poste ? parseInt(formData.poste) : null
@@ -147,7 +147,7 @@ export default function EmployeCreate() {
       if (response.data) {
         showToastMessage('Employé créé avec succès !', 'success');
         setTimeout(() => {
-          navigate('/superadmin/employes');
+          navigate('/superadmin/personnel');
         }, 2000);
       }
     } catch (err) {
@@ -175,7 +175,7 @@ export default function EmployeCreate() {
         >
           <div className="flex items-center mb-4">
             <Link
-              to="/superadmin/employes"
+              to="/superadmin/personnel"
               className="mr-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -312,7 +312,7 @@ export default function EmployeCreate() {
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : 'border-gray-300 dark:border-gray-600 focus:border-[#179150] focus:ring-[#179150]'
                           } bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200 rounded-lg`}
-                        placeholder="employe@example.com"
+                        placeholder="personnel@example.com"
                         required
                       />
                       {errors.email && (
@@ -577,7 +577,7 @@ export default function EmployeCreate() {
                 <div></div>
                 <div className="flex gap-3">
                   <Link
-                    to="/superadmin/employes"
+                    to="/superadmin/personnel"
                     className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium transition-colors duration-200 rounded-lg"
                   >
                     <X className="w-4 h-4 mr-2" />

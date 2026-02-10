@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      const response = await api.get("/users/profile");
+      const response = await api.get("/users/profile/");
       const userData = response.data;
       
       // Valider les rôles

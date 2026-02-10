@@ -48,7 +48,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await api.post("/users/login", form);
+      const res = await api.post("/users/login/", form);
       if (res.data.message) {
         setStep(2);
       }
@@ -71,7 +71,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await api.post("/users/verify-otp", {
+      const res = await api.post("/users/verify-otp/", {
         email: form.email,
         otp_code: form.otp_code
       });
@@ -85,7 +85,7 @@ const Login = () => {
       } else if (user.is_admin) {
         navigate("/admin/dashboard");
       } else {
-        navigate("/employe/dashboard");
+        navigate("/personnel/dashboard");
       }
     } catch (err) {
       const response = err.response;
@@ -101,7 +101,7 @@ const Login = () => {
 
   const handleResendOTP = async () => {
     try {
-      await api.post("/users/resend-otp", { email: form.email });
+      await api.post("/users/resend-otp/", { email: form.email });
       setError(null);
     } catch (err) {
       setError("Erreur lors de l'envoi du code OTP");
